@@ -1,9 +1,24 @@
+html,
+body {
+  font-family: "Open Sans", sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  background: #333;
+  color-scheme: only dark;
+}
+
 body {
   color: #f0f0f0;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 14px;
+  font-size: 1rem;
   line-height: 1.42857143;
+  /* background: url("./Pine01.png") #333; */
+  /* background-repeat: no-repeat; */
+  /* height: 100vh; */
+}
+
+* {
+  box-sizing: border-box;
   margin: 0;
-  background: url("./Pine01.png") #333;
-  background-repeat: no-repeat;
+  padding: 0;
 }

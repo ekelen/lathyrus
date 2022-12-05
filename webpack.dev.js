@@ -1,7 +1,11 @@
+const common = require("./webpack.common.js");
+let { merge } = require("webpack-merge");
+
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 
-module.exports = {
+module.exports = merge(common, {
   mode: "development",
   entry: {
     app: "./src/index.js",
@@ -10,24 +14,16 @@ module.exports = {
     extensions: ["*", ".js", ".jsx"],
   },
   devtool: "inline-source-map",
-  output: {
-    filename: "bundle.js",
-    path: path.resolve(__dirname, "build"),
-    clean: true,
-  },
   plugins: [
     new HtmlWebpackPlugin({
-      title: "Development",
       template: "./index.html",
     }),
+    new ReactRefreshWebpackPlugin(),
   ],
   devServer: {
     static: "./build",
     hot: true,
   },
-  //   optimization: {
-  //     runtimeChunk: "single",
-  //   },
   module: {
     rules: [
       {
@@ -42,8 +38,15 @@ module.exports = {
         test: /\.(js|jsx)$/,
         include: path.resolve(__dirname, "./src"),
         exclude: /node_modules/,
-        use: ["babel-loader"],
+        use: [
+          {
+            loader: "babel-loader",
+            options: {
+              plugins: [require.resolve("react-refresh/babel")],
+            },
+          },
+        ],
       },
     ],
   },
-};
+});
