@@ -127,15 +127,14 @@ const inventory = _.sortBy(
   "name"
 );
 
-const mapExits = () => {
-  const roomCoordinates = {};
+const mapRooms = () => {
   ROOMS.forEach((room, i) => {
     const y = ROOM_POSITIONS.findIndex((row) => row.includes(room.id));
     const x = ROOM_POSITIONS[y].findIndex((id) => id === room.id);
-    roomCoordinates[room.id] = { x, y };
+    ROOMS[i].coordinates = { x, y };
   });
   ROOMS.forEach((room, i) => {
-    const { x, y } = roomCoordinates[room.id];
+    const { x, y } = room.coordinates;
     ROOMS[i].exits = {
       north: ROOM_POSITIONS[y - 1]?.[x] ?? null,
       south: ROOM_POSITIONS[y + 1]?.[x] ?? null,
@@ -156,7 +155,7 @@ const mapExits = () => {
   });
 };
 
-mapExits();
+mapRooms();
 
 const roomMonsters = _.keyBy(
   MONSTERS.map((monster) => ({

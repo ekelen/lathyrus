@@ -8,8 +8,15 @@ import {
 } from "../data/setup";
 import Inventory from "./Inventory";
 import Modal from "../Modal";
+import { getRoomGradient, rowGradients } from "./color";
+import pine00 from "./img/trees/pine00.png";
+import pine01 from "./img/trees/pine01.png";
+import pine02 from "./img/trees/pine02.png";
+// import pine03 from "./img/trees/pine03.png";
+import pine04 from "./img/trees/pine04.png";
 
 const FRAME_WIDTH = "2rem";
+const TREE_IMG = [pine00, pine01, pine02, pine04];
 
 function MonsterTile(props) {
   const containerRef = useRef(null);
@@ -153,6 +160,7 @@ function Room() {
     height: "100%",
     border: "1px solid violet",
     width: "100%",
+    ...getRoomGradient(currentRoom.coordinates.y),
   };
 
   return (
@@ -174,15 +182,15 @@ function Room() {
                 style={{
                   height: "100%",
                   width: `calc(100% / ${ROOM_WIDTH})`,
-                  border: "1px solid blue",
+                  border: "1px solid transparent",
                   display: "flex",
                   justifyContent: "center",
                   alignItems: "center",
                   backgroundColor:
                     position === currentRoom.centerPosition ||
                     currentRoom.exitPositions.includes(position)
-                      ? "rgba(255,0,255,0.3)"
-                      : "black",
+                      ? "rgba(0,200,255,0.2)"
+                      : "rgba(0,5,10,1)",
                 }}
               >
                 {currentRoom.type === "container" &&
@@ -191,8 +199,23 @@ function Room() {
                 ) : currentRoom.type === "monster" &&
                   position === currentRoom.centerPosition ? (
                   <MonsterTile />
-                ) : (
-                  "tile"
+                ) : currentRoom.exitPositions.includes(position) ? null : (
+                  <div
+                    style={{
+                      backgroundImage: `url('${
+                        TREE_IMG[
+                          (position +
+                            currentRoom.coordinates.x +
+                            currentRoom.coordinates.y) %
+                            TREE_IMG.length
+                        ]
+                      }')`,
+                      backgroundSize: "contain",
+                      backgroundRepeat: "no-repeat",
+                      height: "100%",
+                      width: "100%",
+                    }}
+                  ></div>
                 )}
               </div>
             );
@@ -234,7 +257,7 @@ function RoomFrame() {
     <div
       style={{
         height: "clamp(350px, 95vw, 450px)",
-        border: "1px solid blue",
+        border: "1px solid transparent",
         display: "flex",
         flexDirection: "column",
         alignItems: "stretch",

@@ -93,11 +93,6 @@ export function gameReducer(state, action) {
         console.error(`No item with id ${itemId} in inventory`);
         return state;
       }
-      // const filteredInventory = inventory.filter((i) => i.itemId !== itemId);
-      // const newInventoryItem = {
-      //   ...inventoryItem,
-      //   quantity: inventoryItem.quantity + quantity,
-      // };
       const newInventoryItems = updateQuantity({
         items: inventory,
         item: inventoryItem,
