@@ -6,6 +6,7 @@ specifiers:
   '@babel/preset-react': ^7.18.6
   '@pmmmwh/react-refresh-webpack-plugin': ^0.5.10
   babel-loader: ^9.1.0
+  babel-plugin-lodash: ^3.3.4
   css-loader: ^6.7.2
   html-webpack-plugin: ^5.5.0
   lodash: ^4.17.21
@@ -30,6 +31,7 @@ devDependencies:
   '@babel/preset-react': 7.18.6_@babel+core@7.20.5
   '@pmmmwh/react-refresh-webpack-plugin': 0.5.10_e764yt37rymiplqgpb7fiwcihu
   babel-loader: 9.1.0_ztqwsvkb6z73luspkai6ilstpu
+  babel-plugin-lodash: 3.3.4
   css-loader: 6.7.2_webpack@5.75.0
   html-webpack-plugin: 5.5.0_webpack@5.75.0
   react-refresh: 0.14.0
@@ -1752,6 +1754,16 @@ packages:
       webpack: 5.75.0_webpack-cli@5.0.0
     dev: true
 
+  /babel-plugin-lodash/3.3.4:
+    resolution: {integrity: sha512-yDZLjK7TCkWl1gpBeBGmuaDIFhZKmkoL+Cu2MUUjv5VxUZx/z7tBGBCBcQs5RI1Bkz5LLmNdjx7paOyQtMovyg==}
+    dependencies:
+      '@babel/helper-module-imports': 7.18.6
+      '@babel/types': 7.20.5
+      glob: 7.2.3
+      lodash: 4.17.21
+      require-package-name: 2.0.1
+    dev: true
+
   /babel-plugin-polyfill-corejs2/0.3.3_@babel+core@7.20.5:
     resolution: {integrity: sha512-8hOdmFYFSZhqg2C/JgLUQ+t52o5nirNwaWM2B9LWteozwIvM14VSwdsCAUET10qT+kmySAlseadmfeeSWFCy+Q==}
     peerDependencies:
@@ -3448,6 +3460,10 @@ packages:
   /require-from-string/2.0.2:
     resolution: {integrity: sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==}
     engines: {node: '>=0.10.0'}
+    dev: true
+
+  /require-package-name/2.0.1:
+    resolution: {integrity: sha512-uuoJ1hU/k6M0779t3VMVIYpb2VMJk05cehCaABFhXaibcbvfgR8wKiozLjVFSzJPmQMRqIcO0HMyTFqfV09V6Q==}
     dev: true
 
   /requires-port/1.0.0:

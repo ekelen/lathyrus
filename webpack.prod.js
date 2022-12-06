@@ -3,11 +3,10 @@ let { merge } = require("webpack-merge");
 
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const BundleAnalyzerPlugin =
-  require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 
 module.exports = merge(common, {
   mode: "production",
+
   entry: {
     app: "./src/index.js",
   },
@@ -18,7 +17,6 @@ module.exports = merge(common, {
     new HtmlWebpackPlugin({
       template: "./index.html",
     }),
-    // new BundleAnalyzerPlugin(),
   ],
   module: {
     rules: [
