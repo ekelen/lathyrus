@@ -1,5 +1,5 @@
-import _, { cloneDeep } from "lodash";
-import { initialData } from "../data/setup";
+import _, { cloneDeep, max } from "lodash";
+import { initialData, ROOM_EXIT_POSITIONS } from "../data/setup";
 
 export const initialState = initialData;
 
@@ -30,16 +30,41 @@ const updateQuantityMany = ({ existingItems, upsertItems }) => {
 export function gameReducer(state, action) {
   switch (action.type) {
     case "reset": {
-      return _.cloneDeep({ ...initialState });
+      return cloneDeep({ ...initialState });
     }
     case "move": {
       const { direction } = action.payload;
-      const { currentRoom, rooms } = state;
-      const exitRoom = rooms[currentRoom.exits[direction]];
+      const { currentRoom, rooms, roomMonsters } = state;
+      const isLocked = currentRoom.lockedExitTilePositions?.includes(
+        ROOM_EXIT_POSITIONS[direction]
+      );
+      if (isLocked) {
+        console.log("This way is locked!");
+        return state;
+      }
+
+      const targetRoom = rooms[currentRoom.exits[direction]];
+      const exitsUnlocked =
+        !roomMonsters[targetRoom.id] || roomMonsters[targetRoom.id].sated;
+      const enteredRoomFrom =
+        direction === "north"
+          ? "south"
+          : direction === "east"
+          ? "west"
+          : direction === "south"
+          ? "north"
+          : "east";
+      const lockedExits = exitsUnlocked
+        ? []
+        : targetRoom.exitTilePositions.filter((position) => {
+            return position !== ROOM_EXIT_POSITIONS[enteredRoomFrom];
+          });
       return {
         ...state,
         previousRoom: currentRoom,
-        currentRoom: exitRoom,
+        currentRoom: { ...targetRoom, lockedExitTilePositions: lockedExits },
+        enteredRoomFrom,
+        direction,
       };
     }
     case "addToRoomFromInventory": {
@@ -84,15 +109,7 @@ export function gameReducer(state, action) {
       const roomItem = roomItems[currentRoom.id].find(
         (i) => i.itemId === itemId
       );
-      if (!roomItem) {
-        console.error(`No item with id ${itemId} in room ${currentRoom}`);
-        return state;
-      }
       const inventoryItem = inventory.find((i) => i.itemId === itemId);
-      if (!inventoryItem) {
-        console.error(`No item with id ${itemId} in inventory`);
-        return state;
-      }
       const newInventoryItems = updateQuantity({
         items: inventory,
         item: inventoryItem,
@@ -123,14 +140,10 @@ export function gameReducer(state, action) {
       }
       const inventoryItem = inventory.find((i) => i.itemId === itemId);
       const currentRoomItems = roomItems[currentRoom.id] ?? [];
-      if (inventoryItem.quantity < 1) {
-        console.error(`No item with id ${itemId} in inventory`);
-        return state;
-      }
       const { value } = inventoryItem;
       const newEnemy = {
         ...enemy,
-        hunger: enemy.hunger - value,
+        hunger: max([enemy.hunger - value, 0]),
         sated: enemy.hunger - value <= 0,
       };
       const newRoomMonsters = {
@@ -144,6 +157,10 @@ export function gameReducer(state, action) {
         });
         return {
           ...state,
+          currentRoom: {
+            ...currentRoom,
+            lockedExitTilePositions: [],
+          },
           roomMonsters: newRoomMonsters,
           roomItems: {
             ...state.roomItems,

@@ -4,19 +4,21 @@ import _ from "lodash";
 import { ITEMS } from "../data/setup";
 
 export const GameContext = React.createContext();
+const GameDispatchContext = React.createContext();
 
-const DispatchContext = React.createContext();
+export const ModalContext = React.createContext();
 
 export function useGame() {
   return React.useContext(GameContext);
 }
 
 export function useGameDispatch() {
-  return React.useContext(DispatchContext);
+  return React.useContext(GameDispatchContext);
 }
 
 const GameContextProvider = (props) => {
   const [state, dispatch] = React.useReducer(gameReducer, initialState);
+  const [showModal, setShowModal] = React.useState(false);
 
   const currentRoomItems = React.useMemo(() => {
     return _.map(state.roomItems[state.currentRoom.id], (item) => ({
@@ -36,13 +38,19 @@ const GameContextProvider = (props) => {
     return state.roomMonsters[state.currentRoom.id];
   }, [state.currentRoom.id, state.roomMonsters]);
 
+  const handleShowModal = React.useCallback((show) => {
+    setShowModal(show);
+  }, []);
+
   return (
     <GameContext.Provider
       value={{ ...state, currentRoomItems, inventoryItems, currentRoomMonster }}
     >
-      <DispatchContext.Provider value={dispatch}>
-        {props.children}
-      </DispatchContext.Provider>
+      <GameDispatchContext.Provider value={dispatch}>
+        <ModalContext.Provider value={{ showModal, handleShowModal }}>
+          {props.children}
+        </ModalContext.Provider>
+      </GameDispatchContext.Provider>
     </GameContext.Provider>
   );
 };

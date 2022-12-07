@@ -11,7 +11,7 @@ function AppWrapper() {
         display: "flex",
         flexDirection: "row",
         placeContent: "center",
-        border: "3px dashed pink",
+        border: "3px dashed #333",
         // position: "relative",
       }}
     >
@@ -30,7 +30,7 @@ function App() {
           flexDirection: "column",
           justifyContent: "center",
           alignContent: "center",
-          border: "1px solid red",
+          border: "1px solid #333",
         }}
       >
         <h2>Lathyrus</h2>

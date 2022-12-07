@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { useGame, useGameDispatch } from "../state/GameContext";
+import { ModalContext, useGame, useGameDispatch } from "../state/GameContext";
 import _ from "lodash";
 import {
   getPositionFromCoordinates,
@@ -14,157 +14,146 @@ import pine01 from "./img/trees/pine01.png";
 import pine02 from "./img/trees/pine02.png";
 // import pine03 from "./img/trees/pine03.png";
 import pine04 from "./img/trees/pine04.png";
+import { stripUnit } from "polished";
+import { rgba } from "polished";
 
 const FRAME_WIDTH = "2rem";
 const TREE_IMG = [pine00, pine01, pine02, pine04];
 
-function MonsterTile(props) {
-  const containerRef = useRef(null);
-  const prevRoomIdRef = useRef(null);
-  const { currentRoomItems, currentRoom, currentRoomMonster } = useGame();
-  const dispatch = useGameDispatch();
-  const [showModal, setShowModal] = React.useState(false);
+const START_POSITION_CURRENT = {
+  south: {
+    top: "100%",
+  },
+  north: {
+    top: "-100%",
+  },
+  east: {
+    left: "100%",
+  },
+  west: {
+    left: "-100%",
+  },
+};
 
-  const handleFeed = (item) => {
-    dispatch({
-      type: "feed",
-      payload: { itemId: item.itemId },
-    });
-  };
+const END_POSITION_PREVIOUS = {
+  south: {
+    top: "-100%",
+  },
+  north: {
+    top: "100%",
+  },
+  east: {
+    left: "-100%",
+  },
+  west: {
+    left: "100%",
+  },
+};
 
-  useEffect(() => {
-    let timer;
-    if (containerRef.current && prevRoomIdRef.current === currentRoom.id) {
-      containerRef.current.style.borderColor = "yellow";
-      timer = setTimeout(() => {
-        containerRef.current.style.borderColor = "transparent";
-      }, 1000);
-    }
-    if (prevRoomIdRef.current !== currentRoom.id) {
-      prevRoomIdRef.current = currentRoom.id;
-    }
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [currentRoomItems, currentRoom.id]);
-
+function RoomTile({ row, col, room }) {
+  const position = getPositionFromCoordinates(col, row);
   return (
     <div
+      key={col}
       style={{
         height: "100%",
-        width: "100%",
+        width: `calc(100% / ${ROOM_WIDTH})`,
+        border: "1px solid transparent",
         display: "flex",
-        flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor:
+          position === room.centerPosition ||
+          room.exitTilePositions.includes(position)
+            ? "rgba(0,200,255,0.2)"
+            : "rgba(0,5,10,1)",
       }}
     >
-      {showModal ? (
-        <Modal onClose={() => setShowModal(false)}>
-          {currentRoomMonster.name} - {currentRoomMonster.hunger}/
-          {currentRoomMonster.maxHunger} hunger
-          {/* <ContainerModalContents
-              {...{ currentRoom, currentRoomItems, handleTakeItem }}
-            /> */}
-        </Modal>
+      {room.centerPosition === position ? (
+        room.type === "container" ? (
+          <ContainerTile room={room} />
+        ) : room.type === "monster" ? (
+          <MonsterTile room={room} />
+        ) : null
+      ) : room.exitTilePositions.includes(position) ? (
+        room.lockedExitTilePositions.includes(position) ? (
+          <span style={{ color: "red" }}>Locked</span>
+        ) : null
       ) : (
-        <button onClick={() => setShowModal(true)} ref={containerRef}>
-          {currentRoomMonster.name}
-        </button>
+        <div
+          style={{
+            backgroundImage: `url('${
+              TREE_IMG[
+                (position + room.coordinates.x + room.coordinates.y) %
+                  TREE_IMG.length
+              ]
+            }')`,
+            backgroundSize: "contain",
+            backgroundRepeat: "no-repeat",
+            height: "100%",
+            width: "100%",
+          }}
+        ></div>
       )}
     </div>
   );
 }
 
-function ContainerModalContents({
-  currentRoom,
-  currentRoomItems,
-  handleTakeItem,
-}) {
-  const itemList = currentRoomItems.filter((item) => item.quantity > 0);
+function Room({ room, isPreviousRoom = false }) {
+  const { direction } = useGame();
+  const roomRef = useRef(null);
 
-  return itemList.length <= 0 ? (
-    <div>{currentRoom.containerName} is empty!</div>
-  ) : (
-    itemList.map((item) => {
-      return (
-        <button key={item.id} onClick={() => handleTakeItem(item)}>
-          {item.name}x{item.quantity}
-        </button>
-      );
-    })
-  );
-}
-
-function ContainerTile(props) {
-  const containerRef = useRef(null);
-  const prevRoomIdRef = useRef(null);
-  const { currentRoomItems, currentRoom } = useGame();
-  const dispatch = useGameDispatch();
-  const [showModal, setShowModal] = React.useState(false);
-
-  const handleTakeItem = (item) => {
-    dispatch({
-      type: "addToInventoryFromRoom",
-      payload: { itemId: item.itemId, quantity: 1 },
-    });
-  };
-
-  useEffect(() => {
-    let timer;
-    if (containerRef.current && prevRoomIdRef.current === currentRoom.id) {
-      containerRef.current.style.borderColor = "yellow";
-      timer = setTimeout(() => {
-        if (containerRef.current) {
-          containerRef.current.style.borderColor = "transparent";
-        }
-      }, 1000);
-    }
-    if (prevRoomIdRef.current !== currentRoom.id) {
-      prevRoomIdRef.current = currentRoom.id;
-    }
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [currentRoomItems, currentRoom.id]);
-
-  return (
-    <div
-      style={{
-        height: "100%",
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      {showModal ? (
-        <Modal onClose={() => setShowModal(false)}>
-          <ContainerModalContents
-            {...{ currentRoom, currentRoomItems, handleTakeItem }}
-          />
-        </Modal>
-      ) : (
-        <button onClick={() => setShowModal(true)} ref={containerRef}>
-          {currentRoom.containerName}
-        </button>
-      )}
-    </div>
-  );
-}
-
-function Room() {
-  const { currentRoom } = useGame();
   const commonStyle = {
     height: "100%",
-    border: "1px solid violet",
+    border: "1px solid #333",
     width: "100%",
-    ...getRoomGradient(currentRoom.coordinates.y),
+    ...getRoomGradient(room.coordinates.y),
+    position: "absolute",
+    transition: "opacity 1s ease, left 1s ease, top 1s ease",
+    top: 0,
+    zIndex: isPreviousRoom ? 5 : 20,
+    borderWidth: "1px",
+    borderStyle: "dashed",
+    borderColor: "(255,255,255,0)",
+    left:
+      isPreviousRoom || !direction
+        ? 0
+        : START_POSITION_CURRENT[direction].left ?? 0,
+    top:
+      isPreviousRoom || !direction
+        ? 0
+        : START_POSITION_CURRENT[direction].top ?? 0,
   };
 
+  useEffect(() => {
+    let timer;
+    console.log(
+      `[=] remounting room ${room.id} - isPreviousRoom: ${isPreviousRoom}`
+    );
+    if (roomRef.current && isPreviousRoom) {
+      timer = setTimeout(() => {
+        roomRef.current.style.opacity = 0.8;
+        roomRef.current.style.left = `${
+          END_POSITION_PREVIOUS[direction].left ?? 0
+        }`;
+        roomRef.current.style.top = `${
+          END_POSITION_PREVIOUS[direction].top ?? 0
+        }`;
+      }, 10);
+    }
+    if (roomRef.current && !isPreviousRoom) {
+      timer = setTimeout(() => {
+        roomRef.current.style.left = `0px`;
+        roomRef.current.style.top = `0px`;
+      }, 10);
+    }
+    return () => {
+      clearTimeout(timer);
+    };
+  }, []);
+
   return (
-    <div style={commonStyle}>
+    <div style={commonStyle} ref={roomRef}>
       {_.range(ROOM_HEIGHT).map((row) => (
         <div
           key={row}
@@ -175,50 +164,7 @@ function Room() {
           }}
         >
           {_.range(ROOM_WIDTH).map((col) => {
-            const position = getPositionFromCoordinates(col, row);
-            return (
-              <div
-                key={col}
-                style={{
-                  height: "100%",
-                  width: `calc(100% / ${ROOM_WIDTH})`,
-                  border: "1px solid transparent",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  backgroundColor:
-                    position === currentRoom.centerPosition ||
-                    currentRoom.exitPositions.includes(position)
-                      ? "rgba(0,200,255,0.2)"
-                      : "rgba(0,5,10,1)",
-                }}
-              >
-                {currentRoom.type === "container" &&
-                position === currentRoom.centerPosition ? (
-                  <ContainerTile />
-                ) : currentRoom.type === "monster" &&
-                  position === currentRoom.centerPosition ? (
-                  <MonsterTile />
-                ) : currentRoom.exitPositions.includes(position) ? null : (
-                  <div
-                    style={{
-                      backgroundImage: `url('${
-                        TREE_IMG[
-                          (position +
-                            currentRoom.coordinates.x +
-                            currentRoom.coordinates.y) %
-                            TREE_IMG.length
-                        ]
-                      }')`,
-                      backgroundSize: "contain",
-                      backgroundRepeat: "no-repeat",
-                      height: "100%",
-                      width: "100%",
-                    }}
-                  ></div>
-                )}
-              </div>
-            );
+            return <RoomTile key={col} row={row} col={col} room={room} />;
           })}
         </div>
       ))}
@@ -231,6 +177,14 @@ const MoveButton = ({ exits, handleMove, direction }) => {
     <button
       onClick={() => handleMove(direction)}
       disabled={exits[direction] === null}
+      style={{
+        height: "2rem",
+        width: "2rem",
+        padding: "0.2rem",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
     >
       <span
         style={{
@@ -245,6 +199,18 @@ const MoveButton = ({ exits, handleMove, direction }) => {
     </button>
   );
 };
+
+function RoomWrapper({ children }) {
+  const style = {
+    height: "100%",
+    border: "1px solid #333",
+    width: "100%",
+    position: "relative",
+    overflowX: "hidden",
+    overflowY: "hidden",
+  };
+  return <div style={style}>{children}</div>;
+}
 
 function RoomFrame() {
   const { currentRoom, previousRoom } = useGame();
@@ -261,6 +227,8 @@ function RoomFrame() {
         display: "flex",
         flexDirection: "column",
         alignItems: "stretch",
+        position: "relative",
+        zIndex: 10,
       }}
     >
       <div
@@ -291,7 +259,20 @@ function RoomFrame() {
         >
           <MoveButton exits={exits} direction="west" handleMove={handleMove} />
         </div>
-        <Room />
+        <RoomWrapper>
+          {previousRoom && (
+            <Room
+              room={previousRoom}
+              isPreviousRoom={true}
+              key={previousRoom.id + "prev"}
+            />
+          )}
+          <Room
+            room={currentRoom}
+            isPreviousRoom={false}
+            key={currentRoom.id}
+          />
+        </RoomWrapper>
         <div
           style={{
             width: FRAME_WIDTH,
@@ -328,11 +309,17 @@ function Game() {
         display: "flex",
         flexDirection: "column",
         alignContent: "center",
-        border: "1px solid yellow",
+        border: "1px solid #333",
       }}
     >
-      <div style={{ display: "flex" }}>
-        <h1>{currentRoom.name}</h1>
+      <div
+        style={{
+          display: "flex",
+          alignContent: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <h3>{currentRoom.name}</h3>
         <button
           onClick={() => {
             dispatch({ type: "reset" });
@@ -343,6 +330,140 @@ function Game() {
       </div>
       <RoomFrame />
       <Inventory />
+    </div>
+  );
+}
+
+function MonsterTile({ room }) {
+  const containerRef = useRef(null);
+  const prevRoomIdRef = useRef(null);
+  //   const { currentRoomItems, currentRoom, currentRoomMonster } = useGame();
+  const { roomItems, roomMonsters } = useGame();
+  const currentRoomMonster = roomMonsters[room.id];
+  const currentRoomItems = roomItems[room.id];
+  const currentRoom = room;
+
+  const { showModal, handleShowModal } = React.useContext(ModalContext);
+
+  useEffect(() => {
+    let timer;
+    if (containerRef.current && prevRoomIdRef.current === currentRoom.id) {
+      containerRef.current.style.borderColor = "yellow";
+      timer = setTimeout(() => {
+        containerRef.current.style.borderColor = "transparent";
+      }, 500);
+    }
+    if (prevRoomIdRef.current !== currentRoom.id) {
+      prevRoomIdRef.current = currentRoom.id;
+    }
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [currentRoomItems, currentRoom.id]);
+
+  return (
+    <div
+      style={{
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      {showModal ? (
+        <Modal onClose={() => handleShowModal(false)}>
+          {currentRoomMonster.name} - {currentRoomMonster.hunger}/
+          {currentRoomMonster.maxHunger} hunger
+        </Modal>
+      ) : (
+        <button onClick={() => handleShowModal(true)} ref={containerRef}>
+          {currentRoomMonster.name} - {currentRoomMonster.hunger}/
+          {currentRoomMonster.maxHunger}
+        </button>
+      )}
+    </div>
+  );
+}
+
+function ContainerModalContents({
+  currentRoom,
+  currentRoomItems,
+  handleTakeItem,
+}) {
+  const itemList = currentRoomItems.filter((item) => item.quantity > 0);
+
+  return itemList.length <= 0 ? (
+    <div>{currentRoom.containerName} is empty!</div>
+  ) : (
+    itemList.map((item) => {
+      return (
+        <button key={item.id} onClick={() => handleTakeItem(item)}>
+          {item.name}x{item.quantity}
+        </button>
+      );
+    })
+  );
+}
+
+function ContainerTile({ room }) {
+  const containerRef = useRef(null);
+  const prevRoomIdRef = useRef(null);
+  //   const { currentRoomItems, currentRoom } = useGame();
+  const { roomItems } = useGame();
+  const dispatch = useGameDispatch();
+  const { showModal, handleShowModal } = React.useContext(ModalContext);
+  const currentRoom = room;
+  const currentRoomItems = roomItems[room.id];
+
+  const handleTakeItem = (item) => {
+    dispatch({
+      type: "addToInventoryFromRoom",
+      payload: { itemId: item.itemId, quantity: 1 },
+    });
+  };
+
+  useEffect(() => {
+    let timer;
+    if (containerRef.current && prevRoomIdRef.current === room.id) {
+      containerRef.current.style.borderColor = "yellow";
+      timer = setTimeout(() => {
+        if (containerRef.current) {
+          containerRef.current.style.borderColor = "transparent";
+        }
+      }, 1000);
+    }
+    if (prevRoomIdRef.current !== room.id) {
+      prevRoomIdRef.current = room.id;
+    }
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [currentRoomItems, room.id]);
+
+  return (
+    <div
+      style={{
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      {showModal ? (
+        <Modal onClose={() => handleShowModal(false)}>
+          <ContainerModalContents
+            {...{ currentRoom, currentRoomItems, handleTakeItem }}
+          />
+        </Modal>
+      ) : (
+        <button onClick={() => handleShowModal(true)} ref={containerRef}>
+          {currentRoom.containerName}
+        </button>
+      )}
     </div>
   );
 }
