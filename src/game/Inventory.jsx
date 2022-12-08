@@ -3,7 +3,7 @@ import React from "react";
 import { useGame, useGameDispatch } from "../state/GameContext";
 
 function Inventory(props) {
-  const { inventoryItems, currentRoomItems, currentRoom } = useGame();
+  const { inventoryItems, currentRoom } = useGame();
   const { type } = currentRoom;
   const dispatch = useGameDispatch();
   return (

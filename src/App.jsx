@@ -10,9 +10,9 @@ function AppWrapper() {
         padding: "1rem",
         display: "flex",
         flexDirection: "row",
-        placeContent: "center",
+        justifyContent: "center",
+        alignItems: "flex-start",
         border: "3px dashed #333",
-        // position: "relative",
       }}
     >
       <Game />
@@ -28,7 +28,7 @@ function App() {
           height: "99vh",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "center",
+          justifyContent: "flex-start",
           alignContent: "center",
           border: "1px solid #333",
         }}

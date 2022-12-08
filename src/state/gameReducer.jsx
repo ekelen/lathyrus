@@ -1,5 +1,5 @@
 import _, { cloneDeep, max } from "lodash";
-import { initialData, ROOM_EXIT_POSITIONS } from "../data/setup";
+import { initialData, ROOMS, ROOM_EXIT_POSITIONS } from "../data/setup";
 
 export const initialState = initialData;
 
@@ -34,7 +34,7 @@ export function gameReducer(state, action) {
     }
     case "move": {
       const { direction } = action.payload;
-      const { currentRoom, rooms, roomMonsters } = state;
+      const { currentRoom, roomMonsters } = state;
       const isLocked = currentRoom.lockedExitTilePositions?.includes(
         ROOM_EXIT_POSITIONS[direction]
       );
@@ -43,7 +43,7 @@ export function gameReducer(state, action) {
         return state;
       }
 
-      const targetRoom = rooms[currentRoom.exits[direction]];
+      const targetRoom = ROOMS[currentRoom.exits[direction]];
       const exitsUnlocked =
         !roomMonsters[targetRoom.id] || roomMonsters[targetRoom.id].sated;
       const enteredRoomFrom =
@@ -141,10 +141,11 @@ export function gameReducer(state, action) {
       const inventoryItem = inventory.find((i) => i.itemId === itemId);
       const currentRoomItems = roomItems[currentRoom.id] ?? [];
       const { value } = inventoryItem;
+      const satiationFactor = _.round(value * _.random(0.5, 1, true), 1);
       const newEnemy = {
         ...enemy,
-        hunger: max([enemy.hunger - value, 0]),
-        sated: enemy.hunger - value <= 0,
+        hunger: max([enemy.hunger - satiationFactor, 0]),
+        sated: enemy.hunger - satiationFactor <= 0,
       };
       const newRoomMonsters = {
         ...roomMonsters,

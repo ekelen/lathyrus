@@ -1,11 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { ModalContext, useGame, useGameDispatch } from "../state/GameContext";
 import _ from "lodash";
-import {
-  getPositionFromCoordinates,
-  ROOM_HEIGHT,
-  ROOM_WIDTH,
-} from "../data/setup";
+import { getPositionFromCoordinates, ROOM_SIZE } from "../data/setup";
 import Inventory from "./Inventory";
 import Modal from "../Modal";
 import { getRoomGradient, rowGradients } from "./color";
@@ -50,50 +46,55 @@ const END_POSITION_PREVIOUS = {
   },
 };
 
+function RoomDeadspaceTile({ room, position }) {
+  return (
+    <div
+      style={{
+        backgroundImage: `url('${
+          TREE_IMG[
+            (position + room.coordinates.x + room.coordinates.y) %
+              TREE_IMG.length
+          ]
+        }')`,
+        backgroundSize: "contain",
+        backgroundRepeat: "no-repeat",
+        height: "100%",
+        width: "100%",
+      }}
+    ></div>
+  );
+}
+
 function RoomTile({ row, col, room }) {
   const position = getPositionFromCoordinates(col, row);
+  const isCenter = position === room.centerPosition;
+  const isExitTile = room.exitTilePositions.includes(position);
   return (
     <div
       key={col}
       style={{
         height: "100%",
-        width: `calc(100% / ${ROOM_WIDTH})`,
+        width: `calc(100% / ${ROOM_SIZE})`,
         border: "1px solid transparent",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         backgroundColor:
-          position === room.centerPosition ||
-          room.exitTilePositions.includes(position)
-            ? "rgba(0,200,255,0.2)"
-            : "rgba(0,5,10,1)",
+          isCenter || isExitTile ? "rgba(0,200,255,0.2)" : "rgba(0,5,10,1)",
       }}
     >
-      {room.centerPosition === position ? (
+      {isCenter ? (
         room.type === "container" ? (
           <ContainerTile room={room} />
         ) : room.type === "monster" ? (
           <MonsterTile room={room} />
         ) : null
-      ) : room.exitTilePositions.includes(position) ? (
+      ) : isExitTile ? (
         room.lockedExitTilePositions.includes(position) ? (
           <span style={{ color: "red" }}>Locked</span>
         ) : null
       ) : (
-        <div
-          style={{
-            backgroundImage: `url('${
-              TREE_IMG[
-                (position + room.coordinates.x + room.coordinates.y) %
-                  TREE_IMG.length
-              ]
-            }')`,
-            backgroundSize: "contain",
-            backgroundRepeat: "no-repeat",
-            height: "100%",
-            width: "100%",
-          }}
-        ></div>
+        <RoomDeadspaceTile {...{ room, position }} />
       )}
     </div>
   );
@@ -105,16 +106,14 @@ function Room({ room, isPreviousRoom = false }) {
 
   const commonStyle = {
     height: "100%",
-    border: "1px solid #333",
     width: "100%",
     ...getRoomGradient(room.coordinates.y),
     position: "absolute",
-    transition: "opacity 1s ease, left 1s ease, top 1s ease",
-    top: 0,
+    transition: "left 1s ease, top 1s ease",
     zIndex: isPreviousRoom ? 5 : 20,
-    borderWidth: "1px",
+    borderWidth: "0px",
     borderStyle: "dashed",
-    borderColor: "(255,255,255,0)",
+    borderColor: "rgba(255,255,255,0)",
     left:
       isPreviousRoom || !direction
         ? 0
@@ -132,7 +131,6 @@ function Room({ room, isPreviousRoom = false }) {
     );
     if (roomRef.current && isPreviousRoom) {
       timer = setTimeout(() => {
-        roomRef.current.style.opacity = 0.8;
         roomRef.current.style.left = `${
           END_POSITION_PREVIOUS[direction].left ?? 0
         }`;
@@ -154,17 +152,19 @@ function Room({ room, isPreviousRoom = false }) {
 
   return (
     <div style={commonStyle} ref={roomRef}>
-      {_.range(ROOM_HEIGHT).map((row) => (
+      {_.range(ROOM_SIZE).map((row) => (
         <div
           key={row}
           style={{
-            height: `calc(100% / ${ROOM_HEIGHT})`,
+            height: `calc(100% / ${ROOM_SIZE})`,
             width: "100%",
             display: "flex",
           }}
         >
-          {_.range(ROOM_WIDTH).map((col) => {
-            return <RoomTile key={col} row={row} col={col} room={room} />;
+          {_.range(ROOM_SIZE).map((col) => {
+            return (
+              <RoomTile key={`${col}-${row}`} row={row} col={col} room={room} />
+            );
           })}
         </div>
       ))}
@@ -203,7 +203,7 @@ const MoveButton = ({ exits, handleMove, direction }) => {
 function RoomWrapper({ children }) {
   const style = {
     height: "100%",
-    border: "1px solid #333",
+    border: `0px solid rgba(255,255,255,0)`,
     width: "100%",
     position: "relative",
     overflowX: "hidden",
@@ -223,7 +223,7 @@ function RoomFrame() {
     <div
       style={{
         height: "clamp(350px, 95vw, 450px)",
-        border: "1px solid transparent",
+        border: "1px solid rgba(255,255,255,0)",
         display: "flex",
         flexDirection: "column",
         alignItems: "stretch",
@@ -337,29 +337,28 @@ function Game() {
 function MonsterTile({ room }) {
   const containerRef = useRef(null);
   const prevRoomIdRef = useRef(null);
-  //   const { currentRoomItems, currentRoom, currentRoomMonster } = useGame();
+
   const { roomItems, roomMonsters } = useGame();
   const currentRoomMonster = roomMonsters[room.id];
   const currentRoomItems = roomItems[room.id];
-  const currentRoom = room;
 
   const { showModal, handleShowModal } = React.useContext(ModalContext);
 
   useEffect(() => {
     let timer;
-    if (containerRef.current && prevRoomIdRef.current === currentRoom.id) {
+    if (containerRef.current && prevRoomIdRef.current === room.id) {
       containerRef.current.style.borderColor = "yellow";
       timer = setTimeout(() => {
         containerRef.current.style.borderColor = "transparent";
       }, 500);
     }
-    if (prevRoomIdRef.current !== currentRoom.id) {
-      prevRoomIdRef.current = currentRoom.id;
+    if (prevRoomIdRef.current !== room.id) {
+      prevRoomIdRef.current = room.id;
     }
     return () => {
       clearTimeout(timer);
     };
-  }, [currentRoomItems, currentRoom.id]);
+  }, [currentRoomItems, room.id]);
 
   return (
     <div
@@ -410,11 +409,9 @@ function ContainerModalContents({
 function ContainerTile({ room }) {
   const containerRef = useRef(null);
   const prevRoomIdRef = useRef(null);
-  //   const { currentRoomItems, currentRoom } = useGame();
   const { roomItems } = useGame();
   const dispatch = useGameDispatch();
   const { showModal, handleShowModal } = React.useContext(ModalContext);
-  const currentRoom = room;
   const currentRoomItems = roomItems[room.id];
 
   const handleTakeItem = (item) => {
@@ -456,12 +453,12 @@ function ContainerTile({ room }) {
       {showModal ? (
         <Modal onClose={() => handleShowModal(false)}>
           <ContainerModalContents
-            {...{ currentRoom, currentRoomItems, handleTakeItem }}
+            {...{ currentRoom: room, currentRoomItems, handleTakeItem }}
           />
         </Modal>
       ) : (
         <button onClick={() => handleShowModal(true)} ref={containerRef}>
-          {currentRoom.containerName}
+          {room.containerName}
         </button>
       )}
     </div>
