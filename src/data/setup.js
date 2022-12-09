@@ -1,11 +1,19 @@
 import _ from "lodash";
 
+export const DIRECTION_OPPOSITE = {
+  north: "south",
+  south: "north",
+  east: "west",
+  west: "east",
+};
+
 const ROOM_POSITIONS = [
-  ["0_C", null, "13", null, null],
-  ["1_C", "2_M", null, "12", null],
-  [null, "3_C", "6_C", "10_M", "11_C"],
-  [null, "4_C", null, "9_C", null],
-  [null, "5_M", "7_C", "8_C", null],
+  ["0_C", null, "13", null, null, null],
+  ["1_C", "2_M", null, "12", null, null],
+  [null, "3_C", "6_C", "10_M", "11_C", null],
+  [null, "4_C", null, "9_C", null, null],
+  [null, "5_M", "7_C", "8_C", null, null],
+  [null, "14", null, null, null, null],
 ];
 
 export const MAP_SIZE = ROOM_POSITIONS.length;
@@ -85,6 +93,7 @@ export const ROOMS = _.keyBy(
     },
     { id: "12", name: "Room 12" },
     { id: "13", name: "Room 13" },
+    { id: "14", name: "Room 14" },
   ],
   "id"
 );
@@ -236,7 +245,7 @@ export const initialData = {
   roomItems,
   inventory,
   roomMonsters,
-  direction: null,
+  movedCameraToOnTransition: null,
 };
 
 console.assert(

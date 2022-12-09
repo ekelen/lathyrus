@@ -1,5 +1,10 @@
 import _, { cloneDeep, max } from "lodash";
-import { initialData, ROOMS, ROOM_EXIT_POSITIONS } from "../data/setup";
+import {
+  DIRECTION_OPPOSITE,
+  initialData,
+  ROOMS,
+  ROOM_EXIT_POSITIONS,
+} from "../data/setup";
 
 export const initialState = initialData;
 
@@ -44,27 +49,30 @@ export function gameReducer(state, action) {
       }
 
       const targetRoom = ROOMS[currentRoom.exits[direction]];
-      const exitsUnlocked =
-        !roomMonsters[targetRoom.id] || roomMonsters[targetRoom.id].sated;
-      const enteredRoomFrom =
-        direction === "north"
-          ? "south"
-          : direction === "east"
-          ? "west"
-          : direction === "south"
-          ? "north"
-          : "east";
-      const lockedExits = exitsUnlocked
+      const { exits } = targetRoom;
+      const monster = roomMonsters[targetRoom.id] ?? null;
+      const exitsUnlocked = !monster || monster.sated;
+      const enteredRoomFrom = DIRECTION_OPPOSITE[direction];
+      const lockedDirections = exitsUnlocked
         ? []
-        : targetRoom.exitTilePositions.filter((position) => {
-            return position !== ROOM_EXIT_POSITIONS[enteredRoomFrom];
-          });
+        : [
+            ..._.filter(
+              Object.keys(targetRoom.exits),
+              (dir) => enteredRoomFrom !== dir && exits[dir]
+            ),
+          ];
+      const lockedExitTilePositions = lockedDirections.map(
+        (dir) => ROOM_EXIT_POSITIONS[dir]
+      );
       return {
         ...state,
         previousRoom: currentRoom,
-        currentRoom: { ...targetRoom, lockedExitTilePositions: lockedExits },
-        enteredRoomFrom,
-        direction,
+        currentRoom: {
+          ...targetRoom,
+          lockedExitTilePositions,
+          lockedDirections,
+        },
+        movedCameraToOnTransition: direction,
       };
     }
     case "addToRoomFromInventory": {

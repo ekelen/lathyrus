@@ -30,6 +30,31 @@ function RoomDeadspaceTile({ room, position }) {
   );
 }
 
+function ExitTile({ room, position }) {
+  return (
+    <div
+      key={`${room.id}-${position}`}
+      style={{
+        height: "100%",
+        width: `100%`,
+        border: "1px solid transparent",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "rgba(255,255,255,0)",
+        position: "relative",
+        // zIndex: 30,
+      }}
+    >
+      {room.lockedExitTilePositions.includes(position) ? (
+        <>
+          <span style={{ color: "red" }}>Locked</span>
+        </>
+      ) : null}
+    </div>
+  );
+}
+
 function RoomTile({ row, col, room }) {
   const position = getPositionFromCoordinates(col, row);
   const isCenter = position === room.centerPosition;
@@ -55,9 +80,7 @@ function RoomTile({ row, col, room }) {
           <MonsterTile room={room} />
         ) : null
       ) : isExitTile ? (
-        room.lockedExitTilePositions.includes(position) ? (
-          <span style={{ color: "red" }}>Locked</span>
-        ) : null
+        <ExitTile {...{ room, position }} />
       ) : (
         <RoomDeadspaceTile {...{ room, position }} />
       )}

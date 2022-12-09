@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from "react";
 import { ROOM_SIZE } from "../data/setup";
 import { useGame, useGameDispatch } from "../state/GameContext";
 import { getRoomGradient } from "./color";
+import InteractiveTooltip from "./components/InteractiveTooltip";
 import RoomTile from "./Tile";
 
 const FRAME_WIDTH = "2rem";
@@ -38,7 +39,7 @@ const END_POSITION_PREVIOUS = {
 };
 
 function Room({ room, isPreviousRoom = false }) {
-  const { direction } = useGame();
+  const { movedCameraToOnTransition } = useGame();
   const roomRef = useRef(null);
 
   const commonStyle = {
@@ -52,13 +53,13 @@ function Room({ room, isPreviousRoom = false }) {
     borderStyle: "dashed",
     borderColor: "rgba(255,255,255,0)",
     left:
-      isPreviousRoom || !direction
+      isPreviousRoom || !movedCameraToOnTransition
         ? 0
-        : START_POSITION_CURRENT[direction].left ?? 0,
+        : START_POSITION_CURRENT[movedCameraToOnTransition].left ?? 0,
     top:
-      isPreviousRoom || !direction
+      isPreviousRoom || !movedCameraToOnTransition
         ? 0
-        : START_POSITION_CURRENT[direction].top ?? 0,
+        : START_POSITION_CURRENT[movedCameraToOnTransition].top ?? 0,
   };
 
   useEffect(() => {
@@ -69,10 +70,10 @@ function Room({ room, isPreviousRoom = false }) {
     if (roomRef.current && isPreviousRoom) {
       timer = setTimeout(() => {
         roomRef.current.style.left = `${
-          END_POSITION_PREVIOUS[direction].left ?? 0
+          END_POSITION_PREVIOUS[movedCameraToOnTransition].left ?? 0
         }`;
         roomRef.current.style.top = `${
-          END_POSITION_PREVIOUS[direction].top ?? 0
+          END_POSITION_PREVIOUS[movedCameraToOnTransition].top ?? 0
         }`;
       }, 10);
     }
@@ -109,31 +110,55 @@ function Room({ room, isPreviousRoom = false }) {
   );
 }
 
-const MoveButton = ({ exits, handleMove, direction }) => {
+const MoveButton = ({ exits, handleMove, direction, lockedExits = [] }) => {
+  const [open, setOpen] = React.useState(false);
   return (
-    <button
-      onClick={() => handleMove(direction)}
-      disabled={exits[direction] === null}
-      style={{
-        height: "2rem",
-        width: "2rem",
-        padding: "0.2rem",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <span
+    <div style={{ height: "2rem", width: "2rem", position: "relative" }}>
+      <button
+        onClick={() => {
+          if (lockedExits.includes(direction)) {
+            console.log(`[=] locked exit: ${direction}`);
+            setOpen(true);
+          } else {
+            handleMove(direction);
+          }
+        }}
+        disabled={exits[direction] === null}
         style={{
-          transform: `rotate(${
-            ["north", "east", "south", "west"].indexOf(direction) * 90
-          }deg)`,
-          display: "block",
+          height: "100%",
+          width: "100%",
+          padding: "0.2rem",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
-        &#8593;
-      </span>
-    </button>
+        <span
+          style={{
+            transform: `rotate(${
+              ["north", "east", "south", "west"].indexOf(direction) * 90
+            }deg)`,
+            display: "block",
+          }}
+        >
+          &#8593;
+        </span>
+      </button>
+
+      <InteractiveTooltip
+        onClick={() => setOpen(!open)}
+        isOpen={open}
+        style={{
+          color: "red",
+          height: "2rem",
+          width: "2rem",
+          top: 0,
+          left: 0,
+        }}
+      >
+        Locked!
+      </InteractiveTooltip>
+    </div>
   );
 };
 
@@ -150,9 +175,13 @@ function RoomWrapper({ children }) {
 }
 
 function RoomFrame() {
-  const { currentRoom, previousRoom } = useGame();
+  const { currentRoom, previousRoom, movedCameraToOnTransition } = useGame();
   const dispatch = useGameDispatch();
-  const { exits } = currentRoom;
+  const {
+    exits,
+    lockedDirections = [],
+    // moveCameraToOnTransition = null,
+  } = currentRoom;
   const handleMove = (direction) => {
     dispatch({ type: "move", payload: { direction } });
   };
@@ -176,7 +205,12 @@ function RoomFrame() {
           alignItems: "center",
         }}
       >
-        <MoveButton exits={exits} direction="north" handleMove={handleMove} />
+        <MoveButton
+          exits={exits}
+          direction="north"
+          handleMove={handleMove}
+          lockedExits={lockedDirections}
+        />
       </div>
       <div
         style={{
@@ -194,7 +228,12 @@ function RoomFrame() {
             justifyContent: "center",
           }}
         >
-          <MoveButton exits={exits} direction="west" handleMove={handleMove} />
+          <MoveButton
+            exits={exits}
+            direction="west"
+            handleMove={handleMove}
+            lockedExits={lockedDirections}
+          />
         </div>
         <RoomWrapper>
           {previousRoom && (
@@ -218,7 +257,12 @@ function RoomFrame() {
             justifyContent: "center",
           }}
         >
-          <MoveButton exits={exits} direction="east" handleMove={handleMove} />
+          <MoveButton
+            exits={exits}
+            direction="east"
+            handleMove={handleMove}
+            lockedExits={lockedDirections}
+          />
         </div>
       </div>
       <div
@@ -229,7 +273,12 @@ function RoomFrame() {
           alignItems: "center",
         }}
       >
-        <MoveButton exits={exits} direction="south" handleMove={handleMove} />
+        <MoveButton
+          exits={exits}
+          direction="south"
+          handleMove={handleMove}
+          lockedExits={lockedDirections}
+        />
       </div>
     </div>
   );
