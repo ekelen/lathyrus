@@ -6,13 +6,6 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = merge(common, {
   mode: "production",
-
-  entry: {
-    app: "./src/index.js",
-  },
-  resolve: {
-    extensions: ["*", ".js", ".jsx"],
-  },
   plugins: [
     new HtmlWebpackPlugin({
       template: "./index.html",
@@ -25,7 +18,7 @@ module.exports = merge(common, {
         use: ["style-loader", "css-loader"],
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        test: /\.(png|svg|jpg|jpeg|gif|webp)$/i,
         type: "asset/resource",
       },
       {

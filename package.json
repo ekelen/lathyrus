@@ -7,7 +7,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode production --config webpack.prod.js",
     "start": "webpack serve --open --config webpack.dev.js",
-    "analyze": "webpack --mode production --config webpack.prod.js --profile --json > stats.json && webpack-bundle-analyzer stats.json"
+    "analyze": "webpack --mode production --config webpack.prod.js --profile --json > stats.json && webpack-bundle-analyzer stats.json",
+    "analyze-dev": "webpack --mode development --config webpack.dev.js --profile --json > stats.json && webpack-bundle-analyzer stats.json"
   },
   "keywords": [],
   "author": "",

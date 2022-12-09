@@ -7,12 +7,7 @@ const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin"
 
 module.exports = merge(common, {
   mode: "development",
-  entry: {
-    app: "./src/index.js",
-  },
-  resolve: {
-    extensions: ["*", ".js", ".jsx"],
-  },
+
   devtool: "inline-source-map",
   plugins: [
     new HtmlWebpackPlugin({
@@ -28,10 +23,18 @@ module.exports = merge(common, {
     rules: [
       {
         test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
+        use: [
+          "style-loader",
+          {
+            loader: "css-loader",
+            // options: {
+            //   url: false,
+            // },
+          },
+        ],
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        test: /\.(png|svg|jpg|jpeg|gif|webp)$/i,
         type: "asset/resource",
       },
       {
