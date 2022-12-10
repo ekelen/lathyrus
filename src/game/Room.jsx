@@ -64,9 +64,9 @@ function Room({ room, isPreviousRoom = false }) {
 
   useEffect(() => {
     let timer;
-    console.log(
-      `[=] remounting room ${room.id} - isPreviousRoom: ${isPreviousRoom}`
-    );
+    // console.log(
+    //   `[=] remounting room ${room.id} - isPreviousRoom: ${isPreviousRoom}`
+    // );
     if (roomRef.current && isPreviousRoom) {
       timer = setTimeout(() => {
         roomRef.current.style.left = `${
@@ -111,14 +111,13 @@ function Room({ room, isPreviousRoom = false }) {
 }
 
 const MoveButton = ({ exits, handleMove, direction, lockedExits = [] }) => {
-  const [open, setOpen] = React.useState(false);
+  // const [open, setOpen] = React.useState(false);
   return (
     <div style={{ height: "2rem", width: "2rem", position: "relative" }}>
       <button
         onClick={() => {
           if (lockedExits.includes(direction)) {
-            console.log(`[=] locked exit: ${direction}`);
-            setOpen(true);
+            // setOpen(true);
           } else {
             handleMove(direction);
           }
@@ -145,7 +144,7 @@ const MoveButton = ({ exits, handleMove, direction, lockedExits = [] }) => {
         </span>
       </button>
 
-      <InteractiveTooltip
+      {/* <InteractiveTooltip
         onClick={() => setOpen(!open)}
         isOpen={open}
         style={{
@@ -157,7 +156,7 @@ const MoveButton = ({ exits, handleMove, direction, lockedExits = [] }) => {
         }}
       >
         Locked!
-      </InteractiveTooltip>
+      </InteractiveTooltip> */}
     </div>
   );
 };
@@ -189,6 +188,7 @@ function RoomFrame() {
     <div
       style={{
         height: "clamp(350px, 95vw, 450px)",
+        // height: "400px",
         border: "1px solid rgba(255,255,255,0)",
         display: "flex",
         flexDirection: "column",

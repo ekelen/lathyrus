@@ -160,15 +160,17 @@ export function gameReducer(state, action) {
         [currentRoom.id]: newEnemy,
       };
       if (newEnemy.sated) {
-        const newInventoryItems = updateQuantityMany({
-          existingItems: inventory,
-          upsertItems: currentRoomItems,
+        const newInventoryItems = updateQuantity({
+          items: inventory,
+          item: inventoryItem,
+          quantity: -1,
         });
         return {
           ...state,
           currentRoom: {
             ...currentRoom,
             lockedExitTilePositions: [],
+            lockedDirections: [],
           },
           roomMonsters: newRoomMonsters,
           roomItems: {

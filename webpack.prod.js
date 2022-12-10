@@ -9,8 +9,10 @@ module.exports = merge(common, {
   plugins: [
     new HtmlWebpackPlugin({
       template: "./index.html",
+      title: "Lathyrus",
     }),
   ],
+  devtool: "source-map",
   module: {
     rules: [
       {

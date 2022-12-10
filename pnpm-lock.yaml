@@ -8,6 +8,7 @@ specifiers:
   babel-loader: ^9.1.0
   babel-plugin-lodash: ^3.3.4
   css-loader: ^6.7.2
+  express: ^4.18.2
   html-webpack-plugin: ^5.5.0
   lodash: ^4.17.21
   polished: ^4.2.2
@@ -35,6 +36,7 @@ devDependencies:
   babel-loader: 9.1.0_ztqwsvkb6z73luspkai6ilstpu
   babel-plugin-lodash: 3.3.4
   css-loader: 6.7.2_webpack@5.75.0
+  express: 4.18.2
   html-webpack-plugin: 5.5.0_webpack@5.75.0
   react-refresh: 0.14.0
   style-loader: 3.3.1_webpack@5.75.0

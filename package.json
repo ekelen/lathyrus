@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode production --config webpack.prod.js",
+    "serve": "node server.js",
     "start": "webpack serve --open --config webpack.dev.js",
     "analyze": "webpack --mode production --config webpack.prod.js --profile --json > stats.json && webpack-bundle-analyzer stats.json",
     "analyze-dev": "webpack --mode development --config webpack.dev.js --profile --json > stats.json && webpack-bundle-analyzer stats.json"
@@ -21,6 +22,7 @@
     "babel-loader": "^9.1.0",
     "babel-plugin-lodash": "^3.3.4",
     "css-loader": "^6.7.2",
+    "express": "^4.18.2",
     "html-webpack-plugin": "^5.5.0",
     "react-refresh": "^0.14.0",
     "style-loader": "^3.3.1",

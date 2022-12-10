@@ -124,6 +124,7 @@ function MonsterTile({ room }) {
     }
     if (prevRoomIdRef.current !== room.id) {
       prevRoomIdRef.current = room.id;
+      clearTimeout(timer);
     }
     return () => {
       clearTimeout(timer);
@@ -207,23 +208,23 @@ function ContainerTile({ room }) {
     });
   };
 
-  useEffect(() => {
-    let timer;
-    if (containerRef.current && prevRoomIdRef.current === room.id) {
-      containerRef.current.style.borderColor = "yellow";
-      timer = setTimeout(() => {
-        if (containerRef.current) {
-          containerRef.current.style.borderColor = "transparent";
-        }
-      }, 1000);
-    }
-    if (prevRoomIdRef.current !== room.id) {
-      prevRoomIdRef.current = room.id;
-    }
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [currentRoomItems, room.id]);
+  // useEffect(() => {
+  //   let timer;
+  //   if (containerRef.current && prevRoomIdRef.current === room.id) {
+  //     containerRef.current.style.borderColor = "yellow";
+  //     timer = setTimeout(() => {
+  //       if (containerRef.current) {
+  //         containerRef.current.style.borderColor = "transparent";
+  //       }
+  //     }, 1000);
+  //   }
+  //   if (prevRoomIdRef.current !== room.id) {
+  //     prevRoomIdRef.current = room.id;
+  //   }
+  //   return () => {
+  //     clearTimeout(timer);
+  //   };
+  // }, [currentRoomItems, room.id]);
 
   return (
     <div

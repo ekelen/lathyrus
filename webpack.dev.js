@@ -11,6 +11,7 @@ module.exports = merge(common, {
   devtool: "inline-source-map",
   plugins: [
     new HtmlWebpackPlugin({
+      title: "Lathyrus Dev",
       template: "./index.html",
     }),
     new ReactRefreshWebpackPlugin(),
@@ -27,9 +28,6 @@ module.exports = merge(common, {
           "style-loader",
           {
             loader: "css-loader",
-            // options: {
-            //   url: false,
-            // },
           },
         ],
       },

@@ -18,38 +18,18 @@ export function useGameDispatch() {
 
 const GameContextProvider = (props) => {
   const [state, dispatch] = React.useReducer(gameReducer, initialState);
-  const [showModal, setShowModal] = React.useState(false);
+  // const [showModal, setShowModal] = React.useState(false);
 
-  const currentRoomItems = React.useMemo(() => {
-    return _.map(state.roomItems[state.currentRoom.id], (item) => ({
-      ...item,
-      ...ITEMS.find((i) => i.id === item.itemId),
-    }));
-  }, [state.currentRoom, state.roomItems]);
-
-  const inventoryItems = React.useMemo(() => {
-    return _.map(state.inventory, (item) => ({
-      ...item,
-      ...ITEMS.find((i) => i.id === item.itemId),
-    }));
-  }, [state.inventory]);
-
-  const currentRoomMonster = React.useMemo(() => {
-    return state.roomMonsters[state.currentRoom.id];
-  }, [state.currentRoom.id, state.roomMonsters]);
-
-  const handleShowModal = React.useCallback((show) => {
-    setShowModal(show);
-  }, []);
+  // const handleShowModal = React.useCallback((show) => {
+  //   setShowModal(show);
+  // }, []);
 
   return (
-    <GameContext.Provider
-      value={{ ...state, currentRoomItems, inventoryItems, currentRoomMonster }}
-    >
+    <GameContext.Provider value={state}>
       <GameDispatchContext.Provider value={dispatch}>
-        <ModalContext.Provider value={{ showModal, handleShowModal }}>
-          {props.children}
-        </ModalContext.Provider>
+        {/* <ModalContext.Provider value={{ showModal, handleShowModal }}> */}
+        {props.children}
+        {/* </ModalContext.Provider> */}
       </GameDispatchContext.Provider>
     </GameContext.Provider>
   );

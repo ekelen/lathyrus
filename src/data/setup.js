@@ -1,5 +1,8 @@
 import _ from "lodash";
 
+export const sortByName = (collection = []) => _.sortBy(collection, "name");
+export const sorted = (arr = []) => _.sortBy(arr);
+
 export const DIRECTION_OPPOSITE = {
   north: "south",
   south: "north",
@@ -8,12 +11,14 @@ export const DIRECTION_OPPOSITE = {
 };
 
 const ROOM_POSITIONS = [
-  ["0_C", null, "13", null, null, null],
-  ["1_C", "2_M", null, "12", null, null],
-  [null, "3_C", "6_C", "10_M", "11_C", null],
-  [null, "4_C", null, "9_C", null, null],
-  [null, "5_M", "7_C", "8_C", null, null],
-  [null, "14", null, null, null, null],
+  ["0_C", null, "13", null, null, null, null, null],
+  ["1_C", "2_M", null, "12", null, null, null, null],
+  [null, "3_C", "6_C", "10_M", "11_C", null, "23", null],
+  [null, "4_C", null, "9_C", null, null, "22", null],
+  [null, "5_M", "7_C", "8_C", null, null, "28", null],
+  [null, "14", null, null, null, null, "21", null],
+  [null, "15", "16", "17", "18", "19", "20", null],
+  [null, "24_C", "25_C", "26_C", "27_C", null, null, null],
 ];
 
 export const MAP_SIZE = ROOM_POSITIONS.length;
@@ -94,6 +99,20 @@ export const ROOMS = _.keyBy(
     { id: "12", name: "Room 12" },
     { id: "13", name: "Room 13" },
     { id: "14", name: "Room 14" },
+    { id: "15", name: "Room 15" },
+    { id: "16", name: "Room 16" },
+    { id: "17", name: "Room 17" },
+    { id: "18", name: "Room 18" },
+    { id: "19", name: "Room 19" },
+    { id: "20", name: "Room 20" },
+    { id: "21", name: "Room 21" },
+    { id: "22", name: "Room 22" },
+    { id: "23", name: "Room 23" },
+    { id: "24_C", name: "Room 24", type: "container" },
+    { id: "25_C", name: "Room 25", type: "container" },
+    { id: "26_C", name: "Room 26", type: "container" },
+    { id: "27_C", name: "Room 27", type: "container" },
+    { id: "28", name: "Room 28" },
   ],
   "id"
 );
@@ -219,24 +238,37 @@ let roomItems = {
   "11_C": [],
 };
 
-roomItems = _.mapValues(roomItems, (items, roomId) => {
-  return _.sortBy(
-    items.map((item) => ({
-      roomId,
-      ...item,
-      ...ITEMS.find((i) => i.id === item.itemId),
-    })),
-    "name"
-  );
-});
+const mapContainerRooms = () => {
+  _.values(ROOMS).forEach((room) => {
+    if (room.type === "container") {
+      ROOMS[room.id].containerName = room.containerName ?? "container";
+    }
+    if (!roomItems[room.id]) {
+      roomItems[room.id] = [];
+    }
+  });
+  _.keys(roomItems).forEach((roomId) => {
+    roomItems[roomId] = sortByName(
+      roomItems[roomId].map((item) => {
+        return {
+          ...item,
+          ...ITEMS.find((i) => i.id === item.itemId),
+          roomId,
+        };
+      })
+    );
+  });
+};
 
-const inventory = _.sortBy(
+mapContainerRooms();
+
+const inventory = sortByName(
   ITEMS.map((item) => ({
     ...item,
     itemId: item.id,
-    quantity: 0,
-  })),
-  "name"
+    quantity:
+      item.id === "diamond" && process.env.NODE_ENV === "development" ? 10 : 0,
+  }))
 );
 
 export const initialData = {
@@ -275,20 +307,13 @@ console.assert(
 );
 
 console.assert(
-  _.values(ROOMS).filter((r) => r.type === "container").length ===
-    _.keys(roomItems).length,
-  "Some rooms are containers but have no item list",
-  _.difference(
-    _.values(ROOMS)
-      .filter((r) => r.type === "container")
-      .map((r) => r.id),
-    ..._.keys(roomItems)
-  )
+  _.uniq(_.flatMap(ROOM_POSITIONS)).filter(_.identity).length ===
+    _.keys(ROOMS).length,
+  "Rooms are missing"
 );
 
 console.assert(
-  _.keys(roomItems).every((roomId) => {
-    return ROOMS[roomId].type === "container" || console.error(roomId);
-  }),
-  `Some rooms have items but are not containers`
+  _.uniq(_.flatMap(ROOM_POSITIONS)).filter(_.identity).length ===
+    _.flatMap(ROOM_POSITIONS).filter(_.identity).length,
+  "Rooms are duplicated"
 );

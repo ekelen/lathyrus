@@ -3,12 +3,12 @@ import React from "react";
 import { useGame, useGameDispatch } from "../state/GameContext";
 
 function Inventory(props) {
-  const { inventoryItems, currentRoom } = useGame();
+  const { inventory, currentRoom } = useGame();
   const { type } = currentRoom;
   const dispatch = useGameDispatch();
   return (
     <div style={{ height: "100px" }}>
-      {inventoryItems
+      {inventory
         .filter((item) => item.quantity > 0)
         .map((item) => {
           return (
@@ -30,7 +30,7 @@ function Inventory(props) {
                 );
               }}
             >
-              {item.name}x{item.quantity}
+              {item.name} x {item.quantity}
             </button>
           );
         })}
