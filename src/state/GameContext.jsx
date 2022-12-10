@@ -1,7 +1,7 @@
 import React from "react";
-import { gameReducer, initialState } from "./gameReducer";
+import { initialState } from "../data/setup";
 import _ from "lodash";
-import { ITEMS } from "../data/setup";
+import { gameReducer } from "./gameReducer";
 
 export const GameContext = React.createContext();
 const GameDispatchContext = React.createContext();

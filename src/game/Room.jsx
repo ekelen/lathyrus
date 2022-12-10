@@ -1,6 +1,6 @@
 import _ from "lodash";
 import React, { useEffect, useRef } from "react";
-import { ROOM_SIZE } from "../data/setup";
+import { ROOM_SIZE } from "../data/constants";
 import { useGame, useGameDispatch } from "../state/GameContext";
 import { getRoomGradient } from "./color";
 import InteractiveTooltip from "./components/InteractiveTooltip";
@@ -111,18 +111,14 @@ function Room({ room, isPreviousRoom = false }) {
 }
 
 const MoveButton = ({ exits, handleMove, direction, lockedExits = [] }) => {
-  // const [open, setOpen] = React.useState(false);
+  const isLocked = lockedExits.includes(direction);
   return (
     <div style={{ height: "2rem", width: "2rem", position: "relative" }}>
       <button
         onClick={() => {
-          if (lockedExits.includes(direction)) {
-            // setOpen(true);
-          } else {
-            handleMove(direction);
-          }
+          handleMove(direction);
         }}
-        disabled={exits[direction] === null}
+        disabled={isLocked}
         style={{
           height: "100%",
           width: "100%",
@@ -130,33 +126,24 @@ const MoveButton = ({ exits, handleMove, direction, lockedExits = [] }) => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          visibility: exits[direction] === null ? "hidden" : "visible",
         }}
       >
-        <span
-          style={{
-            transform: `rotate(${
-              ["north", "east", "south", "west"].indexOf(direction) * 90
-            }deg)`,
-            display: "block",
-          }}
-        >
-          &#8593;
-        </span>
+        {isLocked ? (
+          <span>🔒</span>
+        ) : (
+          <span
+            style={{
+              transform: `rotate(${
+                ["north", "east", "south", "west"].indexOf(direction) * 90
+              }deg)`,
+              display: "block",
+            }}
+          >
+            &#8593;
+          </span>
+        )}
       </button>
-
-      {/* <InteractiveTooltip
-        onClick={() => setOpen(!open)}
-        isOpen={open}
-        style={{
-          color: "red",
-          height: "2rem",
-          width: "2rem",
-          top: 0,
-          left: 0,
-        }}
-      >
-        Locked!
-      </InteractiveTooltip> */}
     </div>
   );
 };

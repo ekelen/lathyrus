@@ -25,7 +25,7 @@ function App() {
     <GameContextProvider>
       <div
         style={{
-          height: "99vh",
+          // height: "99vh",
           display: "flex",
           flexDirection: "column",
           justifyContent: "flex-start",

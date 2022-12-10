@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { getPositionFromCoordinates, ROOM_SIZE } from "../data/setup";
+import { ROOM_SIZE } from "../data/constants";
 import { useGame, useGameDispatch } from "../state/GameContext";
 import pine00 from "./img/trees/pine00.png";
 import pine01 from "./img/trees/pine01.png";
@@ -7,6 +7,11 @@ import pine02 from "./img/trees/pine02.png";
 import pine04 from "./img/trees/pine04.png";
 import InteractiveTooltip from "./components/InteractiveTooltip";
 import _ from "lodash";
+import { getPositionFromCoordinates } from "../data/util";
+import Goblin from "./img/Goblin";
+import SVG from "react-inlinesvg";
+import Rabbit from "./img/rabbit.svg";
+import Cage from "./img/cage.svg";
 
 const TREE_IMG = [pine00, pine01, pine02, pine04];
 
@@ -78,6 +83,8 @@ function RoomTile({ row, col, room }) {
           <ContainerTile room={room} />
         ) : room.type === "monster" ? (
           <MonsterTile room={room} />
+        ) : room.type === "captive" ? (
+          <CaptiveTile room={room} />
         ) : null
       ) : isExitTile ? (
         <ExitTile {...{ room, position }} />
@@ -93,13 +100,14 @@ function MonsterTileContents({ monster, room }) {
   return (
     <div>
       {monster.sated ? (
-        <div>The {monster.name} is snoring peacefully.</div>
+        <div>{monster.name}: I'm full. You go ahead.</div>
       ) : satiety > 0 ? (
         <div>
-          The {monster.name} is only {satiety}% full.
+          {monster.name}: I'm only {satiety}% full. You must feed me treasure to
+          pass.
         </div>
       ) : (
-        <div>The {monster.name} is very hungry.</div>
+        <div>{monster.name}: I am very hungry.</div>
       )}
     </div>
   );
@@ -150,18 +158,26 @@ function MonsterTile({ room }) {
           justifyContent: "center",
         }}
       >
-        <button onClick={() => setOpen((o) => !o)} ref={containerRef}>
-          {currentRoomMonster.name}
-        </button>
-
-        <InteractiveTooltip
+        <div
           onClick={() => setOpen((o) => !o)}
-          isOpen={open}
-          roomId={room.id}
+          ref={containerRef}
+          style={{ padding: "1rem" }}
         >
-          <MonsterTileContents {...{ monster: currentRoomMonster, room }} />
-        </InteractiveTooltip>
+          {currentRoomMonster.image === "goblin" ? (
+            <Goblin />
+          ) : (
+            currentRoomMonster.name
+          )}
+        </div>
       </div>
+      <InteractiveTooltip
+        onClick={() => setOpen((o) => !o)}
+        isOpen={open}
+        roomId={room.id}
+        style={{ bottom: 0, top: "unset" }}
+      >
+        <MonsterTileContents {...{ monster: currentRoomMonster, room }} />
+      </InteractiveTooltip>
     </div>
   );
 }
@@ -198,7 +214,9 @@ function ContainerTile({ room }) {
   const prevRoomIdRef = useRef(null);
   const { roomItems } = useGame();
   const dispatch = useGameDispatch();
-  const currentRoomItems = roomItems[room.id];
+  const currentRoomItems = roomItems[room.id].filter(
+    (item) => item.quantity > 0
+  );
   const [open, setOpen] = React.useState(false);
 
   const handleTakeItem = (item) => {
@@ -235,30 +253,132 @@ function ContainerTile({ room }) {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        position: "relative",
       }}
     >
       <div
         style={{
-          position: "relative",
           width: "100%",
           display: "flex",
           justifyContent: "center",
         }}
       >
-        <button onClick={() => setOpen((o) => !o)} ref={containerRef}>
-          {room.containerName}
-        </button>
-
-        <InteractiveTooltip
+        <button
           onClick={() => setOpen((o) => !o)}
-          isOpen={open}
-          roomId={room.id}
+          ref={containerRef}
+          disabled={currentRoomItems.length === 0}
         >
-          <ContainerModalContents
-            {...{ currentRoom: room, currentRoomItems, handleTakeItem }}
-          />
-        </InteractiveTooltip>
+          {room.containerName}
+          {currentRoomItems.length === 0 && <div>[empty]</div>}
+        </button>
       </div>
+      <InteractiveTooltip
+        onClick={() => setOpen((o) => !o)}
+        isOpen={open}
+        roomId={room.id}
+        style={{ top: "100%" }}
+      >
+        <ContainerModalContents
+          {...{ currentRoom: room, currentRoomItems, handleTakeItem }}
+        />
+      </InteractiveTooltip>
+    </div>
+  );
+}
+
+function CaptiveTile({ room }) {
+  const containerRef = useRef(null);
+  const prevRoomIdRef = useRef(null);
+  const { captives, haveKeysTo } = useGame();
+  const dispatch = useGameDispatch();
+  const captive = captives[room.id];
+  const haveKey = haveKeysTo.includes(captive.id);
+
+  const [open, setOpen] = React.useState(false);
+
+  const handleFreeCaptive = () => {
+    dispatch({
+      type: "freeCaptive",
+      payload: { roomId: room.id },
+    });
+  };
+
+  // useEffect(() => {
+  //   let timer;
+  //   if (containerRef.current && prevRoomIdRef.current === room.id) {
+  //     containerRef.current.style.borderColor = "yellow";
+  //     timer = setTimeout(() => {
+  //       if (containerRef.current) {
+  //         containerRef.current.style.borderColor = "transparent";
+  //       }
+  //     }, 1000);
+  //   }
+  //   if (prevRoomIdRef.current !== room.id) {
+  //     prevRoomIdRef.current = room.id;
+  //   }
+  //   return () => {
+  //     clearTimeout(timer);
+  //   };
+  // }, [currentRoomItems, room.id]);
+
+  return (
+    <div
+      style={{
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        // position: "relative",
+      }}
+    >
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          position: "relative",
+        }}
+      >
+        <div onClick={() => setOpen((o) => !o)} ref={containerRef} style={{}}>
+          <div
+            style={{
+              position: "absolute",
+              width: "100%",
+              height: "100%",
+              top: 0,
+              left: 0,
+            }}
+          >
+            <SVG src={Cage} width={128} height="auto" title="React" />
+          </div>
+          <div style={{ position: "absolute", height: "100%", width: "100%" }}>
+            {!captive.freed ? (
+              captive.id === "rabbit" ? (
+                <SVG src={Rabbit} width={128} height="auto" title="React" />
+              ) : (
+                captive.name
+              )
+            ) : null}
+          </div>
+        </div>
+      </div>
+      <InteractiveTooltip
+        onClick={() => setOpen((o) => !o)}
+        isOpen={open}
+        roomId={room.id}
+        style={{ bottom: 0, top: "unset" }}
+      >
+        <div>
+          {!captive.freed ? (
+            <button onClick={() => handleFreeCaptive()} disabled={!haveKey}>
+              {haveKey ? <div>Free {captive.name}</div> : <div>Need key</div>}
+            </button>
+          ) : (
+            <div>An empty cage...</div>
+          )}
+        </div>
+      </InteractiveTooltip>
     </div>
   );
 }

@@ -16,9 +16,9 @@ function Inventory(props) {
               key={item.id}
               onClick={() => {
                 dispatch(
-                  type === "container"
+                  type === "storage"
                     ? {
-                        type: "addToRoomFromInventory",
+                        type: "addToStorageFromInventory",
                         payload: { itemId: item.itemId, quantity: 1 },
                       }
                     : type === "monster"

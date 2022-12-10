@@ -1,5 +1,5 @@
 import { linearGradient } from "polished";
-import { MAP_SIZE } from "../data/setup";
+import { MAP_SIZE } from "../data/constants";
 import _ from "lodash";
 import { lighten } from "polished";
 
