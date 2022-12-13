@@ -22,3 +22,5 @@ export const rowGradients = _.range(MAP_SIZE).map((row) => {
 export const getRoomGradient = (y) => {
   return rowGradients[y];
 };
+
+export const BLACK = "rgba(4, 6, 8, 1)";

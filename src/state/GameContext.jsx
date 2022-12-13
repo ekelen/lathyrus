@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { initialState } from "../data/setup";
 import _ from "lodash";
 import { gameReducer } from "./gameReducer";
@@ -23,9 +23,12 @@ const GameContextProvider = (props) => {
   // const handleShowModal = React.useCallback((show) => {
   //   setShowModal(show);
   // }, []);
+  const freedCaptives = useMemo(() => {
+    return _.values(state.captives).filter((c) => c.freed);
+  }, [state.captives]);
 
   return (
-    <GameContext.Provider value={state}>
+    <GameContext.Provider value={{ ...state, freedCaptives }}>
       <GameDispatchContext.Provider value={dispatch}>
         {/* <ModalContext.Provider value={{ showModal, handleShowModal }}> */}
         {props.children}

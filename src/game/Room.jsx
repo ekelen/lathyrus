@@ -97,6 +97,7 @@ function Room({ room, isPreviousRoom = false }) {
             height: `calc(100% / ${ROOM_SIZE})`,
             width: "100%",
             display: "flex",
+            border: "0px solid rgba(255,255,255,0)",
           }}
         >
           {_.range(ROOM_SIZE).map((col) => {
@@ -110,48 +111,10 @@ function Room({ room, isPreviousRoom = false }) {
   );
 }
 
-const MoveButton = ({ exits, handleMove, direction, lockedExits = [] }) => {
-  const isLocked = lockedExits.includes(direction);
-  return (
-    <div style={{ height: "2rem", width: "2rem", position: "relative" }}>
-      <button
-        onClick={() => {
-          handleMove(direction);
-        }}
-        disabled={isLocked}
-        style={{
-          height: "100%",
-          width: "100%",
-          padding: "0.2rem",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          visibility: exits[direction] === null ? "hidden" : "visible",
-        }}
-      >
-        {isLocked ? (
-          <span>🔒</span>
-        ) : (
-          <span
-            style={{
-              transform: `rotate(${
-                ["north", "east", "south", "west"].indexOf(direction) * 90
-              }deg)`,
-              display: "block",
-            }}
-          >
-            &#8593;
-          </span>
-        )}
-      </button>
-    </div>
-  );
-};
-
 function RoomWrapper({ children }) {
   const style = {
     height: "100%",
-    border: `0px solid rgba(255,255,255,0)`,
+    border: `1px solid rgba(255,255,255,0)`,
     width: "100%",
     position: "relative",
     overflowX: "hidden",
@@ -196,7 +159,7 @@ function RoomFrame() {
           exits={exits}
           direction="north"
           handleMove={handleMove}
-          lockedExits={lockedDirections}
+          lockedDirections={lockedDirections}
         />
       </div>
       <div
@@ -219,7 +182,7 @@ function RoomFrame() {
             exits={exits}
             direction="west"
             handleMove={handleMove}
-            lockedExits={lockedDirections}
+            lockedDirections={lockedDirections}
           />
         </div>
         <RoomWrapper>
@@ -248,7 +211,7 @@ function RoomFrame() {
             exits={exits}
             direction="east"
             handleMove={handleMove}
-            lockedExits={lockedDirections}
+            lockedDirections={lockedDirections}
           />
         </div>
       </div>
@@ -264,11 +227,54 @@ function RoomFrame() {
           exits={exits}
           direction="south"
           handleMove={handleMove}
-          lockedExits={lockedDirections}
+          lockedDirections={lockedDirections}
         />
       </div>
     </div>
   );
 }
+
+const MoveButton = ({
+  exits,
+  handleMove,
+  direction,
+  lockedDirections = [],
+}) => {
+  const isLocked = lockedDirections.includes(direction);
+  return (
+    <div style={{ height: "2rem", width: "2rem", position: "relative" }}>
+      <button
+        onClick={() => {
+          handleMove(direction);
+        }}
+        disabled={isLocked}
+        style={{
+          height: "100%",
+          width: "100%",
+          padding: "0.2rem",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          visibility: exits[direction] === null ? "hidden" : "visible",
+        }}
+      >
+        {isLocked ? (
+          <span>🔒</span>
+        ) : (
+          <span
+            style={{
+              transform: `rotate(${
+                ["north", "east", "south", "west"].indexOf(direction) * 90
+              }deg)`,
+              display: "block",
+            }}
+          >
+            &#8593;
+          </span>
+        )}
+      </button>
+    </div>
+  );
+};
 
 export default RoomFrame;

@@ -12,6 +12,7 @@ import Goblin from "./img/Goblin";
 import SVG from "react-inlinesvg";
 import Rabbit from "./img/rabbit.svg";
 import Cage from "./img/cage.svg";
+import { BLACK } from "./color";
 
 const TREE_IMG = [pine00, pine01, pine02, pine04];
 
@@ -29,7 +30,7 @@ function RoomDeadspaceTile({ room, position }) {
         backgroundRepeat: "no-repeat",
         height: "100%",
         width: "100%",
-        backgroundColor: "rgb(4, 6, 8)",
+        backgroundColor: BLACK,
       }}
     ></div>
   );
@@ -42,18 +43,16 @@ function ExitTile({ room, position }) {
       style={{
         height: "100%",
         width: `100%`,
-        border: "1px solid transparent",
+        border: "1px solid rgba(255,255,255,0)",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "rgba(255,255,255,0)",
-        position: "relative",
-        // zIndex: 30,
       }}
     >
       {room.lockedExitTilePositions.includes(position) ? (
         <>
-          <span style={{ color: "red" }}>Locked</span>
+          <span style={{ color: "red" }}></span>
         </>
       ) : null}
     </div>
@@ -70,7 +69,7 @@ function RoomTile({ row, col, room }) {
       style={{
         height: "100%",
         width: `calc(100% / ${ROOM_SIZE})`,
-        border: "1px solid transparent",
+        border: "0px solid rgba(255,255,255,0)",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
@@ -79,13 +78,7 @@ function RoomTile({ row, col, room }) {
       }}
     >
       {isCenter ? (
-        room.type === "container" ? (
-          <ContainerTile room={room} />
-        ) : room.type === "monster" ? (
-          <MonsterTile room={room} />
-        ) : room.type === "captive" ? (
-          <CaptiveTile room={room} />
-        ) : null
+        <CenterTile type={room.type} room={room} />
       ) : isExitTile ? (
         <ExitTile {...{ room, position }} />
       ) : (
@@ -115,41 +108,13 @@ function MonsterTileContents({ monster, room }) {
 
 function MonsterTile({ room }) {
   const containerRef = useRef(null);
-  const prevRoomIdRef = useRef(null);
 
-  const { roomItems, roomMonsters } = useGame();
-  const currentRoomMonster = roomMonsters[room.id];
-  const currentRoomItems = roomItems[room.id];
-  const [open, setOpen] = React.useState(false);
-
-  useEffect(() => {
-    let timer;
-    if (containerRef.current && prevRoomIdRef.current === room.id) {
-      containerRef.current.style.borderColor = "yellow";
-      timer = setTimeout(() => {
-        containerRef.current.style.borderColor = "transparent";
-      }, 500);
-    }
-    if (prevRoomIdRef.current !== room.id) {
-      prevRoomIdRef.current = room.id;
-      clearTimeout(timer);
-    }
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [currentRoomItems, room.id]);
+  const { roomMonsters } = useGame();
+  const monster = roomMonsters[room.id];
+  const [open, setOpen] = React.useState(!monster.sated);
 
   return (
-    <div
-      style={{
-        height: "100%",
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
+    <>
       <div
         style={{
           position: "relative",
@@ -163,22 +128,18 @@ function MonsterTile({ room }) {
           ref={containerRef}
           style={{ padding: "1rem" }}
         >
-          {currentRoomMonster.image === "goblin" ? (
-            <Goblin />
-          ) : (
-            currentRoomMonster.name
-          )}
+          {monster.image === "goblin" ? <Goblin /> : monster.name}
         </div>
       </div>
       <InteractiveTooltip
         onClick={() => setOpen((o) => !o)}
         isOpen={open}
         roomId={room.id}
-        style={{ bottom: 0, top: "unset" }}
+        // style={{ top: "100%" }}
       >
-        <MonsterTileContents {...{ monster: currentRoomMonster, room }} />
+        <MonsterTileContents {...{ monster, room }} />
       </InteractiveTooltip>
-    </div>
+    </>
   );
 }
 
@@ -211,13 +172,12 @@ function ContainerModalContents({
 
 function ContainerTile({ room }) {
   const containerRef = useRef(null);
-  const prevRoomIdRef = useRef(null);
   const { roomItems } = useGame();
   const dispatch = useGameDispatch();
   const currentRoomItems = roomItems[room.id].filter(
     (item) => item.quantity > 0
   );
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(currentRoomItems.length > 0);
 
   const handleTakeItem = (item) => {
     dispatch({
@@ -226,36 +186,8 @@ function ContainerTile({ room }) {
     });
   };
 
-  // useEffect(() => {
-  //   let timer;
-  //   if (containerRef.current && prevRoomIdRef.current === room.id) {
-  //     containerRef.current.style.borderColor = "yellow";
-  //     timer = setTimeout(() => {
-  //       if (containerRef.current) {
-  //         containerRef.current.style.borderColor = "transparent";
-  //       }
-  //     }, 1000);
-  //   }
-  //   if (prevRoomIdRef.current !== room.id) {
-  //     prevRoomIdRef.current = room.id;
-  //   }
-  //   return () => {
-  //     clearTimeout(timer);
-  //   };
-  // }, [currentRoomItems, room.id]);
-
   return (
-    <div
-      style={{
-        height: "100%",
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        position: "relative",
-      }}
-    >
+    <>
       <div
         style={{
           width: "100%",
@@ -276,19 +208,18 @@ function ContainerTile({ room }) {
         onClick={() => setOpen((o) => !o)}
         isOpen={open}
         roomId={room.id}
-        style={{ top: "100%" }}
+        // style={{ top: "100%" }}
       >
         <ContainerModalContents
           {...{ currentRoom: room, currentRoomItems, handleTakeItem }}
         />
       </InteractiveTooltip>
-    </div>
+    </>
   );
 }
 
 function CaptiveTile({ room }) {
   const containerRef = useRef(null);
-  const prevRoomIdRef = useRef(null);
   const { captives, haveKeysTo } = useGame();
   const dispatch = useGameDispatch();
   const captive = captives[room.id];
@@ -303,71 +234,41 @@ function CaptiveTile({ room }) {
     });
   };
 
-  // useEffect(() => {
-  //   let timer;
-  //   if (containerRef.current && prevRoomIdRef.current === room.id) {
-  //     containerRef.current.style.borderColor = "yellow";
-  //     timer = setTimeout(() => {
-  //       if (containerRef.current) {
-  //         containerRef.current.style.borderColor = "transparent";
-  //       }
-  //     }, 1000);
-  //   }
-  //   if (prevRoomIdRef.current !== room.id) {
-  //     prevRoomIdRef.current = room.id;
-  //   }
-  //   return () => {
-  //     clearTimeout(timer);
-  //   };
-  // }, [currentRoomItems, room.id]);
-
   return (
-    <div
-      style={{
-        height: "100%",
-        width: "100%",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        // position: "relative",
-      }}
-    >
+    <>
       <div
-        style={{
-          width: "100%",
-          height: "100%",
-          position: "relative",
+        onClick={() => {
+          setOpen((o) => !o);
         }}
+        ref={containerRef}
+        style={{ position: "relative", width: "100%", height: "100%" }}
       >
-        <div onClick={() => setOpen((o) => !o)} ref={containerRef} style={{}}>
-          <div
-            style={{
-              position: "absolute",
-              width: "100%",
-              height: "100%",
-              top: 0,
-              left: 0,
-            }}
-          >
-            <SVG src={Cage} width={128} height="auto" title="React" />
-          </div>
-          <div style={{ position: "absolute", height: "100%", width: "100%" }}>
-            {!captive.freed ? (
-              captive.id === "rabbit" ? (
-                <SVG src={Rabbit} width={128} height="auto" title="React" />
-              ) : (
-                captive.name
-              )
-            ) : null}
-          </div>
+        <div
+          style={{
+            position: "absolute",
+            width: "100%",
+            height: "100%",
+            top: 0,
+            left: 0,
+          }}
+        >
+          <SVG src={Cage} width={128} height="auto" title="React" />
+        </div>
+        <div style={{ position: "absolute", height: "100%", width: "100%" }}>
+          {!captive.freed ? (
+            captive.id === "rabbit" ? (
+              <SVG src={Rabbit} width={128} height="auto" title="React" />
+            ) : (
+              captive.name
+            )
+          ) : null}
         </div>
       </div>
       <InteractiveTooltip
         onClick={() => setOpen((o) => !o)}
         isOpen={open}
         roomId={room.id}
-        style={{ bottom: 0, top: "unset" }}
+        style={{ top: "100%" }}
       >
         <div>
           {!captive.freed ? (
@@ -379,8 +280,56 @@ function CaptiveTile({ room }) {
           )}
         </div>
       </InteractiveTooltip>
+    </>
+  );
+}
+
+function CenterTile({ room, type }) {
+  return (
+    <div
+      style={{
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        border: "1px solid rgba(255,255,255,0)",
+        position: "relative",
+      }}
+    >
+      {(() => {
+        switch (type) {
+          case "container":
+            return <ContainerTile room={room} />;
+          case "monster":
+            return <MonsterTile room={room} />;
+          case "captive":
+            return <CaptiveTile room={room} />;
+          default:
+            return null;
+        }
+      })()}
     </div>
   );
 }
 
 export default RoomTile;
+
+// useEffect(() => {
+//   let timer;
+//   if (containerRef.current && prevRoomIdRef.current === room.id) {
+//     containerRef.current.style.borderColor = "yellow";
+//     timer = setTimeout(() => {
+//       if (containerRef.current) {
+//         containerRef.current.style.borderColor = "transparent";
+//       }
+//     }, 1000);
+//   }
+//   if (prevRoomIdRef.current !== room.id) {
+//     prevRoomIdRef.current = room.id;
+//   }
+//   return () => {
+//     clearTimeout(timer);
+//   };
+// }, [currentRoomItems, room.id]);
