@@ -39,12 +39,12 @@ describe("ROOM_POSITIONS and ROOMS", () => {
   test("All monsters must be in a room of type 'monster'", () => {
     expect(
       MONSTERS.every((monster) => {
-        return ROOMS[monster.roomId].type === "monster";
+        return ROOMS[monster.roomId].type === constants.ROOM_TYPES.monster;
       })
     ).toBe(true);
     expect(
       _.values(ROOMS)
-        .filter((r) => r.type === "monster")
+        .filter((r) => r.type === constants.ROOM_TYPES.monster)
         .every((r) => MONSTERS.find((m) => m.roomId === r.id))
     ).toBe(true);
   });
@@ -56,18 +56,37 @@ describe("ROOM_POSITIONS and ROOMS", () => {
     ).toBe(true);
   });
   test("All captives must have a monster with key", () => {
-    expect(
-      CAPTIVES.every((captive) => {
-        return MONSTERS.find((m) => m.hasKeyTo === captive.id);
-      })
-    ).toBe(true);
+    CAPTIVES.forEach((captive) => {
+      expect(MONSTERS.find((m) => m.hasKeyTo === captive.id)).toBeTruthy();
+    });
   });
   test("All monsters with keys have keys to a captive", () => {
-    expect(
-      MONSTERS.filter((m) => m.hasKeyTo).every((m) => {
-        return CAPTIVES.find((c) => c.id === m.hasKeyTo);
-      })
-    ).toBe(true);
+    MONSTERS.filter((m) => m.hasKeyTo).forEach((m) => {
+      expect(CAPTIVES.find((c) => c.id === m.hasKeyTo)).toBeTruthy();
+    });
+  });
+  test("Captives", () => {
+    CAPTIVES.forEach((captive) => {
+      expect(captive).toHaveProperty("id");
+      expect(captive).toHaveProperty("roomId");
+      expect(captive).toHaveProperty("name");
+
+      expect(captive).toHaveProperty("image");
+      expect(captive).toHaveProperty("freed");
+      expect(captive).toHaveProperty("teaches");
+    });
+  });
+  test("Recipes", () => {
+    _.entries(constants.RECIPES).forEach(([id, recipe]) => {
+      expect(
+        CAPTIVES.find((c) => {
+          return c.teaches.recipeId === id;
+        })
+      ).toBeTruthy();
+      expect(recipe).toHaveProperty("name");
+      expect(recipe).toHaveProperty("ingredients");
+      expect(recipe.ingredients.every((i) => ITEMS[i.itemId])).toBe(true);
+    });
   });
 });
 

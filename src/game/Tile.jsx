@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { ROOM_SIZE } from "../data/constants";
+import { ROOM_SIZE, ROOM_TYPES } from "../data/constants";
 import { useGame, useGameDispatch } from "../state/GameContext";
 import pine00 from "./img/trees/pine00.png";
 import pine01 from "./img/trees/pine01.png";
@@ -8,11 +8,13 @@ import pine04 from "./img/trees/pine04.png";
 import InteractiveTooltip from "./components/InteractiveTooltip";
 import _ from "lodash";
 import { getPositionFromCoordinates } from "../data/util";
-import Goblin from "./img/Goblin";
 import SVG from "react-inlinesvg";
-import Rabbit from "./img/rabbit.svg";
 import Cage from "./img/cage.svg";
+import Flasks from "./img/flasks.svg";
+import Chest from "./img/chest.svg";
 import { BLACK } from "./color";
+import { GET_CAPTIVE_IMAGE } from "./img/Captive";
+import { GET_MONSTER_IMAGE } from "./img/Monster";
 
 const TREE_IMG = [pine00, pine01, pine02, pine04];
 
@@ -93,7 +95,10 @@ function MonsterTileContents({ monster, room }) {
   return (
     <div>
       {monster.sated ? (
-        <div>{monster.name}: I'm full. You go ahead.</div>
+        <div>
+          {monster.name}: I'm full. You go ahead.
+          {!monster.hasKeyTo ? null : " Here's a key."}
+        </div>
       ) : satiety > 0 ? (
         <div>
           {monster.name}: I'm only {satiety}% full. You must feed me treasure to
@@ -109,33 +114,36 @@ function MonsterTileContents({ monster, room }) {
 function MonsterTile({ room }) {
   const containerRef = useRef(null);
 
-  const { roomMonsters } = useGame();
+  const { roomMonsters, previousRoom } = useGame();
   const monster = roomMonsters[room.id];
-  const [open, setOpen] = React.useState(!monster.sated);
+  const [open, setOpen] = React.useState(
+    !monster.sated && previousRoom?.id !== room.id
+  );
 
   return (
     <>
       <div
         style={{
-          position: "relative",
           width: "100%",
+          height: "100%",
+          padding: "0.5rem",
           display: "flex",
           justifyContent: "center",
+          alignItems: "center",
         }}
+        onClick={() => setOpen((o) => !o)}
       >
-        <div
-          onClick={() => setOpen((o) => !o)}
-          ref={containerRef}
-          style={{ padding: "1rem" }}
-        >
-          {monster.image === "goblin" ? <Goblin /> : monster.name}
-        </div>
+        <SVG
+          src={GET_MONSTER_IMAGE(monster.image)}
+          width={"100%"}
+          height="auto"
+          title="React"
+        />
       </div>
       <InteractiveTooltip
         onClick={() => setOpen((o) => !o)}
         isOpen={open}
         roomId={room.id}
-        // style={{ top: "100%" }}
       >
         <MonsterTileContents {...{ monster, room }} />
       </InteractiveTooltip>
@@ -159,7 +167,6 @@ function ContainerModalContents({
           key={item.id}
           onClick={(e) => {
             e.stopPropagation();
-            console.log(`[=] Taking item ${item.name}x${item.quantity}`);
             handleTakeItem(item);
           }}
         >
@@ -170,14 +177,63 @@ function ContainerModalContents({
   );
 }
 
+function LabTile({ room }) {
+  const containerRef = useRef(null);
+  const { learnedRecipes, previousRoom } = useGame();
+  const dispatch = useGameDispatch();
+  const [open, setOpen] = React.useState(false);
+
+  const handleCombineItems = (recipeId) => {
+    dispatch({
+      type: "combineItems",
+      payload: { recipeId },
+    });
+  };
+
+  return (
+    <>
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          padding: "0.5rem",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+        onClick={() => setOpen((o) => !o)}
+      >
+        <SVG src={Flasks} width={"100%"} height="auto" title="React" />
+      </div>
+      <InteractiveTooltip
+        onClick={() => setOpen((o) => !o)}
+        isOpen={open}
+        roomId={room.id}
+      >
+        <div>
+          {!learnedRecipes.length ? (
+            <span>You haven't learned any recipes yet...</span>
+          ) : (
+            learnedRecipes.map((r) => {
+              return <button onClick={() => handleCombineItems(r)}>{r}</button>;
+            })
+          )}
+        </div>
+      </InteractiveTooltip>
+    </>
+  );
+}
+
 function ContainerTile({ room }) {
   const containerRef = useRef(null);
-  const { roomItems } = useGame();
+  const { roomItems, previousRoom } = useGame();
   const dispatch = useGameDispatch();
   const currentRoomItems = roomItems[room.id].filter(
     (item) => item.quantity > 0
   );
-  const [open, setOpen] = React.useState(currentRoomItems.length > 0);
+  const [open, setOpen] = React.useState(
+    currentRoomItems.length > 0 && room.id !== previousRoom?.id
+  );
 
   const handleTakeItem = (item) => {
     dispatch({
@@ -193,22 +249,18 @@ function ContainerTile({ room }) {
           width: "100%",
           display: "flex",
           justifyContent: "center",
+          alignItems: "center",
+          padding: "0.5rem",
         }}
+        onClick={() => setOpen((o) => !o)}
+        ref={containerRef}
       >
-        <button
-          onClick={() => setOpen((o) => !o)}
-          ref={containerRef}
-          disabled={currentRoomItems.length === 0}
-        >
-          {room.containerName}
-          {currentRoomItems.length === 0 && <div>[empty]</div>}
-        </button>
+        <SVG src={Chest} width={"100%"} height="auto" title="React" />
       </div>
       <InteractiveTooltip
         onClick={() => setOpen((o) => !o)}
         isOpen={open}
         roomId={room.id}
-        // style={{ top: "100%" }}
       >
         <ContainerModalContents
           {...{ currentRoom: room, currentRoomItems, handleTakeItem }}
@@ -250,25 +302,42 @@ function CaptiveTile({ room }) {
             height: "100%",
             top: 0,
             left: 0,
+            zIndex: 31,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          <SVG src={Cage} width={128} height="auto" title="React" />
+          <SVG src={Cage} width={"100%"} height="auto" title="React" />
         </div>
-        <div style={{ position: "absolute", height: "100%", width: "100%" }}>
-          {!captive.freed ? (
-            captive.id === "rabbit" ? (
-              <SVG src={Rabbit} width={128} height="auto" title="React" />
-            ) : (
-              captive.name
-            )
-          ) : null}
-        </div>
+        {!captive.freed ? (
+          <div
+            style={{
+              position: "absolute",
+              height: "100%",
+              width: "100%",
+              top: 0,
+              left: 0,
+              color: "white",
+              zIndex: 30,
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <SVG
+              src={GET_CAPTIVE_IMAGE(captive.image)}
+              width={"75%"}
+              height="auto"
+              title="React"
+            />
+          </div>
+        ) : null}
       </div>
       <InteractiveTooltip
         onClick={() => setOpen((o) => !o)}
         isOpen={open}
         roomId={room.id}
-        style={{ top: "100%" }}
       >
         <div>
           {!captive.freed ? (
@@ -284,7 +353,7 @@ function CaptiveTile({ room }) {
   );
 }
 
-function CenterTile({ room, type }) {
+function CenterTile({ room }) {
   return (
     <div
       style={{
@@ -299,13 +368,15 @@ function CenterTile({ room, type }) {
       }}
     >
       {(() => {
-        switch (type) {
-          case "container":
+        switch (room.type) {
+          case ROOM_TYPES.container:
             return <ContainerTile room={room} />;
-          case "monster":
+          case ROOM_TYPES.monster:
             return <MonsterTile room={room} />;
-          case "captive":
+          case ROOM_TYPES.captive:
             return <CaptiveTile room={room} />;
+          case ROOM_TYPES.lab:
+            return <LabTile room={room} />;
           default:
             return null;
         }
