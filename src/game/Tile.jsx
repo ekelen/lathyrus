@@ -13,7 +13,7 @@ import Cage from "./img/cage.svg";
 import Flasks from "./img/flasks.svg";
 import Chest from "./img/chest.svg";
 import { BLACK } from "./color";
-import { GET_CAPTIVE_IMAGE } from "./img/Captive";
+import { CaptiveImage } from "./img/Captive";
 import { GET_MONSTER_IMAGE } from "./img/Monster";
 
 const TREE_IMG = [pine00, pine01, pine02, pine04];
@@ -255,7 +255,7 @@ function ContainerTile({ room }) {
         onClick={() => setOpen((o) => !o)}
         ref={containerRef}
       >
-        <SVG src={Chest} width={"100%"} height="auto" title="React" />
+        <SVG src={Chest} width={"100%"} height="auto" title="Container" />
       </div>
       <InteractiveTooltip
         onClick={() => setOpen((o) => !o)}
@@ -325,12 +325,7 @@ function CaptiveTile({ room }) {
               alignItems: "center",
             }}
           >
-            <SVG
-              src={GET_CAPTIVE_IMAGE(captive.image)}
-              width={"75%"}
-              height="auto"
-              title="React"
-            />
+            <CaptiveImage captive={captive} width="80%" />
           </div>
         ) : null}
       </div>

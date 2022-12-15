@@ -3,7 +3,7 @@ import _ from "lodash";
 
 import { useGame, useGameDispatch } from "../state/GameContext";
 import SVG from "react-inlinesvg";
-import { GET_CAPTIVE_IMAGE } from "./img/Captive";
+import { CaptiveImage, GET_CAPTIVE_IMAGE } from "./img/Captive";
 import { sortByName } from "../data/util";
 import { ROOM_TYPES } from "../data/constants";
 
@@ -43,39 +43,26 @@ function Inventory(props) {
             </button>
           );
         })}
-      {freedCaptives.map((captive) => {
-        return (
-          <div style={{ height: "20px", width: "20px", position: "relative" }}>
+      <div style={{ display: "flex" }}>
+        {freedCaptives.map((captive) => {
+          return (
             <div
-              style={{
-                position: "absolute",
-                height: "100%",
-                width: "100%",
-              }}
+              style={{ height: "25px", width: "25px", position: "relative" }}
             >
-              {/* {captive.image === "rabbit" ? ( */}
-              <CaptiveImage captive={captive} />
+              <div
+                style={{
+                  position: "absolute",
+                  height: "100%",
+                  width: "100%",
+                }}
+              >
+                <CaptiveImage captive={captive} />
+              </div>
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
-  );
-}
-
-function CaptiveImage({ captive }) {
-  const source = GET_CAPTIVE_IMAGE(captive.image);
-
-  return (
-    <SVG
-      src={source}
-      width={"100%"}
-      height="auto"
-      title="React"
-      preProcessor={(code) =>
-        code.replace(/fill=".*?"/g, 'fill="currentColor"')
-      }
-    />
   );
 }
 

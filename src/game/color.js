@@ -11,8 +11,8 @@ const fallback = "#000000";
 export const rowGradients = _.range(MAP_SIZE).map((row) => {
   return linearGradient({
     colorStops: [
-      lighten((row * 0.75) / MAP_SIZE, bottom),
-      lighten(((row + 1) * 0.75) / MAP_SIZE, bottom),
+      lighten((row * 0.4) / MAP_SIZE, bottom),
+      lighten(((row + 1) * 0.4) / MAP_SIZE, bottom),
     ],
     toDirection,
     fallback,

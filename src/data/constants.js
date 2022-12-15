@@ -1,4 +1,6 @@
 import _ from "lodash";
+import { desaturate } from "polished";
+import { lighten } from "polished";
 import { getPositionFromCoordinates } from "./util";
 
 const ROOM_TYPES = {
@@ -85,21 +87,7 @@ let ROOMS = _.keyBy(
     },
     { id: "12_M_RABBIT", name: "Room 12", type: ROOM_TYPES.monster },
     { id: "13_RABBIT", name: "Room 13", type: ROOM_TYPES.captive },
-    // { id: "14", name: "Room 14" },
-    // { id: "15", name: "Room 15" },
-    // { id: "16", name: "Room 16" },
-    // { id: "17", name: "Room 17" },
     { id: "18", name: "Room 18" },
-    // { id: "19", name: "Room 19" },
-    // { id: "20", name: "Room 20" },
-    // { id: "21", name: "Room 21" },
-    // { id: "22", name: "Room 22" },
-    // { id: "23", name: "Room 23" },
-    // { id: "24_C", name: "Room 24", type: "container" },
-    // { id: "25_C", name: "Room 25", type: "container" },
-    // { id: "26_C", name: "Room 26", type: "container" },
-    // { id: "27_C", name: "Room 27", type: "container" },
-    // { id: "28", name: "Room 28" },
   ],
   "id"
 );
@@ -107,11 +95,19 @@ let ROOMS = _.keyBy(
 const CONTAINER_ITEMS = {
   "0_C": [
     {
-      itemId: "stick",
+      itemId: "tin",
       quantity: 3,
     },
     {
       itemId: "silver",
+      quantity: 3,
+    },
+    {
+      itemId: "frostEssence",
+      quantity: 3,
+    },
+    {
+      itemId: "earthEssence",
       quantity: 3,
     },
   ],
@@ -182,10 +178,10 @@ const ITEMS = _.keyBy(
     { id: "stick", name: "stick", value: 1 },
     { id: "rock", name: "rock", value: 1 },
     { id: "diamond", name: "diamond", value: 1 },
-    { id: "frostEssence", name: "frost essence", value: 1 },
+    { id: "frostEssence", name: "Frost Essence", value: 1 },
     { id: "tin", name: "tin", value: 1 },
-    { id: "frostFarthing", name: "frost farthing", value: 10 },
-    { id: "earthEssence", name: "frost farthing", value: 1 },
+    { id: "frostFarthing", name: "Frost Farthing", value: 10 },
+    { id: "earthEssence", name: "Earth Essence", value: 1 },
     { id: "gildedGroat", name: "Gilded Groat", value: 10 },
   ],
   "id"
@@ -220,6 +216,7 @@ let CAPTIVES = [
     name: "rabbit",
     roomId: "13_RABBIT",
     image: "rabbit",
+    color: `${lighten(0.2, "blue")}`,
     teaches: {
       recipeId: "frostFarthing",
     },
@@ -229,6 +226,7 @@ let CAPTIVES = [
     name: "toad",
     roomId: "6_TOAD",
     image: "toad",
+    color: `${desaturate(0.5, "cyan")}`,
     teaches: {
       recipeId: "gildedGroat",
     },
