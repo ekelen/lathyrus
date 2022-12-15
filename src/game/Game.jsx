@@ -8,22 +8,13 @@ function Game() {
   const dispatch = useGameDispatch();
   return (
     <div
+      className="flex flex-col h-100"
       style={{
         width: "clamp(350px, 95vw, 450px)",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignContent: "center",
-        border: "1px solid #333",
+        // border: "1px solid #333",
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          alignContent: "center",
-          justifyContent: "space-between",
-        }}
-      >
+      <div className="flex items-center justify-between">
         <h3>{currentRoom.name}</h3>
         <button
           onClick={() => {

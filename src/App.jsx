@@ -23,16 +23,7 @@ function AppWrapper() {
 function App() {
   return (
     <GameContextProvider>
-      <div
-        style={{
-          // height: "99vh",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "flex-start",
-          alignContent: "center",
-          border: "1px solid #333",
-        }}
-      >
+      <div className="flex flex-col justify-center">
         <h2>Lathyrus</h2>
         <AppWrapper />
       </div>

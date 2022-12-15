@@ -76,6 +76,22 @@ describe("ROOM_POSITIONS and ROOMS", () => {
       expect(captive).toHaveProperty("teaches");
     });
   });
+  test("Container items", () => {
+    expect(
+      _.values(setup.initialState.roomItems).flat().length
+    ).toBeGreaterThan(3);
+    _.values(setup.initialState.roomItems)
+      .flat()
+      .forEach((item) => {
+        expect(item).toHaveProperty("id");
+        expect(item).toHaveProperty("roomId");
+        expect(ROOMS[item.roomId].type).toBe("container");
+        expect(item).toHaveProperty("name");
+        expect(item).toHaveProperty("type");
+        expect(ITEMS[item.id]).toBeTruthy();
+        expect(item).toHaveProperty("quantity");
+      });
+  });
   test("Recipes", () => {
     _.entries(constants.RECIPES).forEach(([id, recipe]) => {
       expect(

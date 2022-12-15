@@ -47,7 +47,12 @@ const inventory = _.keyBy(
     ...item,
     itemId: item.id,
     quantity:
-      item.id === "diamond" && process.env.NODE_ENV === "development" ? 10 : 0,
+      (item.id === "tin" ||
+        item.id === "frostFarthing" ||
+        item.id === "gildedGroat") &&
+      process.env.NODE_ENV === "development"
+        ? 10
+        : 0,
   })),
   "id"
 );
@@ -64,5 +69,5 @@ export const initialState = {
   captives,
   haveKeysTo: [],
   storageItems: [],
-  learnedRecipes: [],
+  learnedRecipeIds: [],
 };

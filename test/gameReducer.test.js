@@ -56,7 +56,7 @@ describe("reset", () => {
     let goldItem = gameState.inventory["gold"];
     expect(goldItem).toHaveProperty("quantity", 1);
     expect(goldItem).toHaveProperty("id", "gold");
-    expect(goldItem).toHaveProperty("name", "gold");
+    expect(goldItem).toHaveProperty("name", "Gold");
     expect(goldItem).toHaveProperty("value", 1);
     gameState = gameReducer(gameState, {
       type: "updateInventoryQuantity",
@@ -108,14 +108,14 @@ describe("reset", () => {
       currentRoom: ROOMS["13_RABBIT"],
     };
     expect(gameState.captives["13_RABBIT"]).toHaveProperty("freed", false);
-    expect(gameState.learnedRecipes).toHaveLength(0);
+    expect(gameState.learnedRecipeIds).toHaveLength(0);
     // try to free captive without key
     gameState = gameReducer(gameState, {
       type: "freeCaptive",
       payload: { roomId: "13_RABBIT" },
     });
     expect(gameState.captives["13_RABBIT"]).toHaveProperty("freed", false);
-    expect(gameState.learnedRecipes).toHaveLength(0);
+    expect(gameState.learnedRecipeIds).toHaveLength(0);
     gameState = {
       ...gameState,
       haveKeysTo: ["rabbit"],
@@ -126,12 +126,12 @@ describe("reset", () => {
       payload: { roomId: "13_RABBIT" },
     });
     expect(gameState.captives["13_RABBIT"]).toHaveProperty("freed", true);
-    expect(gameState.learnedRecipes).toHaveLength(1);
+    expect(gameState.learnedRecipeIds).toHaveLength(1);
   });
   test("combineItems", () => {
     let gameState = {
       ...initialState,
-      learnedRecipes: ["frostFarthing"],
+      learnedRecipeIds: ["frostFarthing"],
     };
     gameState = gameReducer(gameState, {
       type: "updateInventoryQuantity",

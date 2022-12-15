@@ -3,6 +3,9 @@ let { merge } = require("webpack-merge");
 
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ImageMinimizerPlugin = require("image-minimizer-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = merge(common, {
   mode: "production",
@@ -11,16 +14,22 @@ module.exports = merge(common, {
       template: "./index.html",
       title: "Lathyrus",
     }),
+    new MiniCssExtractPlugin(),
   ],
   devtool: "source-map",
   module: {
     rules: [
       {
         test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
+        use: [
+          MiniCssExtractPlugin.loader,
+          // "style-loader",
+          "css-loader",
+          "postcss-loader",
+        ],
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif|webp)$/i,
+        test: /\.(png|svg|jpg|jpeg|gif|webp|woff2?)$/i,
         type: "asset/resource",
       },
       {
@@ -33,6 +42,28 @@ module.exports = merge(common, {
           },
         ],
       },
+    ],
+  },
+  optimization: {
+    minimizer: [
+      "...",
+      new CssMinimizerPlugin(),
+      new ImageMinimizerPlugin({
+        minimizer: {
+          implementation: ImageMinimizerPlugin.svgoMinify,
+          options: {
+            encodeOptions: {
+              // Pass over SVGs multiple times to ensure all optimizations are applied. False by default
+              multipass: true,
+              plugins: [
+                // set of built-in plugins enabled by default
+                // see: https://github.com/svg/svgo#default-preset
+                "preset-default",
+              ],
+            },
+          },
+        },
+      }),
     ],
   },
 });

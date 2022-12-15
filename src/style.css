@@ -1,22 +1,14 @@
-html,
-body {
-  font-family: "Open Sans", sans-serif;
-  font-size: 16px;
-  line-height: 1.5;
-  background-color: rgb(4, 6, 8);
-  color-scheme: only dark;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap");
+
+@font-face {
+  font-family: "NewtonSans";
+  src: url("./font/NewtonSans-2015-11-04.woff2") format("woff2");
+  unicode-range: U+E000-EFFF, U+2600-26FF;
 }
 
-body {
-  color: #f0f0f0;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 1rem;
-  line-height: 1.42857143;
-  background-color: rgb(4, 6, 8);
-}
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+.alchemy {
+  font-family: "NewtonSans", sans-serif;
 }

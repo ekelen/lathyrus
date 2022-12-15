@@ -2,8 +2,6 @@ import _ from "lodash";
 import React, { useEffect, useRef } from "react";
 import { ROOM_SIZE } from "../data/constants";
 import { useGame, useGameDispatch } from "../state/GameContext";
-import { getRoomGradient } from "./color";
-import InteractiveTooltip from "./components/InteractiveTooltip";
 import RoomTile from "./Tile";
 
 const FRAME_WIDTH = "2rem";
@@ -45,7 +43,7 @@ function Room({ room, isPreviousRoom = false }) {
   const commonStyle = {
     height: "100%",
     width: "100%",
-    ...getRoomGradient(room.coordinates.y),
+    // ...getRoomGradient(room.coordinates.y),
     position: "absolute",
     transition: "left 1s ease, top 1s ease",
     zIndex: isPreviousRoom ? 5 : 20,
@@ -93,11 +91,9 @@ function Room({ room, isPreviousRoom = false }) {
       {_.range(ROOM_SIZE).map((row) => (
         <div
           key={row}
+          className="flex w-full"
           style={{
             height: `calc(100% / ${ROOM_SIZE})`,
-            width: "100%",
-            display: "flex",
-            border: "0px solid rgba(255,255,255,0)",
           }}
         >
           {_.range(ROOM_SIZE).map((col) => {
@@ -120,7 +116,15 @@ function RoomWrapper({ children }) {
     overflowX: "hidden",
     overflowY: "hidden",
   };
-  return <div style={style}>{children}</div>;
+  return (
+    <div style={style}>
+      <div className="absolute top-0 left-0 w-full h-2.5 bg-gradient-to-b from-black to-transparent z-50" />
+      <div className="absolute bottom-0 left-0 w-full h-2.5 bg-gradient-to-t from-black to-transparent z-50" />
+      <div className="absolute top-0 left-0 w-2.5 h-full bg-gradient-to-r from-black to-transparent z-50" />
+      <div className="absolute top-0 right-0 w-2.5 h-full bg-gradient-to-l from-black to-transparent z-50" />
+      {children}
+    </div>
+  );
 }
 
 function RoomFrame() {
@@ -136,23 +140,16 @@ function RoomFrame() {
   };
   return (
     <div
+      className="flex flex-col items-stretch relative z-10"
       style={{
         height: "clamp(350px, 95vw, 450px)",
-        // height: "400px",
         border: "1px solid rgba(255,255,255,0)",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "stretch",
-        position: "relative",
-        zIndex: 10,
       }}
     >
       <div
+        className="flex items-center justify-center"
         style={{
           height: FRAME_WIDTH,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
         }}
       >
         <MoveButton
@@ -162,20 +159,11 @@ function RoomFrame() {
           lockedDirections={lockedDirections}
         />
       </div>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "stretch",
-          flex: 1,
-          //   position: "relative",
-        }}
-      >
+      <div className="flex items-stretch flex-1">
         <div
+          className="flex items-center justify-center"
           style={{
             width: FRAME_WIDTH,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
           }}
         >
           <MoveButton
@@ -200,11 +188,9 @@ function RoomFrame() {
           />
         </RoomWrapper>
         <div
+          className="flex flex-col justify-center"
           style={{
             width: FRAME_WIDTH,
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
           }}
         >
           <MoveButton
@@ -216,11 +202,9 @@ function RoomFrame() {
         </div>
       </div>
       <div
+        className="flex items-center justify-center"
         style={{
           height: FRAME_WIDTH,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
         }}
       >
         <MoveButton
@@ -241,37 +225,34 @@ const MoveButton = ({
   lockedDirections = [],
 }) => {
   const isLocked = lockedDirections.includes(direction);
+
+  const rotateClasses = {
+    north: "rotate-0",
+    east: "rotate-90",
+    south: "rotate-180",
+    west: "-rotate-90",
+  };
+  const content = isLocked ? <span className="text-xs">🔒</span> : <>&#8593;</>;
+
+  const rotateClass = isLocked ? "" : rotateClasses[direction];
+
   return (
-    <div style={{ height: "2rem", width: "2rem", position: "relative" }}>
+    <div className="h-8 w-8 relative">
       <button
         onClick={() => {
           handleMove(direction);
         }}
         disabled={isLocked}
+        className="h-full w-full p-1 flex items-center bg-gray-800 rounded-full justify-center"
         style={{
-          height: "100%",
-          width: "100%",
-          padding: "0.2rem",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
           visibility: exits[direction] === null ? "hidden" : "visible",
         }}
       >
-        {isLocked ? (
-          <span>🔒</span>
-        ) : (
-          <span
-            style={{
-              transform: `rotate(${
-                ["north", "east", "south", "west"].indexOf(direction) * 90
-              }deg)`,
-              display: "block",
-            }}
-          >
-            &#8593;
-          </span>
-        )}
+        <div
+          className={`table-cell align-middle text-center w-full h-full text-sm ${rotateClass}`}
+        >
+          {content}
+        </div>
       </button>
     </div>
   );

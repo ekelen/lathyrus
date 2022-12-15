@@ -1,6 +1,4 @@
 import _ from "lodash";
-import { desaturate } from "polished";
-import { lighten } from "polished";
 import { getPositionFromCoordinates } from "./util";
 
 const ROOM_TYPES = {
@@ -10,13 +8,14 @@ const ROOM_TYPES = {
   storage: "storage",
   captive: "captive",
   empty: "empty",
+  exit: "exit",
 };
 const ROOM_POSITIONS = [
   ["0_C", null, "13_RABBIT", null, null],
-  ["1_LAB", "2_M", "18", "12_M_RABBIT", null],
-  [null, "3_MY_STUFF", null, "10_M", "11_C"],
-  [null, "4_C", null, "9_C", null],
-  [null, "5_M_TOAD", "6_TOAD", "8_C", "7_C"],
+  ["1_LAB", "2_M", "13", null, "9_C"],
+  [null, "3_MY_STUFF", "11_C", "10_M", "14"],
+  ["12_M_RABBIT", "4_C", null, null, null],
+  [null, "5_M_TOAD", "6_TOAD", "8_C", "7_EXIT"],
 ];
 
 const MAP_SIZE = ROOM_POSITIONS.length;
@@ -29,13 +28,51 @@ const DIRECTION_OPPOSITE = {
   west: "east",
 };
 
+const ITEMS = _.keyBy(
+  [
+    { id: "gold", name: "Gold", value: 1, symbol: "🜚", type: "alchemy" },
+    { id: "silver", name: "Silver", value: 1, symbol: "🜛", type: "alchemy" },
+    { id: "mercury", name: "Mercury", value: 1, symbol: "☿", type: "alchemy" },
+    { id: "copper", name: "Copper", value: 1, symbol: "♀", type: "alchemy" },
+    { id: "tin", name: "Tin", value: 1, symbol: "♃", type: "alchemy" },
+    {
+      id: "frostEssence",
+      name: "Frost Essence",
+      value: 1,
+      symbol: "🜄",
+      type: "alchemy",
+    },
+    {
+      id: "frostFarthing",
+      name: "Frost Farthing",
+      value: 10,
+      symbol: "🜄",
+      type: "coin",
+    },
+    {
+      id: "earthEssence",
+      name: "Earth Essence",
+      value: 1,
+      symbol: "🜁",
+      type: "alchemy",
+    },
+    {
+      id: "gildedGroat",
+      name: "Gilded Groat",
+      value: 100,
+      symbol: "🜁",
+      type: "coin",
+    },
+  ],
+  "id"
+);
+
 let ROOMS = _.keyBy(
   [
     {
       id: "0_C",
       name: "Room 0",
       type: ROOM_TYPES.container,
-      containerName: "fancy chest",
     },
     {
       id: "1_LAB",
@@ -52,7 +89,6 @@ let ROOMS = _.keyBy(
       id: "4_C",
       name: "Room 4",
       type: ROOM_TYPES.container,
-      containerName: "canvas sack",
     },
     { id: "5_M_TOAD", name: "Room 5", type: ROOM_TYPES.monster },
     {
@@ -61,33 +97,30 @@ let ROOMS = _.keyBy(
       type: ROOM_TYPES.captive,
     },
     {
-      id: "7_C",
+      id: "7_EXIT",
       name: "Room 7",
-      type: ROOM_TYPES.container,
-      containerName: "small crate",
+      type: ROOM_TYPES.exit,
     },
     {
       id: "8_C",
       name: "Room 8",
       type: ROOM_TYPES.container,
-      containerName: "tiny crate",
     },
     {
       id: "9_C",
       name: "Room 9",
       type: ROOM_TYPES.container,
-      containerName: "huge box",
     },
     { id: "10_M", name: "Room 10", type: ROOM_TYPES.monster },
     {
       id: "11_C",
       name: "Room 11",
       type: ROOM_TYPES.container,
-      containerName: "small box",
     },
     { id: "12_M_RABBIT", name: "Room 12", type: ROOM_TYPES.monster },
     { id: "13_RABBIT", name: "Room 13", type: ROOM_TYPES.captive },
-    { id: "18", name: "Room 18" },
+    { id: "13", name: "Room 13" },
+    { id: "14", name: "Room 14" },
   ],
   "id"
 );
@@ -116,30 +149,41 @@ const CONTAINER_ITEMS = {
       itemId: "silver",
       quantity: 3,
     },
-  ],
-  "7_C": [
     {
-      itemId: "rock",
+      itemId: "earthEssence",
+      quantity: 3,
+    },
+    {
+      itemId: "frostEssence",
       quantity: 3,
     },
   ],
   "8_C": [
     {
-      itemId: "rock",
+      itemId: "mercury",
+      quantity: 3,
+    },
+    {
+      itemId: "copper",
       quantity: 3,
     },
   ],
   "9_C": [
     {
-      itemId: "stick",
-      quantity: 3,
+      itemId: "gold",
+      quantity: 5,
     },
     {
-      itemId: "diamond",
-      quantity: 3,
+      itemId: "earthEssence",
+      quantity: 4,
     },
   ],
-  "11_C": [],
+  "11_C": [
+    {
+      itemId: "gold",
+      quantity: 5,
+    },
+  ],
 };
 
 const MONSTERS = [
@@ -171,27 +215,10 @@ const MONSTERS = [
   },
 ];
 
-const ITEMS = _.keyBy(
-  [
-    { id: "gold", name: "gold", value: 1 },
-    { id: "silver", name: "silver", value: 1 },
-    { id: "stick", name: "stick", value: 1 },
-    { id: "rock", name: "rock", value: 1 },
-    { id: "diamond", name: "diamond", value: 1 },
-    { id: "frostEssence", name: "Frost Essence", value: 1 },
-    { id: "tin", name: "tin", value: 1 },
-    { id: "frostFarthing", name: "Frost Farthing", value: 10 },
-    { id: "earthEssence", name: "Earth Essence", value: 1 },
-    { id: "gildedGroat", name: "Gilded Groat", value: 10 },
-  ],
-  "id"
-);
-
 let RECIPES = [
   {
     name: "Frost Farthing",
     id: "frostFarthing",
-    learned: false,
     ingredients: [
       { itemId: "frostEssence", quantity: 1 },
       { itemId: "tin", quantity: 1 },
@@ -200,7 +227,6 @@ let RECIPES = [
   {
     name: "Gilded Groat",
     id: "gildedGroat",
-    learned: false,
     ingredients: [
       { itemId: "earthEssence", quantity: 1 },
       { itemId: "silver", quantity: 1 },
@@ -213,20 +239,20 @@ RECIPES = _.keyBy(RECIPES, "id");
 let CAPTIVES = [
   {
     id: "rabbit",
-    name: "rabbit",
+    name: "Rabbit",
     roomId: "13_RABBIT",
     image: "rabbit",
-    color: `${lighten(0.2, "blue")}`,
+    color: "#5eead4",
     teaches: {
       recipeId: "frostFarthing",
     },
   },
   {
     id: "toad",
-    name: "toad",
+    name: "Toad",
     roomId: "6_TOAD",
     image: "toad",
-    color: `${desaturate(0.5, "cyan")}`,
+    color: "#fef08a",
     teaches: {
       recipeId: "gildedGroat",
     },
@@ -243,7 +269,7 @@ const ROOM_EXIT_POSITIONS = {
 const mapRooms = () => {
   ROOMS = _.mapValues(ROOMS, (room) => {
     if (room.type === ROOM_TYPES.container) {
-      room.containerName = room.containerName ?? "container";
+      room.containerName = room.containerName ?? "Container";
     } else if (!room.type) {
       room.type = ROOM_TYPES.empty;
     }

@@ -1,61 +1,107 @@
-import React from "react";
 import _ from "lodash";
+import React, { useCallback } from "react";
 
-import { useGame, useGameDispatch } from "../state/GameContext";
-import SVG from "react-inlinesvg";
-import { CaptiveImage, GET_CAPTIVE_IMAGE } from "./img/Captive";
-import { sortByName } from "../data/util";
 import { ROOM_TYPES } from "../data/constants";
+import { sortByName } from "../data/util";
+import { useGame, useGameDispatch } from "../state/GameContext";
+import { CaptiveImage } from "./img/Captive";
+import { Item } from "./Item";
+import Key from "./img/key2.svg";
+import Svg from "./components/Svg";
 
 function Inventory(props) {
-  const { inventory, currentRoom, freedCaptives } = useGame();
+  const {
+    inventory,
+    currentRoom,
+    freedCaptives,
+    currentRoomMonster,
+    haveKeysTo,
+    captives,
+  } = useGame();
   const { type } = currentRoom;
   const dispatch = useGameDispatch();
+  const getCaptiveById = useCallback(
+    (id) => {
+      return _.values(captives).find((c) => c.id === id);
+    },
+    [captives, haveKeysTo]
+  );
+
+  const getCaptiveByIdx = useCallback(
+    (i) => {
+      return _.values(captives).find((c) => c.id === haveKeysTo[i]);
+    },
+    [captives, haveKeysTo]
+  );
 
   return (
-    <div style={{ height: "100px" }}>
-      {sortByName(_.values(inventory))
-        .filter((item) => item.quantity > 0)
-        .map((item) => {
-          return (
-            <button
-              key={item.id}
-              onClick={() => {
-                switch (type) {
-                  case ROOM_TYPES.storage:
-                    dispatch({
-                      type: "addToStorageFromInventory",
-                      payload: { itemId: item.itemId, quantity: 1 },
-                    });
-                    break;
-                  case ROOM_TYPES.monster:
-                    dispatch({
-                      type: "feed",
-                      payload: { itemId: item.itemId },
-                    });
-                    break;
-                  default:
-                    break;
+    <div className="flex h-24 w-100 mt-2 gap-1">
+      <div className="flex flex-col flex-wrap h-full p-2 grow border-2 border-white border-double rounded-md align-start content-start justify-start">
+        {sortByName(_.values(inventory))
+          .filter((item) => item.quantity > 0)
+          .map((item) => {
+            return (
+              <button
+                key={item.id}
+                className={`flex items-center justify-start whitespace-pre disabled:opacity-50`}
+                disabled={
+                  (type !== ROOM_TYPES.monster &&
+                    type !== ROOM_TYPES.storage) ||
+                  currentRoomMonster?.sated
                 }
-              }}
+                onClick={() => {
+                  switch (type) {
+                    case ROOM_TYPES.storage:
+                      dispatch({
+                        type: "addToStorageFromInventory",
+                        payload: { itemId: item.itemId, quantity: 1 },
+                      });
+                      break;
+                    case ROOM_TYPES.monster:
+                      dispatch({
+                        type: "feed",
+                        payload: { itemId: item.itemId },
+                      });
+                      break;
+                    default:
+                      break;
+                  }
+                }}
+              >
+                <Item item={item} />
+                <div className="text-xs">x {item.quantity}</div>
+              </button>
+            );
+          })}
+      </div>
+      <div className="flex flex-col flex-wrap relative h-full w-10 border border-white border-double rounded-md">
+        {haveKeysTo.map((key, i) => {
+          const captive = getCaptiveById(key);
+          return (
+            <div
+              className="flex items-center justify-center h-6 w-6 m-2 relative"
+              key={`${i}-${key}`}
             >
-              {item.name} x {item.quantity}
-            </button>
+              <div className="relative h-full w-full">
+                <Svg
+                  source={Key}
+                  height="80%"
+                  width="100%"
+                  color={captive?.color || "#333"}
+                />
+              </div>
+            </div>
           );
         })}
-      <div style={{ display: "flex" }}>
+      </div>
+      <div className="flex flex-col flex-wrap relative h-full w-10 border border-white border-double rounded-md">
         {freedCaptives.map((captive) => {
           return (
             <div
-              style={{ height: "25px", width: "25px", position: "relative" }}
+              className="flex items-center justify-center h-6 w-6 relative"
+              key={captive.id}
             >
-              <div
-                style={{
-                  position: "absolute",
-                  height: "100%",
-                  width: "100%",
-                }}
-              >
+              <div className="absolute h-full w-full">
                 <CaptiveImage captive={captive} />
               </div>
             </div>

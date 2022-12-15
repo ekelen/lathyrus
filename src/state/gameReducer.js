@@ -139,18 +139,7 @@ export function gameReducer(state, action) {
       const { itemId } = action.payload;
       const { currentRoom, roomMonsters, inventory } = state;
       const monster = roomMonsters[currentRoom.id];
-      if (monster.sated && monster.hasKeyTo) {
-        return {
-          ...state,
-          roomMonsters: {
-            ...roomMonsters,
-            [currentRoom.id]: {
-              ...monster,
-              hasKeyTo: null,
-            },
-          },
-        };
-      }
+      const { hasKeyTo } = monster;
       if (monster.sated) {
         console.log("monster is sated");
         return state;
@@ -163,6 +152,7 @@ export function gameReducer(state, action) {
         ...monster,
         hunger,
         sated,
+        hasKeyTo: sated ? null : hasKeyTo,
       };
       const newRoomMonsters = {
         ...roomMonsters,
@@ -176,8 +166,8 @@ export function gameReducer(state, action) {
         },
       };
       if (newMonster.sated) {
-        const haveKeysTo = monster.hasKeyTo
-          ? [...state.haveKeysTo, monster.hasKeyTo].sort()
+        const haveKeysTo = hasKeyTo
+          ? [...state.haveKeysTo, hasKeyTo].sort()
           : state.haveKeysTo;
         return {
           ...state,
@@ -215,16 +205,16 @@ export function gameReducer(state, action) {
             freed: true,
           },
         },
-        learnedRecipes: _.union(state.learnedRecipes, [
+        learnedRecipeIds: _.union(state.learnedRecipeIds, [
           captive.teaches.recipeId,
         ]),
       };
     }
     case "combineItems": {
-      const { inventory, learnedRecipes } = state;
+      const { inventory, learnedRecipeIds } = state;
       const { recipeId } = action.payload;
 
-      if (!learnedRecipes.includes(recipeId)) {
+      if (!learnedRecipeIds.includes(recipeId)) {
         console.error(`Don't have recipe for ${recipeId}`);
         return state;
       }

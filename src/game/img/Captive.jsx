@@ -29,9 +29,12 @@ export const GET_CAPTIVE_IMAGE = (image) => {
   }
 };
 
-export function CaptiveImage({ captive, width = "100%" }) {
+export function CaptiveImage({
+  captive,
+  width = "100%",
+  color = captive.color,
+}) {
   const source = GET_CAPTIVE_IMAGE(captive.image);
-  console.log(`[=] captive:`, captive);
 
   return (
     <SVG
@@ -39,9 +42,7 @@ export function CaptiveImage({ captive, width = "100%" }) {
       width={width}
       height="auto"
       title="React"
-      preProcessor={(code) =>
-        code.replace(/fill=".*?"/g, `fill="${captive.color}"`)
-      }
+      preProcessor={(code) => code.replace(/fill=".*?"/g, `fill="${color}"`)}
     />
   );
 }

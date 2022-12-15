@@ -17,22 +17,17 @@ module.exports = merge(common, {
     new ReactRefreshWebpackPlugin(),
   ],
   devServer: {
-    static: "./build",
+    static: path.resolve(__dirname, "./build"),
     hot: true,
   },
   module: {
     rules: [
       {
         test: /\.css$/i,
-        use: [
-          "style-loader",
-          {
-            loader: "css-loader",
-          },
-        ],
+        use: ["style-loader", "css-loader", "postcss-loader"],
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif|webp)$/i,
+        test: /\.(png|svg|jpg|jpeg|gif|webp|woff2?)$/i,
         type: "asset/resource",
       },
       {

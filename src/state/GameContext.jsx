@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import { initialState } from "../data/setup";
 import _ from "lodash";
 import { gameReducer } from "./gameReducer";
+import { ITEMS, RECIPES } from "../data/constants";
 
 export const GameContext = React.createContext();
 const GameDispatchContext = React.createContext();
@@ -18,17 +19,24 @@ export function useGameDispatch() {
 
 const GameContextProvider = (props) => {
   const [state, dispatch] = React.useReducer(gameReducer, initialState);
-  // const [showModal, setShowModal] = React.useState(false);
+  const { roomMonsters, currentRoom, captives, learnedRecipeIds } = state;
 
-  // const handleShowModal = React.useCallback((show) => {
-  //   setShowModal(show);
-  // }, []);
   const freedCaptives = useMemo(() => {
-    return _.values(state.captives).filter((c) => c.freed);
-  }, [state.captives]);
+    return _.values(captives).filter((c) => c.freed);
+  }, [captives]);
+
+  const currentRoomMonster = useMemo(() => {
+    return roomMonsters[currentRoom.id] ?? null;
+  }, [roomMonsters, currentRoom.id]);
+
+  const learnedRecipes = useMemo(() => {
+    return learnedRecipeIds.map((id) => RECIPES[id]);
+  }, [learnedRecipeIds]);
 
   return (
-    <GameContext.Provider value={{ ...state, freedCaptives }}>
+    <GameContext.Provider
+      value={{ ...state, freedCaptives, currentRoomMonster, learnedRecipes }}
+    >
       <GameDispatchContext.Provider value={dispatch}>
         {/* <ModalContext.Provider value={{ showModal, handleShowModal }}> */}
         {props.children}
