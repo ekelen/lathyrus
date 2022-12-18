@@ -4,9 +4,9 @@ import React, { useCallback } from "react";
 import { ROOM_TYPES } from "../data/constants";
 import { sortByName } from "../data/util";
 import { useGame, useGameDispatch } from "../state/GameContext";
-import { CaptiveImage } from "./img/Captive";
-import { Item } from "./Item";
-import Key from "./img/key2.svg";
+import { CaptiveImage } from "./components/Captive";
+import { Item } from "./components/Item";
+import Key from "./img/key.svg";
 import Svg from "./components/Svg";
 
 function Inventory(props) {
@@ -23,13 +23,6 @@ function Inventory(props) {
   const getCaptiveById = useCallback(
     (id) => {
       return _.values(captives).find((c) => c.id === id);
-    },
-    [captives, haveKeysTo]
-  );
-
-  const getCaptiveByIdx = useCallback(
-    (i) => {
-      return _.values(captives).find((c) => c.id === haveKeysTo[i]);
     },
     [captives, haveKeysTo]
   );
@@ -75,30 +68,34 @@ function Inventory(props) {
           })}
       </div>
       <div className="flex flex-col flex-wrap relative h-full w-10 border border-white border-double rounded-md">
-        {haveKeysTo.map((key, i) => {
-          const captive = getCaptiveById(key);
-          return (
-            <div
-              className="flex items-center justify-center h-6 w-6 m-2 relative"
-              key={`${i}-${key}`}
-            >
-              <div className="relative h-full w-full">
-                <Svg
-                  source={Key}
-                  height="80%"
-                  width="100%"
-                  color={captive?.color || "#333"}
-                />
+        {haveKeysTo
+          .filter(
+            (captiveId) => !freedCaptives.map((c) => c.id).includes(captiveId)
+          )
+          .map((key, i) => {
+            const captive = getCaptiveById(key);
+            return (
+              <div
+                className="flex items-center justify-center h-6 w-6 mx-2 mt-2 mb-0 relative"
+                key={`${i}-${key}`}
+              >
+                <div className="relative h-full w-full">
+                  <Svg
+                    source={Key}
+                    height="80%"
+                    width="100%"
+                    color={captive?.color || "#333"}
+                  />
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
       </div>
       <div className="flex flex-col flex-wrap relative h-full w-10 border border-white border-double rounded-md">
         {freedCaptives.map((captive) => {
           return (
             <div
-              className="flex items-center justify-center h-6 w-6 relative"
+              className="flex items-center justify-center h-6 w-6 relative mx-2 mt-2 mb-0"
               key={captive.id}
             >
               <div className="absolute h-full w-full">

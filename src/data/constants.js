@@ -28,7 +28,7 @@ const DIRECTION_OPPOSITE = {
   west: "east",
 };
 
-const ITEMS = _.keyBy(
+let ITEMS = _.keyBy(
   [
     { id: "gold", name: "Gold", value: 1, symbol: "🜚", type: "alchemy" },
     { id: "silver", name: "Silver", value: 1, symbol: "🜛", type: "alchemy" },
@@ -66,6 +66,16 @@ const ITEMS = _.keyBy(
   ],
   "id"
 );
+
+ITEMS = _.mapValues(ITEMS, (item, id) => ({
+  ...item,
+  color:
+    item.value === 1
+      ? "text-white"
+      : item.value > 1 && item.value < 10
+      ? "text-amber-200"
+      : "text-amber-500",
+}));
 
 let ROOMS = _.keyBy(
   [
@@ -127,6 +137,10 @@ let ROOMS = _.keyBy(
 
 const CONTAINER_ITEMS = {
   "0_C": [
+    {
+      itemId: "gold",
+      quantity: 1,
+    },
     {
       itemId: "tin",
       quantity: 3,

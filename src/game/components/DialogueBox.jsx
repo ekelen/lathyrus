@@ -7,14 +7,14 @@ function DialogueBox({ children, onClick = () => {}, isOpen, style = {} }) {
   return (
     <div
       ref={ref}
+      className="xs:px-2 xs:py-1 sm:px-4 sm:py-2 px-4 py-2"
       style={_.merge(
         {
           position: "absolute",
-          padding: "1rem",
           transition: `opacity 1s ease 0s`,
           backgroundColor: `${BLACK}`,
           opacity: isOpen ? 1 : 0,
-          bottom: "100%",
+          bottom: "110%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
