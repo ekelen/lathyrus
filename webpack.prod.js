@@ -29,7 +29,11 @@ module.exports = merge(common, {
         ],
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif|webp|woff2?)$/i,
+        test: /\.(png|svg|jpg|jpeg|gif|webp)$/i,
+        type: "asset/resource",
+      },
+      {
+        test: /\.(woff|woff2|tff)$/i,
         type: "asset/resource",
       },
       {
