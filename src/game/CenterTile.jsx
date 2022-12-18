@@ -24,8 +24,8 @@ export function CenterTile({ room }) {
             return <LabTile room={room} />;
           case ROOM_TYPES.exit:
             return <LevelExitTile room={room} />;
-          case ROOM_TYPES.storage:
-            return <StorageTile room={room} />;
+          // case ROOM_TYPES.storage:
+          //   return <StorageTile room={room} />;
           default:
             return null;
         }

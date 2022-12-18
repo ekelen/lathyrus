@@ -7,5 +7,5 @@ export function useOpen(initialState = false) {
     setOpen((o) => !o);
   };
 
-  return { open, toggleOpen };
+  return { open, toggleOpen, setOpen };
 }

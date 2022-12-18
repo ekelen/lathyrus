@@ -6,7 +6,7 @@ export default function Svg({
   width = "100%",
   height = width,
   color = "currentColor",
-  title = "Image",
+  title = "",
 }) {
   return (
     <SVG

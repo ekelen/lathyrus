@@ -1,12 +1,13 @@
-import _ from "lodash";
+import _, { cloneDeep } from "lodash";
 import {
   ITEMS,
   MONSTERS,
   ROOMS,
   ROOM_POSITIONS,
-  CAPTIVES,
+  CAPTIVE_LIST,
   ROOM_EXIT_POSITIONS,
   CONTAINER_ITEMS,
+  MAX_ITEMS,
 } from "./constants";
 import { getPositionFromCoordinates, sortByName } from "./util";
 
@@ -20,44 +21,7 @@ const roomMonsters = _.keyBy(
 );
 
 let containerItems = { ...CONTAINER_ITEMS };
-
-const mapRoomItems = () => {
-  _.values(ROOMS).forEach((room) => {
-    if (!containerItems[room.id]) {
-      containerItems[room.id] = [];
-    }
-  });
-  _.keys(containerItems).forEach((roomId) => {
-    containerItems[roomId] = sortByName(
-      containerItems[roomId].map((item) => {
-        return {
-          ...item,
-          ...ITEMS[item.itemId],
-          roomId,
-        };
-      })
-    );
-  });
-};
-
-mapRoomItems();
-
-const inventory = _.keyBy(
-  _.values(ITEMS).map((item) => ({
-    ...item,
-    itemId: item.id,
-    quantity:
-      (item.id === "tin" ||
-        item.id === "frostFarthing" ||
-        item.id === "gildedGroat") &&
-      process.env.NODE_ENV === "development"
-        ? 10
-        : 0,
-  })),
-  "id"
-);
-
-const storageItems = _.keyBy(
+const mappedItems = _.keyBy(
   _.values(ITEMS).map((item) => ({
     ...item,
     itemId: item.id,
@@ -66,17 +30,57 @@ const storageItems = _.keyBy(
   "id"
 );
 
-const captives = _.keyBy(CAPTIVES, "roomId");
+const containerRoomKeys = _.keys(
+  _.pickBy(ROOMS, (room) => room.type === "container")
+);
+
+containerItems = _.fromPairs(
+  containerRoomKeys.map((roomId) => {
+    return [roomId, _.keyBy(containerItems[roomId] ?? [], "id")];
+  })
+);
+
+containerItems = _.mapValues(containerItems, (items, roomId) => {
+  return _.mapValues(mappedItems, (item) => {
+    const quantity = items[item.id]?.quantity ?? 0;
+    return {
+      ...item,
+      quantity,
+      roomId,
+    };
+  });
+});
+
+// console.log(`[=] containerItems:`, containerItems);
+
+const inventory = _.keyBy(
+  _.values(ITEMS).map((item) => ({
+    ...item,
+    quantity: 0,
+  })),
+  "id"
+);
+
+const storageItems = _.keyBy(
+  _.values(ITEMS).map((item) => ({
+    ...item,
+    quantity: 0,
+  })),
+  "id"
+);
+
+const captives = _.keyBy(CAPTIVE_LIST, "roomId");
 
 export const initialState = {
-  currentRoom: ROOMS["0_C"],
+  currentRoom: _.cloneDeep(ROOMS["0_C"]),
   previousRoom: null,
-  roomItems: containerItems,
-  inventory,
-  roomMonsters,
+  roomItems: _.cloneDeep(containerItems),
+  inventory: _.cloneDeep(inventory),
+  roomMonsters: _.cloneDeep(roomMonsters),
   movedCameraToOnTransition: null,
-  captives,
+  captives: _.cloneDeep(captives),
   haveKeysTo: [],
-  storageItems,
+  storageItems: _.cloneDeep(storageItems),
   learnedRecipeIds: [],
+  maxInventory: MAX_ITEMS,
 };

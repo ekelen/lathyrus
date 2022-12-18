@@ -1,28 +1,17 @@
 import _, { cloneDeep, max } from "lodash";
 import {
   DIRECTION_OPPOSITE,
-  RECIPES,
+  RECIPES_BY_ID,
   ROOMS,
   ROOM_EXIT_POSITIONS,
 } from "../data/constants";
 import { initialState } from "../data/setup";
 import { sortByName } from "../data/util";
 
-const updateQuantity = ({ items, item, quantity }) => {
-  const itemsCopy = [...items];
-  const itemIdx = itemsCopy.findIndex((i) => i.itemId === item.itemId);
-  if (itemIdx > -1) {
-    itemsCopy[itemIdx].quantity += quantity;
-  } else {
-    itemsCopy.push({ ...item, quantity });
-  }
-  return sortByName(itemsCopy);
-};
-
 export function gameReducer(state, action) {
   switch (action.type) {
     case "reset": {
-      return cloneDeep({ ...initialState });
+      return cloneDeep(initialState);
     }
     case "move": {
       const { direction } = action.payload;
@@ -31,7 +20,7 @@ export function gameReducer(state, action) {
         ROOM_EXIT_POSITIONS[direction]
       );
       if (isLocked) {
-        console.error("That way is locked");
+        // console.error("That way is locked");
         return state;
       }
 
@@ -69,9 +58,7 @@ export function gameReducer(state, action) {
           quantity: storageItem.quantity - quantity,
         },
       };
-      const inventoryItem = inventory[itemId] ?? {
-        [itemId]: { ...storageItem, quantity: 0 },
-      };
+      const inventoryItem = inventory[itemId];
 
       const newInventoryItems = {
         ...inventory,
@@ -99,9 +86,7 @@ export function gameReducer(state, action) {
           quantity: inventoryItem.quantity - quantity,
         },
       };
-      const storageItem = storageItems[itemId] ?? {
-        [itemId]: { ...inventoryItem, quantity: 0 },
-      };
+      const storageItem = storageItems[itemId];
 
       const newStorageItems = {
         ...storageItems,
@@ -139,9 +124,7 @@ export function gameReducer(state, action) {
       const { itemId, quantity } = action.payload;
       const { inventory, roomItems, currentRoom } = state;
 
-      const roomItem = roomItems[currentRoom.id].find(
-        (i) => i.itemId === itemId
-      );
+      const roomItem = roomItems[currentRoom.id][itemId];
       const inventoryItem = inventory[itemId];
       const newInventoryItems = {
         ...inventory,
@@ -151,11 +134,13 @@ export function gameReducer(state, action) {
         },
       };
 
-      const newCurrentRoomItems = updateQuantity({
-        items: roomItems[currentRoom.id],
-        item: roomItem,
-        quantity: -quantity,
-      });
+      const newCurrentRoomItems = {
+        ...roomItems[currentRoom.id],
+        [itemId]: {
+          ...roomItem,
+          quantity: roomItem.quantity - quantity,
+        },
+      };
 
       return {
         ...state,
@@ -172,7 +157,7 @@ export function gameReducer(state, action) {
       const monster = roomMonsters[currentRoom.id];
       const { hasKeyTo } = monster;
       if (monster.sated) {
-        console.log("monster is sated");
+        // console.log("monster is sated");
         return state;
       }
       const inventoryItem = inventory[itemId];
@@ -224,7 +209,7 @@ export function gameReducer(state, action) {
       const { roomId } = action.payload;
       const captive = captives[roomId];
       if (!haveKeysTo.includes(captive.id)) {
-        console.error(`don't have key for ${roomId} captive ${captive.id}`);
+        // console.error(`don't have key for ${roomId} captive ${captive.id}`);
         return state;
       }
       return {
@@ -246,16 +231,16 @@ export function gameReducer(state, action) {
       const { recipeId } = action.payload;
 
       if (!learnedRecipeIds.includes(recipeId)) {
-        console.error(`Don't have recipe for ${recipeId}`);
+        // console.error(`Don't have recipe for ${recipeId}`);
         return state;
       }
-      const recipe = RECIPES[recipeId];
+      const recipe = RECIPES_BY_ID[recipeId];
       const hasIngredients = recipe.ingredients.every((ingredient) => {
         const inventoryItem = inventory[ingredient.itemId];
         return inventoryItem.quantity >= ingredient.quantity;
       });
       if (!hasIngredients) {
-        console.error(`don't have ingredients for ${recipeId}`);
+        // console.error(`don't have ingredients for ${recipeId}`);
         return state;
       }
       const createdItem = {

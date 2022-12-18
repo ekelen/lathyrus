@@ -6,19 +6,12 @@ import Chest from "../../img/chest.svg";
 import { Item } from "../../components/Item";
 import { CenterTileContentContainer } from "../../CenterTileContentContainer";
 import { useOpen } from "../../useOpen";
+import _ from "lodash";
 
-function ContainerModalContents({
-  currentRoom,
-  currentRoomItems,
-  handleTakeItem,
-}) {
-  const itemList = currentRoomItems.filter((item) => item.quantity > 0);
-
-  return itemList.length <= 0 ? (
-    <div>{currentRoom.containerName} is empty!</div>
-  ) : (
-    <div className="flex flex-wrap items-center gap-1 content-start">
-      {itemList.map((item) => {
+function ContainerModalContents({ currentRoomItems, handleTakeItem }) {
+  return (
+    <div className="flex flex-wrap items-center gap-1 content-start w-full">
+      {currentRoomItems.map((item) => {
         return (
           <button
             key={item.id}
@@ -26,13 +19,14 @@ function ContainerModalContents({
               e.stopPropagation();
               handleTakeItem(item);
             }}
-            className={`flex items-center justify-start whitespace-pre disabled:opacity-50 border-solid border border-gray-700 rounded-md pr-1`}
+            className={`flex items-center justify-start whitespace-pre disabled:opacity-50 border-solid border border-gray-700 rounded-md pr-1 h-6`}
           >
             <Item item={item} />
             <div className="text-xs">x {item.quantity}</div>
           </button>
         );
       })}
+      <div className="h-6 w-0" />
     </div>
   );
 }
@@ -40,34 +34,37 @@ function ContainerModalContents({
 export function ContainerTile({ room }) {
   const { roomItems, previousRoom } = useGame();
   const dispatch = useGameDispatch();
-  const currentRoomItems = roomItems[room.id].filter(
-    (item) => item.quantity > 0
+  const currentRoomItems = _.values(roomItems[room.id]).filter(
+    (i) => i.quantity > 0
   );
+
   const { open, toggleOpen } = useOpen(
     currentRoomItems.length > 0 && room.id !== previousRoom?.id
   );
+  const openable = currentRoomItems.length > 0;
+  const openableClass = openable ? "opacity-100" : "opacity-20";
 
   const handleTakeItem = (item) => {
     dispatch({
       type: "addToInventoryFromRoom",
-      payload: { itemId: item.itemId, quantity: 1 },
+      payload: { itemId: item.id, quantity: 1 },
     });
   };
 
   return (
     <>
       <CenterTileContentContainer toggleOpen={toggleOpen}>
-        <Svg source={Chest} width="100%" height="80%" />
+        <div className={`${openableClass}`}>
+          <Svg source={Chest} width="100%" height="80%" />
+        </div>
       </CenterTileContentContainer>
       <DialogueBox
-        onClick={toggleOpen}
-        isOpen={open}
+        onClick={() => {}}
+        isOpen={openable}
         roomId={room.id}
-        style={{ minWidth: "280%" }}
+        style={{ minWidth: "280%", width: "280%" }}
       >
-        <ContainerModalContents
-          {...{ currentRoom: room, currentRoomItems, handleTakeItem }}
-        />
+        <ContainerModalContents {...{ currentRoomItems, handleTakeItem }} />
       </DialogueBox>
     </>
   );

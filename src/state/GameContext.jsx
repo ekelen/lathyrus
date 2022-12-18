@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { initialState } from "../data/setup";
 import _ from "lodash";
 import { gameReducer } from "./gameReducer";
-import { ITEMS, RECIPES } from "../data/constants";
+import { ITEMS, RECIPES_BY_ID } from "../data/constants";
 
 export const GameContext = React.createContext();
 const GameDispatchContext = React.createContext();
@@ -30,7 +30,7 @@ const GameContextProvider = (props) => {
   }, [roomMonsters, currentRoom.id]);
 
   const learnedRecipes = useMemo(() => {
-    return learnedRecipeIds.map((id) => RECIPES[id]);
+    return learnedRecipeIds.map((id) => RECIPES_BY_ID[id]);
   }, [learnedRecipeIds]);
 
   return (

@@ -6,9 +6,10 @@
 @font-face {
   font-family: "NewtonSans";
   src: url("./font/NewtonSans-2015-11-04.woff2") format("woff2");
-  unicode-range: U+E000-EFFF, U+2600-26FF, U+1F700-1F77F;
+  unicode-range: U+E000-E06B, U+2600-26FF, U+1F700-1F77F;
+  font-display: block;
 }
 
 .alchemy {
-  font-family: "NewtonSans", sans-serif;
+  font-family: "NewtonSans", serif;
 }

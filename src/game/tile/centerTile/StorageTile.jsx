@@ -29,7 +29,12 @@ export function StorageTile({ room }) {
       <CenterTileContentContainer toggleOpen={toggleOpen}>
         <Svg source={Storage} width={"100%"} height="80%" />
       </CenterTileContentContainer>
-      <DialogueBox onClick={toggleOpen} isOpen={open} roomId={room.id}>
+      <DialogueBox
+        onClick={() => {}}
+        isOpen={true}
+        roomId={room.id}
+        style={{ minWidth: "280%", width: "280%" }}
+      >
         <div className="flex flex-wrap items-center gap-1 content-start">
           {storageItemList.map((item) => {
             return (

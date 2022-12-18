@@ -3,7 +3,7 @@ const constants = require("../src/data/constants");
 const util = require("../src/data/util");
 const _ = require("lodash");
 
-const { MONSTERS, ROOMS, ITEMS, ROOM_POSITIONS, MAP_SIZE, CAPTIVES } =
+const { MONSTERS, ROOMS, ITEMS, ROOM_POSITIONS, MAP_SIZE, CAPTIVE_LIST } =
   constants;
 
 describe("ROOM_POSITIONS and ROOMS", () => {
@@ -50,23 +50,23 @@ describe("ROOM_POSITIONS and ROOMS", () => {
   });
   test("All captives must be in a room of type 'captive'", () => {
     expect(
-      CAPTIVES.every((captive) => {
+      CAPTIVE_LIST.every((captive) => {
         return ROOMS[captive.roomId].type === "captive";
       })
     ).toBe(true);
   });
   test("All captives must have a monster with key", () => {
-    CAPTIVES.forEach((captive) => {
+    CAPTIVE_LIST.forEach((captive) => {
       expect(MONSTERS.find((m) => m.hasKeyTo === captive.id)).toBeTruthy();
     });
   });
   test("All monsters with keys have keys to a captive", () => {
     MONSTERS.filter((m) => m.hasKeyTo).forEach((m) => {
-      expect(CAPTIVES.find((c) => c.id === m.hasKeyTo)).toBeTruthy();
+      expect(CAPTIVE_LIST.find((c) => c.id === m.hasKeyTo)).toBeTruthy();
     });
   });
   test("Captives", () => {
-    CAPTIVES.forEach((captive) => {
+    CAPTIVE_LIST.forEach((captive) => {
       expect(captive).toHaveProperty("id");
       expect(captive).toHaveProperty("roomId");
       expect(captive).toHaveProperty("name");
@@ -77,25 +77,28 @@ describe("ROOM_POSITIONS and ROOMS", () => {
     });
   });
   test("Container items", () => {
-    expect(
-      _.values(setup.initialState.roomItems).flat().length
-    ).toBeGreaterThan(3);
+    _.entries(constants.CONTAINER_ITEMS).forEach(([roomId, items]) => {
+      expect(ROOMS[roomId].type).toBe("container");
+    });
     _.values(setup.initialState.roomItems)
       .flat()
-      .forEach((item) => {
-        expect(item).toHaveProperty("id");
-        expect(item).toHaveProperty("roomId");
-        expect(ROOMS[item.roomId].type).toBe("container");
-        expect(item).toHaveProperty("name");
-        expect(item).toHaveProperty("type");
-        expect(ITEMS[item.id]).toBeTruthy();
-        expect(item).toHaveProperty("quantity");
+      .forEach((itemsById) => {
+        _.entries(itemsById).forEach(([id, item]) => {
+          expect(item).toHaveProperty("id");
+          expect(item).toHaveProperty("roomId");
+          expect(ROOMS[item.roomId].type).toBe("container");
+          expect(item).toHaveProperty("name");
+          expect(item).toHaveProperty("type");
+          expect(ITEMS[item.id]).toBeTruthy();
+          expect(ITEMS[id]).toBeTruthy();
+          expect(item).toHaveProperty("quantity");
+        });
       });
   });
   test("Recipes", () => {
-    _.entries(constants.RECIPES).forEach(([id, recipe]) => {
+    _.entries(constants.RECIPES_BY_ID).forEach(([id, recipe]) => {
       expect(
-        CAPTIVES.find((c) => {
+        CAPTIVE_LIST.find((c) => {
           return c.teaches.recipeId === id;
         })
       ).toBeTruthy();

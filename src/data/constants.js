@@ -11,11 +11,11 @@ const ROOM_TYPES = {
   exit: "exit",
 };
 const ROOM_POSITIONS = [
-  ["0_C", null, "13_RABBIT", null, null],
+  ["0_C", null, "rabbit", null, null],
   ["1_LAB", "2_M", "13", null, "9_C"],
   [null, "3_MY_STUFF", "11_C", "10_M", "14"],
   ["12_M_RABBIT", "4_C", null, null, null],
-  [null, "5_M_TOAD", "6_TOAD", "8_C", "7_EXIT"],
+  [null, "5_M_TOAD", "toad", "8_C", "7_EXIT"],
 ];
 
 const MAP_SIZE = ROOM_POSITIONS.length;
@@ -30,36 +30,36 @@ const DIRECTION_OPPOSITE = {
 
 let ITEMS = _.keyBy(
   [
-    { id: "gold", name: "Gold", value: 1, symbol: "🜚", type: "alchemy" },
-    { id: "silver", name: "Silver", value: 1, symbol: "🜛", type: "alchemy" },
-    { id: "mercury", name: "Mercury", value: 1, symbol: "☿", type: "alchemy" },
-    { id: "copper", name: "Copper", value: 1, symbol: "♀", type: "alchemy" },
-    { id: "tin", name: "Tin", value: 1, symbol: "♃", type: "alchemy" },
+    { id: "gold", name: "Gold", value: 2, symbol: "🜚", type: "alchemy" },
+    { id: "silver", name: "Silver", value: 2, symbol: "🜛", type: "alchemy" },
+    { id: "mercury", name: "Mercury", value: 2, symbol: "☿", type: "alchemy" },
+    { id: "copper", name: "Copper", value: 2, symbol: "♀", type: "alchemy" },
+    { id: "tin", name: "Tin", value: 2, symbol: "♃", type: "alchemy" },
     {
       id: "frostEssence",
       name: "Frost Essence",
-      value: 1,
+      value: 2,
       symbol: "🜄",
-      type: "alchemy",
+      type: "element",
     },
     {
       id: "frostFarthing",
       name: "Frost Farthing",
-      value: 10,
+      value: 16,
       symbol: "🜄",
       type: "coin",
     },
     {
       id: "earthEssence",
       name: "Earth Essence",
-      value: 1,
+      value: 2,
       symbol: "🜁",
-      type: "alchemy",
+      type: "element",
     },
     {
       id: "gildedGroat",
       name: "Gilded Groat",
-      value: 100,
+      value: 32,
       symbol: "🜁",
       type: "coin",
     },
@@ -67,14 +67,21 @@ let ITEMS = _.keyBy(
   "id"
 );
 
+const ambers = [
+  "text-amber-100",
+  "text-amber-200",
+  "text-amber-300",
+  "text-amber-400",
+  "text-amber-500",
+  "text-amber-600",
+  "text-amber-700",
+  "text-amber-800",
+  "text-amber-900",
+];
+
 ITEMS = _.mapValues(ITEMS, (item, id) => ({
   ...item,
-  color:
-    item.value === 1
-      ? "text-white"
-      : item.value > 1 && item.value < 10
-      ? "text-amber-200"
-      : "text-amber-500",
+  colorClass: ambers[Math.log2(item.value)],
 }));
 
 let ROOMS = _.keyBy(
@@ -102,7 +109,7 @@ let ROOMS = _.keyBy(
     },
     { id: "5_M_TOAD", name: "Room 5", type: ROOM_TYPES.monster },
     {
-      id: "6_TOAD",
+      id: "toad",
       name: "Room 6",
       type: ROOM_TYPES.captive,
     },
@@ -128,7 +135,7 @@ let ROOMS = _.keyBy(
       type: ROOM_TYPES.container,
     },
     { id: "12_M_RABBIT", name: "Room 12", type: ROOM_TYPES.monster },
-    { id: "13_RABBIT", name: "Room 13", type: ROOM_TYPES.captive },
+    { id: "rabbit", name: "Room 13", type: ROOM_TYPES.captive },
     { id: "13", name: "Room 13" },
     { id: "14", name: "Room 14" },
   ],
@@ -138,64 +145,64 @@ let ROOMS = _.keyBy(
 const CONTAINER_ITEMS = {
   "0_C": [
     {
-      itemId: "gold",
+      id: "gold",
       quantity: 1,
     },
     {
-      itemId: "tin",
+      id: "tin",
+      quantity: 1,
+    },
+    {
+      id: "silver",
+      quantity: 1,
+    },
+    {
+      id: "frostEssence",
       quantity: 3,
     },
     {
-      itemId: "silver",
-      quantity: 3,
-    },
-    {
-      itemId: "frostEssence",
-      quantity: 3,
-    },
-    {
-      itemId: "earthEssence",
+      id: "earthEssence",
       quantity: 3,
     },
   ],
   "4_C": [
     {
-      itemId: "silver",
+      id: "silver",
+      quantity: 1,
+    },
+    {
+      id: "earthEssence",
       quantity: 3,
     },
     {
-      itemId: "earthEssence",
-      quantity: 3,
-    },
-    {
-      itemId: "frostEssence",
-      quantity: 3,
+      id: "frostEssence",
+      quantity: 5,
     },
   ],
   "8_C": [
     {
-      itemId: "mercury",
-      quantity: 3,
+      id: "mercury",
+      quantity: 1,
     },
     {
-      itemId: "copper",
-      quantity: 3,
+      id: "copper",
+      quantity: 1,
     },
   ],
   "9_C": [
     {
-      itemId: "gold",
-      quantity: 5,
+      id: "gold",
+      quantity: 1,
     },
     {
-      itemId: "earthEssence",
+      id: "earthEssence",
       quantity: 4,
     },
   ],
   "11_C": [
     {
-      itemId: "gold",
-      quantity: 5,
+      id: "gold",
+      quantity: 1,
     },
   ],
 };
@@ -203,33 +210,33 @@ const CONTAINER_ITEMS = {
 const MONSTERS = [
   {
     name: "small goblin",
-    maxHunger: 3,
+    maxHunger: 4,
     roomId: "2_M",
     image: "goblin",
   },
   {
     name: "largish goblin",
-    maxHunger: 5,
+    maxHunger: 8,
     roomId: "5_M_TOAD",
     image: "goblin",
     hasKeyTo: "toad",
   },
   {
     name: "small goblin",
-    maxHunger: 3,
+    maxHunger: 4,
     roomId: "10_M",
     image: "goblin",
   },
   {
     name: "frost goblin",
-    maxHunger: 3,
+    maxHunger: 8,
     roomId: "12_M_RABBIT",
     hasKeyTo: "rabbit",
     image: "goblin",
   },
 ];
 
-let RECIPES = [
+let RECIPES_BY_ID = [
   {
     name: "Frost Farthing",
     id: "frostFarthing",
@@ -248,15 +255,15 @@ let RECIPES = [
   },
 ];
 
-RECIPES = _.keyBy(RECIPES, "id");
+RECIPES_BY_ID = _.keyBy(RECIPES_BY_ID, "id");
 
-let CAPTIVES = [
+let CAPTIVE_LIST = [
   {
     id: "rabbit",
     name: "Rabbit",
-    roomId: "13_RABBIT",
+    roomId: "rabbit",
     image: "rabbit",
-    color: "#5eead4",
+    colorClass: "text-pink-300",
     teaches: {
       recipeId: "frostFarthing",
     },
@@ -264,9 +271,9 @@ let CAPTIVES = [
   {
     id: "toad",
     name: "Toad",
-    roomId: "6_TOAD",
+    roomId: "toad",
     image: "toad",
-    color: "#fef08a",
+    colorClass: "text-pink-600",
     teaches: {
       recipeId: "gildedGroat",
     },
@@ -280,67 +287,64 @@ const ROOM_EXIT_POSITIONS = {
   west: getPositionFromCoordinates(0, 1),
 };
 
-const mapRooms = () => {
-  ROOMS = _.mapValues(ROOMS, (room) => {
-    if (room.type === ROOM_TYPES.container) {
-      room.containerName = room.containerName ?? "Container";
-    } else if (!room.type) {
-      room.type = ROOM_TYPES.empty;
-    }
-    const y = ROOM_POSITIONS.findIndex((row) => row.includes(room.id));
-    const x = ROOM_POSITIONS[y].findIndex((id) => id === room.id);
-    return {
-      ...room,
-      position: getPositionFromCoordinates(x, y),
-      coordinates: { x, y },
-    };
-  });
-  ROOMS = _.mapValues(ROOMS, (room) => {
-    const { x, y } = room.coordinates;
-    const exits = {
-      north: ROOM_POSITIONS[y - 1]?.[x] ?? null,
-      south: ROOM_POSITIONS[y + 1]?.[x] ?? null,
-      east: ROOM_POSITIONS[y]?.[x + 1] ?? null,
-      west: ROOM_POSITIONS[y]?.[x - 1] ?? null,
-    };
-    const exitTilePositions = _.compact(
-      _.values(
-        _.mapValues(exits, (exit, direction) => {
-          return !exit ? null : ROOM_EXIT_POSITIONS[direction];
-        })
-      )
-    );
+ROOMS = _.mapValues(ROOMS, (room) => {
+  if (!room.type) {
+    room.type = ROOM_TYPES.empty;
+  }
+  const y = ROOM_POSITIONS.findIndex((row) => row.includes(room.id));
+  const x = ROOM_POSITIONS[y].findIndex((id) => id === room.id);
+  return {
+    ...room,
+    position: getPositionFromCoordinates(x, y),
+    coordinates: { x, y },
+  };
+});
+ROOMS = _.mapValues(ROOMS, (room) => {
+  const { x, y } = room.coordinates;
+  const exits = {
+    north: ROOM_POSITIONS[y - 1]?.[x] ?? null,
+    south: ROOM_POSITIONS[y + 1]?.[x] ?? null,
+    east: ROOM_POSITIONS[y]?.[x + 1] ?? null,
+    west: ROOM_POSITIONS[y]?.[x - 1] ?? null,
+  };
+  const exitTilePositions = _.compact(
+    _.values(
+      _.mapValues(exits, (exit, direction) => {
+        return !exit ? null : ROOM_EXIT_POSITIONS[direction];
+      })
+    )
+  );
 
-    return {
-      ...room,
-      exits,
-      exitTilePositions,
-      lockedExitTilePositions: [],
-      lockedDirections: [],
-      centerPosition: getPositionFromCoordinates(1, 1),
-    };
-  });
-};
+  return {
+    ...room,
+    exits,
+    exitTilePositions,
+    lockedExitTilePositions: [],
+    lockedDirections: [],
+    centerPosition: getPositionFromCoordinates(1, 1),
+  };
+});
 
-mapRooms();
-
-CAPTIVES = _.map(CAPTIVES, (captive) => ({
+CAPTIVE_LIST = _.map(CAPTIVE_LIST, (captive) => ({
   ...captive,
   freed: false,
   position: ROOMS[captive.roomId].position,
 }));
 
+const MAX_ITEMS = 5;
+
 export {
-  MAP_SIZE,
-  ROOM_SIZE,
-  ROOM_POSITIONS,
-  DIRECTION_OPPOSITE,
-  ROOMS,
-  MONSTERS,
-  ITEMS,
-  CAPTIVES,
-  ROOM_EXIT_POSITIONS,
+  CAPTIVE_LIST,
   CONTAINER_ITEMS,
-  RECIPES,
+  DIRECTION_OPPOSITE,
+  ITEMS,
+  MAP_SIZE,
+  MAX_ITEMS,
+  MONSTERS,
+  RECIPES_BY_ID,
+  ROOM_EXIT_POSITIONS,
+  ROOM_POSITIONS,
+  ROOM_SIZE,
   ROOM_TYPES,
+  ROOMS,
 };

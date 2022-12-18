@@ -57,7 +57,7 @@ describe("reset", () => {
     expect(goldItem).toHaveProperty("quantity", 1);
     expect(goldItem).toHaveProperty("id", "gold");
     expect(goldItem).toHaveProperty("name", "Gold");
-    expect(goldItem).toHaveProperty("value", 1);
+    expect(goldItem).toHaveProperty("value", 2);
     gameState = gameReducer(gameState, {
       type: "updateInventoryQuantity",
       payload: { itemId: "gold", quantity: -1 },
@@ -78,7 +78,7 @@ describe("reset", () => {
     expect(result.previousRoom.id).toEqual("1_LAB");
     expect(result.roomMonsters["2_M"]).toHaveProperty("sated", false);
     expect(result.roomMonsters["2_M"]).toHaveProperty("maxHunger");
-    expect(result.roomMonsters["2_M"].maxHunger).toEqual(3);
+    expect(result.roomMonsters["2_M"].maxHunger).toEqual(4);
     expect(result.roomMonsters["2_M"].hunger).toEqual(
       result.roomMonsters["2_M"].maxHunger
     );
@@ -93,10 +93,6 @@ describe("reset", () => {
       type: "feed",
       payload: { itemId: "gold" },
     });
-    fedMonsterResult = gameReducer(fedMonsterResult, {
-      type: "feed",
-      payload: { itemId: "gold" },
-    });
     expect(fedMonsterResult.roomMonsters["2_M"]).toHaveProperty("hunger", 0);
     expect(fedMonsterResult.roomMonsters["2_M"]).toHaveProperty("sated", true);
     expect(fedMonsterResult.currentRoom.lockedDirections).toHaveLength(0);
@@ -105,27 +101,27 @@ describe("reset", () => {
     let gameState = {
       ...initialState,
       haveKeysTo: [],
-      currentRoom: ROOMS["13_RABBIT"],
+      currentRoom: ROOMS["rabbit"],
     };
-    expect(gameState.captives["13_RABBIT"]).toHaveProperty("freed", false);
+    expect(gameState.captives["rabbit"]).toHaveProperty("freed", false);
     expect(gameState.learnedRecipeIds).toHaveLength(0);
     // try to free captive without key
     gameState = gameReducer(gameState, {
       type: "freeCaptive",
-      payload: { roomId: "13_RABBIT" },
+      payload: { roomId: "rabbit" },
     });
-    expect(gameState.captives["13_RABBIT"]).toHaveProperty("freed", false);
+    expect(gameState.captives["rabbit"]).toHaveProperty("freed", false);
     expect(gameState.learnedRecipeIds).toHaveLength(0);
     gameState = {
       ...gameState,
       haveKeysTo: ["rabbit"],
-      currentRoom: ROOMS["13_RABBIT"],
+      currentRoom: ROOMS["rabbit"],
     };
     gameState = gameReducer(gameState, {
       type: "freeCaptive",
-      payload: { roomId: "13_RABBIT" },
+      payload: { roomId: "rabbit" },
     });
-    expect(gameState.captives["13_RABBIT"]).toHaveProperty("freed", true);
+    expect(gameState.captives["rabbit"]).toHaveProperty("freed", true);
     expect(gameState.learnedRecipeIds).toHaveLength(1);
   });
   test("combineItems", () => {
