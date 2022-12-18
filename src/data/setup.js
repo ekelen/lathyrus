@@ -57,6 +57,15 @@ const inventory = _.keyBy(
   "id"
 );
 
+const storageItems = _.keyBy(
+  _.values(ITEMS).map((item) => ({
+    ...item,
+    itemId: item.id,
+    quantity: 0,
+  })),
+  "id"
+);
+
 const captives = _.keyBy(CAPTIVES, "roomId");
 
 export const initialState = {
@@ -68,6 +77,6 @@ export const initialState = {
   movedCameraToOnTransition: null,
   captives,
   haveKeysTo: [],
-  storageItems: [],
+  storageItems,
   learnedRecipeIds: [],
 };

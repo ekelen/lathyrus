@@ -57,6 +57,36 @@ export function gameReducer(state, action) {
         movedCameraToOnTransition: direction,
       };
     }
+    case "addToInventoryFromStorage": {
+      const { itemId, quantity } = action.payload;
+      const { inventory, storageItems } = state;
+
+      const storageItem = storageItems[itemId];
+      const newStorageItems = {
+        ...storageItems,
+        [itemId]: {
+          ...storageItem,
+          quantity: storageItem.quantity - quantity,
+        },
+      };
+      const inventoryItem = inventory[itemId] ?? {
+        [itemId]: { ...storageItem, quantity: 0 },
+      };
+
+      const newInventoryItems = {
+        ...inventory,
+        [itemId]: {
+          ...inventoryItem,
+          quantity: inventoryItem.quantity + quantity,
+        },
+      };
+
+      return {
+        ...state,
+        storageItems: newStorageItems,
+        inventory: newInventoryItems,
+      };
+    }
     case "addToStorageFromInventory": {
       const { itemId, quantity } = action.payload;
       const { inventory, storageItems } = state;
@@ -69,16 +99,17 @@ export function gameReducer(state, action) {
           quantity: inventoryItem.quantity - quantity,
         },
       };
-      const storageItem = storageItems.find((i) => i.itemId === itemId) ?? {
-        ...inventoryItem,
-        quantity: 0,
+      const storageItem = storageItems[itemId] ?? {
+        [itemId]: { ...inventoryItem, quantity: 0 },
       };
 
-      const newStorageItems = updateQuantity({
-        items: storageItems,
-        item: storageItem,
-        quantity,
-      });
+      const newStorageItems = {
+        ...storageItems,
+        [itemId]: {
+          ...storageItem,
+          quantity: storageItem.quantity + quantity,
+        },
+      };
 
       return {
         ...state,
