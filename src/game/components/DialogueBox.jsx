@@ -14,7 +14,7 @@ function DialogueBox({ children, onClick = () => {}, isOpen, style = {} }) {
           transition: `opacity 1s ease 0s`,
           backgroundColor: `${BLACK}`,
           opacity: isOpen ? 1 : 0,
-          bottom: "100%",
+          bottom: "110%",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",

@@ -1,10 +1,10 @@
-import Rabbit from "./rabbit.svg";
-import Tortoise from "./tortoise.svg";
-import Cat from "./cat.svg";
-import Toad from "./toad.svg";
-import Rooster from "./rooster.svg";
+import Rabbit from "../img/rabbit.svg";
+import Tortoise from "../img/tortoise.svg";
+import Cat from "../img/cat.svg";
+import Toad from "../img/toad.svg";
+import Rooster from "../img/rooster.svg";
 import React from "react";
-import SVG from "react-inlinesvg";
+import Svg from "./Svg";
 
 export const GET_CAPTIVE_IMAGE = (image) => {
   switch (image) {
@@ -32,17 +32,19 @@ export const GET_CAPTIVE_IMAGE = (image) => {
 export function CaptiveImage({
   captive,
   width = "100%",
+  height = "80%",
   color = captive.color,
+  title = captive.name,
 }) {
   const source = GET_CAPTIVE_IMAGE(captive.image);
 
   return (
-    <SVG
-      src={source}
+    <Svg
+      source={source}
       width={width}
-      height="auto"
-      title="React"
-      preProcessor={(code) => code.replace(/fill=".*?"/g, `fill="${color}"`)}
+      height={height}
+      title={title}
+      color={color}
     />
   );
 }

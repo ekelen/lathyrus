@@ -45,7 +45,7 @@ function Room({ room, isPreviousRoom = false }) {
     width: "100%",
     // ...getRoomGradient(room.coordinates.y),
     position: "absolute",
-    transition: "left 1s ease, top 1s ease",
+    transition: "left 750ms ease, top 750ms ease",
     zIndex: isPreviousRoom ? 5 : 20,
     borderWidth: "0px",
     borderStyle: "dashed",
@@ -243,15 +243,17 @@ const MoveButton = ({
           handleMove(direction);
         }}
         disabled={isLocked}
-        className="h-full w-full p-1 flex items-center bg-gray-800 rounded-full justify-center"
+        className="h-full w-full flex items-center bg-gray-800 rounded-full justify-center"
         style={{
           visibility: exits[direction] === null ? "hidden" : "visible",
         }}
       >
-        <div
-          className={`table-cell align-middle text-center w-full h-full text-sm ${rotateClass}`}
-        >
-          {content}
+        <div className="table-row">
+          <div
+            className={`table-cell align-middle text-center w-full h-full text-sm ${rotateClass}`}
+          >
+            {content}
+          </div>
         </div>
       </button>
     </div>
