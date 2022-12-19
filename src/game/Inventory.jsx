@@ -10,7 +10,11 @@ import {
 import { sortByName } from "../data/util";
 import { useGame, useGameDispatch } from "../state/GameContext";
 import { CaptiveImage } from "./components/Captive";
-import { Item } from "./components/Item";
+import {
+  Item,
+  ItemWithQuantity,
+  ItemWithQuantityButton,
+} from "./components/Item";
 import Key from "./img/key.svg";
 import Svg from "./components/Svg";
 import DialogueBox from "./components/DialogueBox";
@@ -98,17 +102,16 @@ function _Inventory({ inventoryById, type, currentRoomMonster, dispatch }) {
     <>
       {inventoryValues.map((item) => {
         return (
-          <button
+          <ItemWithQuantityButton
             key={item.id}
-            className={`flex items-center justify-start whitespace-pre disabled:opacity-50`}
+            quantity={item.quantity}
+            item={item}
             disabled={disabled}
             onClick={() => {
               handleItemClick({ item });
             }}
-          >
-            <Item item={item} />
-            <div className="text-xs">x {item.quantity}</div>
-          </button>
+            wrapperClass="disabled:opacity-50"
+          />
         );
       })}
     </>
@@ -205,18 +208,16 @@ function Inventory(props) {
         }}
       >
         {!selectedCaptiveRecipe ? null : (
-          <div className="flex items-center justify-center  mb-1">
+          <div className="flex items-center justify-center mb-1">
             {selectedCaptiveRecipe.ingredients.map((ingredient, i) => (
               <div
                 className="flex items-center justify-center whitespace-pre"
                 key={`${ingredient.id}-${i}`}
               >
-                <div
-                  className={`flex items-center justify-start whitespace-pre pr-1 mx-1`}
-                >
-                  <Item item={ITEMS_BY_ID[ingredient.itemId]} />
-                  <div className="text-xs">x {ingredient.quantity}</div>
-                </div>
+                <ItemWithQuantity
+                  item={ITEMS_BY_ID[ingredient.itemId]}
+                  quantity={ingredient.quantity}
+                />
                 {i < selectedCaptiveRecipe.ingredients.length - 1 ? (
                   <div>+</div>
                 ) : (
@@ -224,14 +225,7 @@ function Inventory(props) {
                 )}
               </div>
             ))}
-            <div
-              // onClick={(e) => {
-              //   e.stopPropagation();
-              //   handleCombineItems(r.id);
-              // }}
-              // disabled={!hasIngredients(r)}
-              className="whitespace-pre p-1 ml-2"
-            >
+            <div className="whitespace-pre p-1 ml-2">
               <Item item={ITEMS_BY_ID[selectedCaptiveRecipe.id]} />
             </div>
           </div>

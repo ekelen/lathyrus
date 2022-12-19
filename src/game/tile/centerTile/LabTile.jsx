@@ -3,7 +3,7 @@ import { useGame, useGameDispatch } from "../../../state/GameContext";
 import DialogueBox from "../../components/DialogueBox";
 import Svg from "../../components/Svg";
 import Flasks from "../../img/flasks.svg";
-import { Item } from "../../components/Item";
+import { Item, ItemWithQuantity } from "../../components/Item";
 import { CenterTileContentContainer } from "../../CenterTileContentContainer";
 import { useOpen } from "../../useOpen";
 
@@ -48,21 +48,37 @@ function LabTileDialogueContent({
                 className="flex items-center justify-center  mb-1"
                 key={r.id}
               >
-                {r.ingredients.map((ingredient, i) => (
-                  <div
-                    className="flex items-center justify-center whitespace-pre"
-                    key={`${ingredient.itemId}-${i}`}
-                  >
+                {r.ingredients.map((ingredient, i) => {
+                  const itemWrapperClass = hasIngredient(ingredient)
+                    ? ""
+                    : "opacity-50";
+                  return (
                     <div
-                      className={`flex items-center justify-start whitespace-pre pr-1 mx-1`}
-                      style={hasIngredient(ingredient) ? {} : { opacity: 0.5 }}
+                      className="flex items-center justify-center whitespace-pre"
+                      key={`${ingredient.itemId}-${i}`}
                     >
-                      <Item item={inventoryById[ingredient.itemId]} />
-                      <div className="text-xs">x {ingredient.quantity}</div>
+                      <ItemWithQuantity
+                        item={inventoryById[ingredient.itemId]}
+                        quantity={ingredient.quantity}
+                        wrapperClass={itemWrapperClass}
+                      />
+                      {/* <div
+                        className={`flex items-center justify-start whitespace-pre pr-1 mx-1`}
+                        style={
+                          hasIngredient(ingredient) ? {} : { opacity: 0.5 }
+                        }
+                      >
+                        <Item item={inventoryById[ingredient.itemId]} />
+                        <div className="text-xs">x {ingredient.quantity}</div>
+                      </div> */}
+                      {i < r.ingredients.length - 1 ? (
+                        <div>+</div>
+                      ) : (
+                        <div>=</div>
+                      )}
                     </div>
-                    {i < r.ingredients.length - 1 ? <div>+</div> : <div>=</div>}
-                  </div>
-                ))}
+                  );
+                })}
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
