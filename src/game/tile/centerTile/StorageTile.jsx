@@ -9,11 +9,11 @@ import { useOpen } from "../../useOpen";
 import _ from "lodash";
 
 export function StorageTile({ room }) {
-  const { inventory, storageItems } = useGame();
+  const { inventoryById, storageItemsById } = useGame();
   const dispatch = useGameDispatch();
   const { open, toggleOpen } = useOpen();
 
-  const storageItemList = _.values(storageItems).filter(
+  const storageItemList = _.values(storageItemsById).filter(
     (item) => item.quantity > 0
   );
 

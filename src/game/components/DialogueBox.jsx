@@ -7,7 +7,7 @@ function DialogueBox({ children, onClick = () => {}, isOpen, style = {} }) {
   return (
     <div
       ref={ref}
-      className="xs:px-2 xs:py-1 sm:px-4 sm:py-2 px-4 py-2 min-h-8"
+      className="xs:px-2 xs:py-1 sm:px-4 sm:py-2 px-4 py-2"
       style={_.merge(
         {
           position: "absolute",
@@ -25,6 +25,7 @@ function DialogueBox({ children, onClick = () => {}, isOpen, style = {} }) {
           fontSize: "smaller",
           minWidth: "200%",
           border: "2px double #f0f0f0",
+          minHeight: "2.75rem",
         },
         style
       )}

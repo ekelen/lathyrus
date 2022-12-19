@@ -13,9 +13,9 @@ const ROOM_TYPES = {
 const ROOM_POSITIONS = [
   ["0_C", null, "rabbit", null, null],
   ["1_LAB", "2_M", "13", null, "9_C"],
-  [null, "3_MY_STUFF", "11_C", "10_M", "14"],
+  [null, "3_MY_STUFF", "11_C", "10_M", "14_LAB"],
   ["12_M_RABBIT", "4_C", null, null, null],
-  [null, "5_M_TOAD", "toad", "8_C", "7_EXIT"],
+  [null, "5_M_TOAD", "toad", "exitGoblin", "7_EXIT"],
 ];
 
 const MAP_SIZE = ROOM_POSITIONS.length;
@@ -28,7 +28,7 @@ const DIRECTION_OPPOSITE = {
   west: "east",
 };
 
-let ITEMS = _.keyBy(
+let ITEMS_BY_ID = _.keyBy(
   [
     { id: "gold", name: "Gold", value: 2, symbol: "🜚", type: "alchemy" },
     { id: "silver", name: "Silver", value: 2, symbol: "🜛", type: "alchemy" },
@@ -79,12 +79,12 @@ const ambers = [
   "text-amber-900",
 ];
 
-ITEMS = _.mapValues(ITEMS, (item, id) => ({
+ITEMS_BY_ID = _.mapValues(ITEMS_BY_ID, (item, id) => ({
   ...item,
   colorClass: ambers[Math.log2(item.value)],
 }));
 
-let ROOMS = _.keyBy(
+let ROOMS_BY_ID = _.keyBy(
   [
     {
       id: "0_C",
@@ -119,9 +119,9 @@ let ROOMS = _.keyBy(
       type: ROOM_TYPES.exit,
     },
     {
-      id: "8_C",
+      id: "exitGoblin",
       name: "Room 8",
-      type: ROOM_TYPES.container,
+      type: ROOM_TYPES.monster,
     },
     {
       id: "9_C",
@@ -137,7 +137,7 @@ let ROOMS = _.keyBy(
     { id: "12_M_RABBIT", name: "Room 12", type: ROOM_TYPES.monster },
     { id: "rabbit", name: "Room 13", type: ROOM_TYPES.captive },
     { id: "13", name: "Room 13" },
-    { id: "14", name: "Room 14" },
+    { id: "14_LAB", name: "Lab 2", type: ROOM_TYPES.lab },
   ],
   "id"
 );
@@ -179,16 +179,6 @@ const CONTAINER_ITEMS = {
       quantity: 5,
     },
   ],
-  "8_C": [
-    {
-      id: "mercury",
-      quantity: 1,
-    },
-    {
-      id: "copper",
-      quantity: 1,
-    },
-  ],
   "9_C": [
     {
       id: "gold",
@@ -197,6 +187,18 @@ const CONTAINER_ITEMS = {
     {
       id: "earthEssence",
       quantity: 4,
+    },
+    {
+      id: "frostEssence",
+      quantity: 4,
+    },
+    {
+      id: "silver",
+      quantity: 2,
+    },
+    {
+      id: "tin",
+      quantity: 2,
     },
   ],
   "11_C": [
@@ -207,7 +209,7 @@ const CONTAINER_ITEMS = {
   ],
 };
 
-const MONSTERS = [
+const MONSTER_LIST = [
   {
     name: "small goblin",
     maxHunger: 4,
@@ -232,6 +234,12 @@ const MONSTERS = [
     maxHunger: 8,
     roomId: "12_M_RABBIT",
     hasKeyTo: "rabbit",
+    image: "goblin",
+  },
+  {
+    name: "goblin",
+    maxHunger: 32,
+    roomId: "exitGoblin",
     image: "goblin",
   },
 ];
@@ -287,7 +295,7 @@ const ROOM_EXIT_POSITIONS = {
   west: getPositionFromCoordinates(0, 1),
 };
 
-ROOMS = _.mapValues(ROOMS, (room) => {
+ROOMS_BY_ID = _.mapValues(ROOMS_BY_ID, (room) => {
   if (!room.type) {
     room.type = ROOM_TYPES.empty;
   }
@@ -299,7 +307,7 @@ ROOMS = _.mapValues(ROOMS, (room) => {
     coordinates: { x, y },
   };
 });
-ROOMS = _.mapValues(ROOMS, (room) => {
+ROOMS_BY_ID = _.mapValues(ROOMS_BY_ID, (room) => {
   const { x, y } = room.coordinates;
   const exits = {
     north: ROOM_POSITIONS[y - 1]?.[x] ?? null,
@@ -328,7 +336,7 @@ ROOMS = _.mapValues(ROOMS, (room) => {
 CAPTIVE_LIST = _.map(CAPTIVE_LIST, (captive) => ({
   ...captive,
   freed: false,
-  position: ROOMS[captive.roomId].position,
+  position: ROOMS_BY_ID[captive.roomId].position,
 }));
 
 const MAX_ITEMS = 5;
@@ -337,14 +345,14 @@ export {
   CAPTIVE_LIST,
   CONTAINER_ITEMS,
   DIRECTION_OPPOSITE,
-  ITEMS,
+  ITEMS_BY_ID,
   MAP_SIZE,
   MAX_ITEMS,
-  MONSTERS,
+  MONSTER_LIST,
   RECIPES_BY_ID,
   ROOM_EXIT_POSITIONS,
   ROOM_POSITIONS,
   ROOM_SIZE,
   ROOM_TYPES,
-  ROOMS,
+  ROOMS_BY_ID,
 };

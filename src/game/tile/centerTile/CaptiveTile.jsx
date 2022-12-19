@@ -8,12 +8,12 @@ import { CaptiveImage } from "../../components/Captive";
 import { CenterTileContentContainer } from "../../CenterTileContentContainer";
 import { useOpen } from "../../useOpen";
 import { Item } from "../../components/Item";
-import { ITEMS } from "../../../data/constants";
+import { ITEMS_BY_ID } from "../../../data/constants";
 
 export function CaptiveTile({ room }) {
-  const { captives, haveKeysTo } = useGame();
+  const { captivesByRoomId, haveKeysTo } = useGame();
   const dispatch = useGameDispatch();
-  const captive = captives[room.id];
+  const captive = captivesByRoomId[room.id];
   const haveKey = haveKeysTo.includes(captive.id);
   const { colorClass } = captive;
 
@@ -55,7 +55,7 @@ export function CaptiveTile({ room }) {
                   handleFreeCaptive();
                 }}
                 disabled={!haveKey || captive.freed}
-                className="rounded-sm border border-white border-solid p-1 whitespace-pre w-min flex justify-center items-center gap-2 disabled:opacity-50"
+                className="p-1 whitespace-pre w-min flex justify-center items-center gap-2 disabled:opacity-50 disabled:bg-transparent bg-slate-800 rounded-sm"
               >
                 <div className="ml-2 flex items-center justify-center h-4 w-4 relative">
                   <div className={`relative h-full w-full ${colorClass}`}>
@@ -67,7 +67,7 @@ export function CaptiveTile({ room }) {
                 </div>
 
                 <Item
-                  item={ITEMS[captive.teaches.recipeId]}
+                  item={ITEMS_BY_ID[captive.teaches.recipeId]}
                   // colorClass="text-slate-500"
                 />
               </button>

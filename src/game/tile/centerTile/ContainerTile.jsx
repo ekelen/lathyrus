@@ -3,27 +3,30 @@ import { useGame, useGameDispatch } from "../../../state/GameContext";
 import DialogueBox from "../../components/DialogueBox";
 import Svg from "../../components/Svg";
 import Chest from "../../img/chest.svg";
-import { Item } from "../../components/Item";
+import {
+  Item,
+  ItemWithQuantity,
+  ItemWithQuantityButton,
+} from "../../components/Item";
 import { CenterTileContentContainer } from "../../CenterTileContentContainer";
 import { useOpen } from "../../useOpen";
 import _ from "lodash";
 
 function ContainerModalContents({ currentRoomItems, handleTakeItem }) {
   return (
-    <div className="flex flex-wrap items-center gap-1 content-start w-full">
+    <div className="flex flex-wrap items-center content-start w-full">
       {currentRoomItems.map((item) => {
         return (
-          <button
+          <ItemWithQuantityButton
             key={item.id}
+            item={item}
+            quantity={item.quantity}
             onClick={(e) => {
               e.stopPropagation();
               handleTakeItem(item);
             }}
-            className={`flex items-center justify-start whitespace-pre disabled:opacity-50 border-solid border border-gray-700 rounded-md pr-1 h-6`}
-          >
-            <Item item={item} />
-            <div className="text-xs">x {item.quantity}</div>
-          </button>
+            wrapperClass="disabled:opacity-50"
+          />
         );
       })}
       <div className="h-6 w-0" />
@@ -32,9 +35,9 @@ function ContainerModalContents({ currentRoomItems, handleTakeItem }) {
 }
 
 export function ContainerTile({ room }) {
-  const { roomItems, previousRoom } = useGame();
+  const { itemsByRoomId, previousRoom } = useGame();
   const dispatch = useGameDispatch();
-  const currentRoomItems = _.values(roomItems[room.id]).filter(
+  const currentRoomItems = _.values(itemsByRoomId[room.id]).filter(
     (i) => i.quantity > 0
   );
 
