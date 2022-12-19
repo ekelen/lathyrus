@@ -32,9 +32,9 @@ function ContainerModalContents({ currentRoomItems, handleTakeItem }) {
 }
 
 export function ContainerTile({ room }) {
-  const { roomItems, previousRoom } = useGame();
+  const { itemsByRoomId, previousRoom } = useGame();
   const dispatch = useGameDispatch();
-  const currentRoomItems = _.values(roomItems[room.id]).filter(
+  const currentRoomItems = _.values(itemsByRoomId[room.id]).filter(
     (i) => i.quantity > 0
   );
 

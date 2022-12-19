@@ -10,7 +10,7 @@ import { useOpen } from "../../useOpen";
 
 function MonsterTileContents({ monster, room }) {
   const { sated, hunger, maxHunger, hasKeyTo } = monster;
-  const { captives } = useGame();
+  const { captivesByRoomId } = useGame();
   const hungerPct = _.ceil((hunger / maxHunger) * 100);
   const markerRef = useRef(null);
   const hungerRef = useRef(null);
@@ -23,7 +23,7 @@ function MonsterTileContents({ monster, room }) {
   const opacityClass = sated ? "opacity-50" : "opacity-100";
   const monsterDifficulty = Math.log2(maxHunger);
   const widthPct = `${monsterDifficulty * 10}%`;
-  const keyColorClass = !hasKeyTo ? "" : captives[hasKeyTo].colorClass;
+  const keyColorClass = !hasKeyTo ? "" : captivesByRoomId[hasKeyTo].colorClass;
 
   return (
     <div
@@ -49,8 +49,8 @@ function MonsterTileContents({ monster, room }) {
 }
 
 export function MonsterTile({ room }) {
-  const { roomMonsters, previousRoom } = useGame();
-  const monster = roomMonsters[room.id];
+  const { monstersByRoomId, previousRoom } = useGame();
+  const monster = monstersByRoomId[room.id];
   const { open, toggleOpen } = useOpen(
     !monster.sated && previousRoom?.id !== room.id
   );

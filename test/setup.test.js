@@ -56,14 +56,14 @@ describe("ROOM_POSITIONS and ROOMS_BY_ID", () => {
         .every((r) => MONSTER_LIST.find((m) => m.roomId === r.id))
     ).toBe(true);
   });
-  test("All captives must be in a room of type 'captive'", () => {
+  test("All captivesByRoomId must be in a room of type 'captive'", () => {
     expect(
       CAPTIVE_LIST.every((captive) => {
         return ROOMS_BY_ID[captive.roomId].type === "captive";
       })
     ).toBe(true);
   });
-  test("All captives must have a monster with key", () => {
+  test("All captivesByRoomId must have a monster with key", () => {
     CAPTIVE_LIST.forEach((captive) => {
       expect(MONSTER_LIST.find((m) => m.hasKeyTo === captive.id)).toBeTruthy();
     });
@@ -88,7 +88,7 @@ describe("ROOM_POSITIONS and ROOMS_BY_ID", () => {
     _.entries(constants.CONTAINER_ITEMS).forEach(([roomId, items]) => {
       expect(ROOMS_BY_ID[roomId].type).toBe("container");
     });
-    _.values(setup.initialState.roomItems)
+    _.values(setup.initialState.itemsByRoomId)
       .flat()
       .forEach((itemsById) => {
         _.entries(itemsById).forEach(([id, item]) => {
@@ -122,11 +122,11 @@ describe("initialData", () => {
     const { initialState } = setup;
     expect(initialState).toHaveProperty("currentRoom");
     expect(initialState).toHaveProperty("previousRoom");
-    expect(initialState).toHaveProperty("roomItems");
-    expect(initialState).toHaveProperty("roomMonsters");
+    expect(initialState).toHaveProperty("itemsByRoomId");
+    expect(initialState).toHaveProperty("monstersByRoomId");
     expect(initialState).toHaveProperty("movedCameraToOnTransition");
-    expect(initialState).toHaveProperty("inventory");
-    expect(initialState).toHaveProperty("captives");
+    expect(initialState).toHaveProperty("inventoryById");
+    expect(initialState).toHaveProperty("captivesByRoomId");
     expect(initialState).toHaveProperty("haveKeysTo");
   });
 });

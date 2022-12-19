@@ -20,10 +20,10 @@ const KeyCodepoint = ({ className }) => (
   <div className={className}>&#x0e033;</div>
 );
 
-function Captives({ freedCaptives, selectedCaptive, setSelectedCaptive }) {
+function Captives({ freedCaptiveList, selectedCaptive, setSelectedCaptive }) {
   return (
     <>
-      {freedCaptives.map((captive) => {
+      {freedCaptiveList.map((captive) => {
         const { colorClass } = captive;
         return (
           <div
@@ -41,13 +41,13 @@ function Captives({ freedCaptives, selectedCaptive, setSelectedCaptive }) {
   );
 }
 
-function Keys({ captives, haveKeysTo }) {
+function Keys({ captivesByRoomId, haveKeysTo }) {
   return (
     <>
       {haveKeysTo
-        .filter((captiveId) => !captives[captiveId]?.freed)
+        .filter((captiveId) => !captivesByRoomId[captiveId]?.freed)
         .map((key, i) => {
-          const captive = captives[key];
+          const captive = captivesByRoomId[key];
           const { colorClass } = captive;
           return (
             <div
@@ -65,7 +65,7 @@ function Keys({ captives, haveKeysTo }) {
   );
 }
 
-function _Inventory({ inventory, type, currentRoomMonster, dispatch }) {
+function _Inventory({ inventoryById, type, currentRoomMonster, dispatch }) {
   const disabled = type !== ROOM_TYPES.monster || currentRoomMonster?.sated;
 
   const handleItemClick = useCallback(
@@ -91,8 +91,8 @@ function _Inventory({ inventory, type, currentRoomMonster, dispatch }) {
   );
 
   const inventoryValues = useMemo(
-    () => _.values(inventory).filter((item) => item.quantity > 0),
-    [inventory]
+    () => _.values(inventoryById).filter((item) => item.quantity > 0),
+    [inventoryById]
   );
   return (
     <>
@@ -117,24 +117,25 @@ function _Inventory({ inventory, type, currentRoomMonster, dispatch }) {
 
 function Inventory(props) {
   const {
-    inventory,
+    inventoryById,
     currentRoom,
-    freedCaptives,
+    freedCaptiveList,
     currentRoomMonster,
     haveKeysTo,
-    captives,
+    captivesByRoomId,
     maxInventory,
   } = useGame();
   const { type } = currentRoom;
   const dispatch = useGameDispatch();
   const [selectedCaptive, setSelectedCaptive] = React.useState(null);
   const { open, toggleOpen, setOpen } = useOpen(false);
-  console.log(`[=] captives:`, captives);
+  console.log(`[=] captivesByRoomId:`, captivesByRoomId);
   const selectedCaptiveRecipe = useMemo(
     () =>
       !selectedCaptive
         ? null
-        : RECIPES_BY_ID[captives[selectedCaptive]?.teaches?.recipeId] ?? null,
+        : RECIPES_BY_ID[captivesByRoomId[selectedCaptive]?.teaches?.recipeId] ??
+          null,
     [selectedCaptive]
   );
   useEffect(() => {
@@ -144,14 +145,14 @@ function Inventory(props) {
     } else {
       setOpen(false);
     }
-  }, [freedCaptives, selectedCaptiveRecipe, setOpen]);
+  }, [freedCaptiveList, selectedCaptiveRecipe, setOpen]);
 
   React.useEffect(() => {
     console.log(`[=] selectedCaptive changed`);
     console.log(`[=] selectedCaptive:`, selectedCaptive);
     console.log(
       `[=] CAPTIVE_LIST[selectedCaptive]:`,
-      captives[selectedCaptive]
+      captivesByRoomId[selectedCaptive]
     );
   }, [selectedCaptive]);
 
@@ -159,7 +160,7 @@ function Inventory(props) {
     <div className="flex h-24 w-100 mt-2 gap-1 relative">
       <div className="flex flex-col flex-wrap h-full p-2 grow border-2 border-slate-700 border-double rounded-md align-start content-start justify-start">
         <_Inventory
-          inventory={inventory}
+          inventoryById={inventoryById}
           type={type}
           currentRoomMonster={currentRoomMonster}
           dispatch={dispatch}
@@ -182,11 +183,11 @@ function Inventory(props) {
         </div> */}
       </div>
       <div className="flex flex-col flex-wrap relative h-full w-10 border-2 border-slate-700 border-double rounded-md">
-        <Keys captives={captives} haveKeysTo={haveKeysTo} />
+        <Keys captivesByRoomId={captivesByRoomId} haveKeysTo={haveKeysTo} />
       </div>
       <div className="flex flex-col flex-wrap relative h-full w-10 border-2 border-slate-700 border-double rounded-md">
         <Captives
-          freedCaptives={freedCaptives}
+          freedCaptiveList={freedCaptiveList}
           selectedCaptive={selectedCaptive}
           setSelectedCaptive={setSelectedCaptive}
         />

@@ -53,7 +53,7 @@ describe("reset", () => {
       type: "updateInventoryQuantity",
       payload: { itemId: "gold", quantity: 1 },
     });
-    let goldItem = gameState.inventory["gold"];
+    let goldItem = gameState.inventoryById["gold"];
     expect(goldItem).toHaveProperty("quantity", 1);
     expect(goldItem).toHaveProperty("id", "gold");
     expect(goldItem).toHaveProperty("name", "Gold");
@@ -62,7 +62,7 @@ describe("reset", () => {
       type: "updateInventoryQuantity",
       payload: { itemId: "gold", quantity: -1 },
     });
-    goldItem = gameState.inventory["gold"];
+    goldItem = gameState.inventoryById["gold"];
     expect(goldItem).toHaveProperty("quantity", 0);
   });
   test("sate monster", () => {
@@ -76,25 +76,31 @@ describe("reset", () => {
     });
     expect(result.currentRoom.id).toEqual("2_M");
     expect(result.previousRoom.id).toEqual("1_LAB");
-    expect(result.roomMonsters["2_M"]).toHaveProperty("sated", false);
-    expect(result.roomMonsters["2_M"]).toHaveProperty("maxHunger");
-    expect(result.roomMonsters["2_M"].maxHunger).toEqual(4);
-    expect(result.roomMonsters["2_M"].hunger).toEqual(
-      result.roomMonsters["2_M"].maxHunger
+    expect(result.monstersByRoomId["2_M"]).toHaveProperty("sated", false);
+    expect(result.monstersByRoomId["2_M"]).toHaveProperty("maxHunger");
+    expect(result.monstersByRoomId["2_M"].maxHunger).toEqual(4);
+    expect(result.monstersByRoomId["2_M"].hunger).toEqual(
+      result.monstersByRoomId["2_M"].maxHunger
     );
     let fedMonsterResult = gameReducer(result, {
       type: "feed",
       payload: { itemId: "gold" },
     });
-    expect(fedMonsterResult.roomMonsters["2_M"].hunger).toBeLessThan(
-      result.roomMonsters["2_M"].maxHunger
+    expect(fedMonsterResult.monstersByRoomId["2_M"].hunger).toBeLessThan(
+      result.monstersByRoomId["2_M"].maxHunger
     );
     fedMonsterResult = gameReducer(fedMonsterResult, {
       type: "feed",
       payload: { itemId: "gold" },
     });
-    expect(fedMonsterResult.roomMonsters["2_M"]).toHaveProperty("hunger", 0);
-    expect(fedMonsterResult.roomMonsters["2_M"]).toHaveProperty("sated", true);
+    expect(fedMonsterResult.monstersByRoomId["2_M"]).toHaveProperty(
+      "hunger",
+      0
+    );
+    expect(fedMonsterResult.monstersByRoomId["2_M"]).toHaveProperty(
+      "sated",
+      true
+    );
     expect(fedMonsterResult.currentRoom.lockedDirections).toHaveLength(0);
   });
   test("freeCaptive", () => {
@@ -103,15 +109,16 @@ describe("reset", () => {
       haveKeysTo: [],
       currentRoom: ROOMS_BY_ID["rabbit"],
     };
-    expect(gameState.captives["rabbit"]).toHaveProperty("freed", false);
+    expect(gameState.captivesByRoomId["rabbit"]).toHaveProperty("freed", false);
     expect(gameState.learnedRecipeIds).toHaveLength(0);
     // try to free captive without key
     gameState = gameReducer(gameState, {
       type: "freeCaptive",
       payload: { roomId: "rabbit" },
     });
-    expect(gameState.captives["rabbit"]).toHaveProperty("freed", false);
+    expect(gameState.captivesByRoomId["rabbit"]).toHaveProperty("freed", false);
     expect(gameState.learnedRecipeIds).toHaveLength(0);
+
     gameState = {
       ...gameState,
       haveKeysTo: ["rabbit"],
@@ -121,8 +128,9 @@ describe("reset", () => {
       type: "freeCaptive",
       payload: { roomId: "rabbit" },
     });
-    expect(gameState.captives["rabbit"]).toHaveProperty("freed", true);
+    expect(gameState.captivesByRoomId["rabbit"]).toHaveProperty("freed", true);
     expect(gameState.learnedRecipeIds).toHaveLength(1);
+    expect(gameState.learnedRecipeIds).toContain("frostFarthing");
   });
   test("combineItems", () => {
     let gameState = {
@@ -137,26 +145,26 @@ describe("reset", () => {
       type: "updateInventoryQuantity",
       payload: { itemId: "frostEssence", quantity: 1 },
     });
-    expect(gameState.inventory.tin).toHaveProperty("quantity", 1);
-    expect(gameState.inventory.frostFarthing).toHaveProperty("quantity", 0);
+    expect(gameState.inventoryById.tin).toHaveProperty("quantity", 1);
+    expect(gameState.inventoryById.frostFarthing).toHaveProperty("quantity", 0);
     gameState = gameReducer(gameState, {
       type: "combineItems",
       payload: { recipeId: "frostFarthing" },
     });
-    expect(gameState.inventory.tin).toHaveProperty("quantity", 0);
-    expect(gameState.inventory.frostEssence).toHaveProperty("quantity", 0);
-    expect(gameState.inventory.frostFarthing).toHaveProperty("quantity", 1);
+    expect(gameState.inventoryById.tin).toHaveProperty("quantity", 0);
+    expect(gameState.inventoryById.frostEssence).toHaveProperty("quantity", 0);
+    expect(gameState.inventoryById.frostFarthing).toHaveProperty("quantity", 1);
     // try to combine items without items
     gameReducer(gameState, {
       type: "combineItems",
       payload: { recipeId: "frostFarthing" },
     });
-    expect(gameState.inventory.frostFarthing).toHaveProperty("quantity", 1);
+    expect(gameState.inventoryById.frostFarthing).toHaveProperty("quantity", 1);
     // try to combine items without recipe
     gameReducer(gameState, {
       type: "combineItems",
       payload: { recipeId: "gildedGroat" },
     });
-    expect(gameState.inventory.gildedGroat).toHaveProperty("quantity", 0);
+    expect(gameState.inventoryById.gildedGroat).toHaveProperty("quantity", 0);
   });
 });

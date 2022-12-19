@@ -15,7 +15,7 @@ export function gameReducer(state, action) {
     }
     case "move": {
       const { direction } = action.payload;
-      const { currentRoom, roomMonsters } = state;
+      const { currentRoom, monstersByRoomId } = state;
       const isLocked = currentRoom.lockedExitTilePositions?.includes(
         ROOM_EXIT_POSITIONS[direction]
       );
@@ -27,7 +27,7 @@ export function gameReducer(state, action) {
       const targetRoom = ROOMS_BY_ID[currentRoom.exits[direction]];
       const { exits } = targetRoom;
       const exitDirections = _.keys(exits).filter((dir) => exits[dir]);
-      const monster = roomMonsters[targetRoom.id] ?? null;
+      const monster = monstersByRoomId[targetRoom.id] ?? null;
       const noLockedExits = !monster || monster.sated;
       const lockedDirections = noLockedExits
         ? []
@@ -48,20 +48,20 @@ export function gameReducer(state, action) {
     }
     case "addToInventoryFromStorage": {
       const { itemId, quantity } = action.payload;
-      const { inventory, storageItems } = state;
+      const { inventoryById, storageItemsById } = state;
 
-      const storageItem = storageItems[itemId];
+      const storageItem = storageItemsById[itemId];
       const newStorageItems = {
-        ...storageItems,
+        ...storageItemsById,
         [itemId]: {
           ...storageItem,
           quantity: storageItem.quantity - quantity,
         },
       };
-      const inventoryItem = inventory[itemId];
+      const inventoryItem = inventoryById[itemId];
 
       const newInventoryItems = {
-        ...inventory,
+        ...inventoryById,
         [itemId]: {
           ...inventoryItem,
           quantity: inventoryItem.quantity + quantity,
@@ -70,26 +70,26 @@ export function gameReducer(state, action) {
 
       return {
         ...state,
-        storageItems: newStorageItems,
-        inventory: newInventoryItems,
+        storageItemsById: newStorageItems,
+        inventoryById: newInventoryItems,
       };
     }
     case "addToStorageFromInventory": {
       const { itemId, quantity } = action.payload;
-      const { inventory, storageItems } = state;
+      const { inventoryById, storageItemsById } = state;
 
-      const inventoryItem = inventory[itemId];
+      const inventoryItem = inventoryById[itemId];
       const newInventoryItems = {
-        ...inventory,
+        ...inventoryById,
         [itemId]: {
           ...inventoryItem,
           quantity: inventoryItem.quantity - quantity,
         },
       };
-      const storageItem = storageItems[itemId];
+      const storageItem = storageItemsById[itemId];
 
       const newStorageItems = {
-        ...storageItems,
+        ...storageItemsById,
         [itemId]: {
           ...storageItem,
           quantity: storageItem.quantity + quantity,
@@ -98,17 +98,17 @@ export function gameReducer(state, action) {
 
       return {
         ...state,
-        storageItems: newStorageItems,
-        inventory: newInventoryItems,
+        storageItemsById: newStorageItems,
+        inventoryById: newInventoryItems,
       };
     }
     case "updateInventoryQuantity": {
       const { itemId, quantity } = action.payload;
-      const { inventory } = state;
+      const { inventoryById } = state;
 
-      const inventoryItem = inventory[itemId];
+      const inventoryItem = inventoryById[itemId];
       const newInventoryItems = {
-        ...inventory,
+        ...inventoryById,
         [itemId]: {
           ...inventoryItem,
           quantity: inventoryItem.quantity + quantity,
@@ -117,17 +117,17 @@ export function gameReducer(state, action) {
 
       return {
         ...state,
-        inventory: newInventoryItems,
+        inventoryById: newInventoryItems,
       };
     }
     case "addToInventoryFromRoom": {
       const { itemId, quantity } = action.payload;
-      const { inventory, roomItems, currentRoom } = state;
+      const { inventoryById, itemsByRoomId, currentRoom } = state;
 
-      const roomItem = roomItems[currentRoom.id][itemId];
-      const inventoryItem = inventory[itemId];
+      const roomItem = itemsByRoomId[currentRoom.id][itemId];
+      const inventoryItem = inventoryById[itemId];
       const newInventoryItems = {
-        ...inventory,
+        ...inventoryById,
         [itemId]: {
           ...inventoryItem,
           quantity: inventoryItem.quantity + quantity,
@@ -135,7 +135,7 @@ export function gameReducer(state, action) {
       };
 
       const newCurrentRoomItems = {
-        ...roomItems[currentRoom.id],
+        ...itemsByRoomId[currentRoom.id],
         [itemId]: {
           ...roomItem,
           quantity: roomItem.quantity - quantity,
@@ -144,23 +144,23 @@ export function gameReducer(state, action) {
 
       return {
         ...state,
-        roomItems: {
-          ...roomItems,
+        itemsByRoomId: {
+          ...itemsByRoomId,
           [currentRoom.id]: newCurrentRoomItems,
         },
-        inventory: newInventoryItems,
+        inventoryById: newInventoryItems,
       };
     }
     case "feed": {
       const { itemId } = action.payload;
-      const { currentRoom, roomMonsters, inventory } = state;
-      const monster = roomMonsters[currentRoom.id];
+      const { currentRoom, monstersByRoomId, inventoryById } = state;
+      const monster = monstersByRoomId[currentRoom.id];
       const { hasKeyTo } = monster;
       if (monster.sated) {
         // console.log("monster is sated");
         return state;
       }
-      const inventoryItem = inventory[itemId];
+      const inventoryItem = inventoryById[itemId];
       const { value } = inventoryItem;
       const hunger = max([monster.hunger - value, 0]);
       const sated = hunger === 0;
@@ -171,11 +171,11 @@ export function gameReducer(state, action) {
         hasKeyTo: sated ? null : hasKeyTo,
       };
       const newRoomMonsters = {
-        ...roomMonsters,
+        ...monstersByRoomId,
         [currentRoom.id]: newMonster,
       };
       const newInventoryItems = {
-        ...inventory,
+        ...inventoryById,
         [itemId]: {
           ...inventoryItem,
           quantity: inventoryItem.quantity - 1,
@@ -193,29 +193,29 @@ export function gameReducer(state, action) {
             lockedDirections: [],
           },
           haveKeysTo,
-          roomMonsters: newRoomMonsters,
-          inventory: newInventoryItems,
+          monstersByRoomId: newRoomMonsters,
+          inventoryById: newInventoryItems,
         };
       } else {
         return {
           ...state,
-          roomMonsters: newRoomMonsters,
-          inventory: newInventoryItems,
+          monstersByRoomId: newRoomMonsters,
+          inventoryById: newInventoryItems,
         };
       }
     }
     case "freeCaptive": {
-      const { captives, haveKeysTo } = state;
+      const { captivesByRoomId, haveKeysTo } = state;
       const { roomId } = action.payload;
-      const captive = captives[roomId];
+      const captive = captivesByRoomId[roomId];
       if (!haveKeysTo.includes(captive.id)) {
         // console.error(`don't have key for ${roomId} captive ${captive.id}`);
         return state;
       }
       return {
         ...state,
-        captives: {
-          ...captives,
+        captivesByRoomId: {
+          ...captivesByRoomId,
           [roomId]: {
             ...captive,
             freed: true,
@@ -227,7 +227,7 @@ export function gameReducer(state, action) {
       };
     }
     case "combineItems": {
-      const { inventory, learnedRecipeIds } = state;
+      const { inventoryById, learnedRecipeIds } = state;
       const { recipeId } = action.payload;
 
       if (!learnedRecipeIds.includes(recipeId)) {
@@ -236,7 +236,7 @@ export function gameReducer(state, action) {
       }
       const recipe = RECIPES_BY_ID[recipeId];
       const hasIngredients = recipe.ingredients.every((ingredient) => {
-        const inventoryItem = inventory[ingredient.itemId];
+        const inventoryItem = inventoryById[ingredient.itemId];
         return inventoryItem.quantity >= ingredient.quantity;
       });
       if (!hasIngredients) {
@@ -244,13 +244,13 @@ export function gameReducer(state, action) {
         return state;
       }
       const createdItem = {
-        ...inventory[recipeId],
-        quantity: inventory[recipeId].quantity + 1,
+        ...inventoryById[recipeId],
+        quantity: inventoryById[recipeId].quantity + 1,
       };
       const ingredientInventoryItems = recipe.ingredients
         .map((i) => i.itemId)
         .reduce((acc, itemId) => {
-          const inventoryItem = inventory[itemId];
+          const inventoryItem = inventoryById[itemId];
           return {
             ...acc,
             [itemId]: {
@@ -262,8 +262,8 @@ export function gameReducer(state, action) {
       // wip
       return {
         ...state,
-        inventory: {
-          ...inventory,
+        inventoryById: {
+          ...inventoryById,
           ...ingredientInventoryItems,
           [recipeId]: createdItem,
         },

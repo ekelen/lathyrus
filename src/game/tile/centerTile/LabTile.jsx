@@ -9,25 +9,25 @@ import { useOpen } from "../../useOpen";
 
 function LabTileDialogueContent({
   room,
-  learnedRecipes,
-  inventory,
+  learnedRecipeList,
+  inventoryById,
   learnedRecipeIds,
   dispatch,
 }) {
   const hasIngredients = useCallback(
     (recipe) => {
       return recipe.ingredients.every((ingredient) => {
-        return inventory[ingredient.itemId].quantity >= ingredient.quantity;
+        return inventoryById[ingredient.itemId].quantity >= ingredient.quantity;
       });
     },
-    [inventory]
+    [inventoryById]
   );
 
   const hasIngredient = useCallback(
     (ingredient) => {
-      return inventory[ingredient.itemId].quantity >= ingredient.quantity;
+      return inventoryById[ingredient.itemId].quantity >= ingredient.quantity;
     },
-    [inventory]
+    [inventoryById]
   );
 
   const handleCombineItems = (recipeId) => {
@@ -42,7 +42,7 @@ function LabTileDialogueContent({
         {!learnedRecipeIds.length ? (
           <span>You haven't learned any recipes yet...</span>
         ) : (
-          learnedRecipes.map((r) => {
+          learnedRecipeList.map((r) => {
             return (
               <div
                 className="flex items-center justify-center  mb-1"
@@ -57,7 +57,7 @@ function LabTileDialogueContent({
                       className={`flex items-center justify-start whitespace-pre pr-1 mx-1`}
                       style={hasIngredient(ingredient) ? {} : { opacity: 0.5 }}
                     >
-                      <Item item={inventory[ingredient.itemId]} />
+                      <Item item={inventoryById[ingredient.itemId]} />
                       <div className="text-xs">x {ingredient.quantity}</div>
                     </div>
                     {i < r.ingredients.length - 1 ? <div>+</div> : <div>=</div>}
@@ -71,7 +71,7 @@ function LabTileDialogueContent({
                   disabled={!hasIngredients(r)}
                   className="border border-white rounded-md border-solid whitespace-pre p-1 ml-2 disabled:opacity-50"
                 >
-                  <Item item={inventory[r.id]} />
+                  <Item item={inventoryById[r.id]} />
                 </button>
               </div>
             );
@@ -83,7 +83,7 @@ function LabTileDialogueContent({
 }
 
 export function LabTile({ room }) {
-  const { learnedRecipeIds, learnedRecipes, inventory } = useGame();
+  const { learnedRecipeIds, learnedRecipeList, inventoryById } = useGame();
   const { open, toggleOpen } = useOpen();
   const dispatch = useGameDispatch();
   const disabled = learnedRecipeIds.length < 1;
@@ -103,8 +103,8 @@ export function LabTile({ room }) {
       >
         <LabTileDialogueContent
           room={room}
-          learnedRecipes={learnedRecipes}
-          inventory={inventory}
+          learnedRecipeList={learnedRecipeList}
+          inventoryById={inventoryById}
           learnedRecipeIds={learnedRecipeIds}
           dispatch={dispatch}
         />

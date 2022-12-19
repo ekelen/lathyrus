@@ -11,9 +11,9 @@ import { Item } from "../../components/Item";
 import { ITEMS_BY_ID } from "../../../data/constants";
 
 export function CaptiveTile({ room }) {
-  const { captives, haveKeysTo } = useGame();
+  const { captivesByRoomId, haveKeysTo } = useGame();
   const dispatch = useGameDispatch();
-  const captive = captives[room.id];
+  const captive = captivesByRoomId[room.id];
   const haveKey = haveKeysTo.includes(captive.id);
   const { colorClass } = captive;
 

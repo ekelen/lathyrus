@@ -19,23 +19,29 @@ export function useGameDispatch() {
 
 const GameContextProvider = (props) => {
   const [state, dispatch] = React.useReducer(gameReducer, initialState);
-  const { roomMonsters, currentRoom, captives, learnedRecipeIds } = state;
+  const { monstersByRoomId, currentRoom, captivesByRoomId, learnedRecipeIds } =
+    state;
 
-  const freedCaptives = useMemo(() => {
-    return _.values(captives).filter((c) => c.freed);
-  }, [captives]);
+  const freedCaptiveList = useMemo(() => {
+    return _.values(captivesByRoomId).filter((c) => c.freed);
+  }, [captivesByRoomId]);
 
   const currentRoomMonster = useMemo(() => {
-    return roomMonsters[currentRoom.id] ?? null;
-  }, [roomMonsters, currentRoom.id]);
+    return monstersByRoomId[currentRoom.id] ?? null;
+  }, [monstersByRoomId, currentRoom.id]);
 
-  const learnedRecipes = useMemo(() => {
+  const learnedRecipeList = useMemo(() => {
     return learnedRecipeIds.map((id) => RECIPES_BY_ID[id]);
   }, [learnedRecipeIds]);
 
   return (
     <GameContext.Provider
-      value={{ ...state, freedCaptives, currentRoomMonster, learnedRecipes }}
+      value={{
+        ...state,
+        freedCaptiveList,
+        currentRoomMonster,
+        learnedRecipeList,
+      }}
     >
       <GameDispatchContext.Provider value={dispatch}>
         {/* <ModalContext.Provider value={{ showModal, handleShowModal }}> */}
