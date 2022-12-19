@@ -3,7 +3,7 @@ const { initialState } = require("../src/data/setup");
 const { gameReducer } = require("../src/state/gameReducer");
 
 const {
-  ROOMS,
+  ROOMS_BY_ID,
   ROOM_POSITIONS,
   MAP_SIZE,
   ROOM_TYPES,
@@ -13,8 +13,8 @@ describe("reset", () => {
   test("reset is valid", () => {
     const gameState = {
       ...initialState,
-      currentRoom: ROOMS[_.keys(ROOMS)[2]],
-      previousRoom: ROOMS[_.keys(ROOMS)[3]],
+      currentRoom: ROOMS_BY_ID[_.keys(ROOMS_BY_ID)[2]],
+      previousRoom: ROOMS_BY_ID[_.keys(ROOMS_BY_ID)[3]],
     };
     const result = gameReducer(gameState, { type: "reset" });
     expect(JSON.stringify(result)).toEqual(JSON.stringify(initialState));
@@ -37,7 +37,7 @@ describe("reset", () => {
   test("move in locked room", () => {
     const gameState = {
       ...initialState,
-      currentRoom: ROOMS["1_LAB"],
+      currentRoom: ROOMS_BY_ID["1_LAB"],
     };
     const result = gameReducer(gameState, {
       type: "move",
@@ -68,7 +68,7 @@ describe("reset", () => {
   test("sate monster", () => {
     const gameState = {
       ...initialState,
-      currentRoom: ROOMS["1_LAB"],
+      currentRoom: ROOMS_BY_ID["1_LAB"],
     };
     const result = gameReducer(gameState, {
       type: "move",
@@ -101,7 +101,7 @@ describe("reset", () => {
     let gameState = {
       ...initialState,
       haveKeysTo: [],
-      currentRoom: ROOMS["rabbit"],
+      currentRoom: ROOMS_BY_ID["rabbit"],
     };
     expect(gameState.captives["rabbit"]).toHaveProperty("freed", false);
     expect(gameState.learnedRecipeIds).toHaveLength(0);
@@ -115,7 +115,7 @@ describe("reset", () => {
     gameState = {
       ...gameState,
       haveKeysTo: ["rabbit"],
-      currentRoom: ROOMS["rabbit"],
+      currentRoom: ROOMS_BY_ID["rabbit"],
     };
     gameState = gameReducer(gameState, {
       type: "freeCaptive",

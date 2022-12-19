@@ -1,8 +1,8 @@
 import _, { cloneDeep } from "lodash";
 import {
-  ITEMS,
-  MONSTERS,
-  ROOMS,
+  ITEMS_BY_ID,
+  MONSTER_LIST,
+  ROOMS_BY_ID,
   ROOM_POSITIONS,
   CAPTIVE_LIST,
   ROOM_EXIT_POSITIONS,
@@ -12,7 +12,7 @@ import {
 import { getPositionFromCoordinates, sortByName } from "./util";
 
 const roomMonsters = _.keyBy(
-  MONSTERS.map((monster) => ({
+  MONSTER_LIST.map((monster) => ({
     ...monster,
     hunger: monster.maxHunger,
     sated: false,
@@ -22,7 +22,7 @@ const roomMonsters = _.keyBy(
 
 let containerItems = { ...CONTAINER_ITEMS };
 const mappedItems = _.keyBy(
-  _.values(ITEMS).map((item) => ({
+  _.values(ITEMS_BY_ID).map((item) => ({
     ...item,
     itemId: item.id,
     quantity: 0,
@@ -31,7 +31,7 @@ const mappedItems = _.keyBy(
 );
 
 const containerRoomKeys = _.keys(
-  _.pickBy(ROOMS, (room) => room.type === "container")
+  _.pickBy(ROOMS_BY_ID, (room) => room.type === "container")
 );
 
 containerItems = _.fromPairs(
@@ -54,7 +54,7 @@ containerItems = _.mapValues(containerItems, (items, roomId) => {
 // console.log(`[=] containerItems:`, containerItems);
 
 const inventory = _.keyBy(
-  _.values(ITEMS).map((item) => ({
+  _.values(ITEMS_BY_ID).map((item) => ({
     ...item,
     quantity: 0,
   })),
@@ -62,7 +62,7 @@ const inventory = _.keyBy(
 );
 
 const storageItems = _.keyBy(
-  _.values(ITEMS).map((item) => ({
+  _.values(ITEMS_BY_ID).map((item) => ({
     ...item,
     quantity: 0,
   })),
@@ -72,7 +72,7 @@ const storageItems = _.keyBy(
 const captives = _.keyBy(CAPTIVE_LIST, "roomId");
 
 export const initialState = {
-  currentRoom: _.cloneDeep(ROOMS["0_C"]),
+  currentRoom: _.cloneDeep(ROOMS_BY_ID["0_C"]),
   previousRoom: null,
   roomItems: _.cloneDeep(containerItems),
   inventory: _.cloneDeep(inventory),

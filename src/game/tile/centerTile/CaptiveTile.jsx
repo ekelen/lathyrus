@@ -8,7 +8,7 @@ import { CaptiveImage } from "../../components/Captive";
 import { CenterTileContentContainer } from "../../CenterTileContentContainer";
 import { useOpen } from "../../useOpen";
 import { Item } from "../../components/Item";
-import { ITEMS } from "../../../data/constants";
+import { ITEMS_BY_ID } from "../../../data/constants";
 
 export function CaptiveTile({ room }) {
   const { captives, haveKeysTo } = useGame();
@@ -67,7 +67,7 @@ export function CaptiveTile({ room }) {
                 </div>
 
                 <Item
-                  item={ITEMS[captive.teaches.recipeId]}
+                  item={ITEMS_BY_ID[captive.teaches.recipeId]}
                   // colorClass="text-slate-500"
                 />
               </button>

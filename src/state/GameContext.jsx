@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import { initialState } from "../data/setup";
 import _ from "lodash";
 import { gameReducer } from "./gameReducer";
-import { ITEMS, RECIPES_BY_ID } from "../data/constants";
+import { ITEMS_BY_ID, RECIPES_BY_ID } from "../data/constants";
 
 export const GameContext = React.createContext();
 const GameDispatchContext = React.createContext();

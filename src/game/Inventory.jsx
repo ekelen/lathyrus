@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo } from "react";
 
 import {
   CAPTIVE_LIST,
-  ITEMS,
+  ITEMS_BY_ID,
   RECIPES_BY_ID,
   ROOM_TYPES,
 } from "../data/constants";
@@ -213,7 +213,7 @@ function Inventory(props) {
                 <div
                   className={`flex items-center justify-start whitespace-pre pr-1 mx-1`}
                 >
-                  <Item item={ITEMS[ingredient.itemId]} />
+                  <Item item={ITEMS_BY_ID[ingredient.itemId]} />
                   <div className="text-xs">x {ingredient.quantity}</div>
                 </div>
                 {i < selectedCaptiveRecipe.ingredients.length - 1 ? (
@@ -231,7 +231,7 @@ function Inventory(props) {
               // disabled={!hasIngredients(r)}
               className="whitespace-pre p-1 ml-2"
             >
-              <Item item={ITEMS[selectedCaptiveRecipe.id]} />
+              <Item item={ITEMS_BY_ID[selectedCaptiveRecipe.id]} />
             </div>
           </div>
         )}

@@ -28,7 +28,7 @@ const DIRECTION_OPPOSITE = {
   west: "east",
 };
 
-let ITEMS = _.keyBy(
+let ITEMS_BY_ID = _.keyBy(
   [
     { id: "gold", name: "Gold", value: 2, symbol: "🜚", type: "alchemy" },
     { id: "silver", name: "Silver", value: 2, symbol: "🜛", type: "alchemy" },
@@ -79,12 +79,12 @@ const ambers = [
   "text-amber-900",
 ];
 
-ITEMS = _.mapValues(ITEMS, (item, id) => ({
+ITEMS_BY_ID = _.mapValues(ITEMS_BY_ID, (item, id) => ({
   ...item,
   colorClass: ambers[Math.log2(item.value)],
 }));
 
-let ROOMS = _.keyBy(
+let ROOMS_BY_ID = _.keyBy(
   [
     {
       id: "0_C",
@@ -207,7 +207,7 @@ const CONTAINER_ITEMS = {
   ],
 };
 
-const MONSTERS = [
+const MONSTER_LIST = [
   {
     name: "small goblin",
     maxHunger: 4,
@@ -287,7 +287,7 @@ const ROOM_EXIT_POSITIONS = {
   west: getPositionFromCoordinates(0, 1),
 };
 
-ROOMS = _.mapValues(ROOMS, (room) => {
+ROOMS_BY_ID = _.mapValues(ROOMS_BY_ID, (room) => {
   if (!room.type) {
     room.type = ROOM_TYPES.empty;
   }
@@ -299,7 +299,7 @@ ROOMS = _.mapValues(ROOMS, (room) => {
     coordinates: { x, y },
   };
 });
-ROOMS = _.mapValues(ROOMS, (room) => {
+ROOMS_BY_ID = _.mapValues(ROOMS_BY_ID, (room) => {
   const { x, y } = room.coordinates;
   const exits = {
     north: ROOM_POSITIONS[y - 1]?.[x] ?? null,
@@ -328,7 +328,7 @@ ROOMS = _.mapValues(ROOMS, (room) => {
 CAPTIVE_LIST = _.map(CAPTIVE_LIST, (captive) => ({
   ...captive,
   freed: false,
-  position: ROOMS[captive.roomId].position,
+  position: ROOMS_BY_ID[captive.roomId].position,
 }));
 
 const MAX_ITEMS = 5;
@@ -337,14 +337,14 @@ export {
   CAPTIVE_LIST,
   CONTAINER_ITEMS,
   DIRECTION_OPPOSITE,
-  ITEMS,
+  ITEMS_BY_ID,
   MAP_SIZE,
   MAX_ITEMS,
-  MONSTERS,
+  MONSTER_LIST,
   RECIPES_BY_ID,
   ROOM_EXIT_POSITIONS,
   ROOM_POSITIONS,
   ROOM_SIZE,
   ROOM_TYPES,
-  ROOMS,
+  ROOMS_BY_ID,
 };

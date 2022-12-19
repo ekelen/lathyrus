@@ -2,7 +2,7 @@ import _, { cloneDeep, max } from "lodash";
 import {
   DIRECTION_OPPOSITE,
   RECIPES_BY_ID,
-  ROOMS,
+  ROOMS_BY_ID,
   ROOM_EXIT_POSITIONS,
 } from "../data/constants";
 import { initialState } from "../data/setup";
@@ -24,7 +24,7 @@ export function gameReducer(state, action) {
         return state;
       }
 
-      const targetRoom = ROOMS[currentRoom.exits[direction]];
+      const targetRoom = ROOMS_BY_ID[currentRoom.exits[direction]];
       const { exits } = targetRoom;
       const exitDirections = _.keys(exits).filter((dir) => exits[dir]);
       const monster = roomMonsters[targetRoom.id] ?? null;

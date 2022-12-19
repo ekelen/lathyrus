@@ -3,10 +3,16 @@ const constants = require("../src/data/constants");
 const util = require("../src/data/util");
 const _ = require("lodash");
 
-const { MONSTERS, ROOMS, ITEMS, ROOM_POSITIONS, MAP_SIZE, CAPTIVE_LIST } =
-  constants;
+const {
+  MONSTER_LIST,
+  ROOMS_BY_ID,
+  ITEMS_BY_ID,
+  ROOM_POSITIONS,
+  MAP_SIZE,
+  CAPTIVE_LIST,
+} = constants;
 
-describe("ROOM_POSITIONS and ROOMS", () => {
+describe("ROOM_POSITIONS and ROOMS_BY_ID", () => {
   test("ROOM_POSITIONS size is valid", () => {
     expect(ROOM_POSITIONS).toHaveLength(MAP_SIZE);
     ROOM_POSITIONS.forEach((row) => {
@@ -19,49 +25,51 @@ describe("ROOM_POSITIONS and ROOMS", () => {
   });
   test("No room Ids are missing from ROOM_POSITIONS and vice versa", () => {
     expect(_.compact(_.uniq(_.flatMap(ROOM_POSITIONS))).sort()).toEqual(
-      _.keys(ROOMS).sort()
+      _.keys(ROOMS_BY_ID).sort()
     );
   });
   test("All container items have keys that exist on map", () => {
     expect(
       _.keys(constants.CONTAINER_ITEMS).every((roomId) => {
-        return ROOMS[roomId] && ROOMS[roomId].type === "container";
+        return ROOMS_BY_ID[roomId] && ROOMS_BY_ID[roomId].type === "container";
       })
     ).toBe(true);
   });
   test("All rooms have at least one exit", () => {
     expect(
-      _.values(ROOMS).every((room) => {
+      _.values(ROOMS_BY_ID).every((room) => {
         return _.compact(_.values(room.exits)).length > 0;
       })
     ).toBe(true);
   });
   test("All monsters must be in a room of type 'monster'", () => {
     expect(
-      MONSTERS.every((monster) => {
-        return ROOMS[monster.roomId].type === constants.ROOM_TYPES.monster;
+      MONSTER_LIST.every((monster) => {
+        return (
+          ROOMS_BY_ID[monster.roomId].type === constants.ROOM_TYPES.monster
+        );
       })
     ).toBe(true);
     expect(
-      _.values(ROOMS)
+      _.values(ROOMS_BY_ID)
         .filter((r) => r.type === constants.ROOM_TYPES.monster)
-        .every((r) => MONSTERS.find((m) => m.roomId === r.id))
+        .every((r) => MONSTER_LIST.find((m) => m.roomId === r.id))
     ).toBe(true);
   });
   test("All captives must be in a room of type 'captive'", () => {
     expect(
       CAPTIVE_LIST.every((captive) => {
-        return ROOMS[captive.roomId].type === "captive";
+        return ROOMS_BY_ID[captive.roomId].type === "captive";
       })
     ).toBe(true);
   });
   test("All captives must have a monster with key", () => {
     CAPTIVE_LIST.forEach((captive) => {
-      expect(MONSTERS.find((m) => m.hasKeyTo === captive.id)).toBeTruthy();
+      expect(MONSTER_LIST.find((m) => m.hasKeyTo === captive.id)).toBeTruthy();
     });
   });
   test("All monsters with keys have keys to a captive", () => {
-    MONSTERS.filter((m) => m.hasKeyTo).forEach((m) => {
+    MONSTER_LIST.filter((m) => m.hasKeyTo).forEach((m) => {
       expect(CAPTIVE_LIST.find((c) => c.id === m.hasKeyTo)).toBeTruthy();
     });
   });
@@ -78,7 +86,7 @@ describe("ROOM_POSITIONS and ROOMS", () => {
   });
   test("Container items", () => {
     _.entries(constants.CONTAINER_ITEMS).forEach(([roomId, items]) => {
-      expect(ROOMS[roomId].type).toBe("container");
+      expect(ROOMS_BY_ID[roomId].type).toBe("container");
     });
     _.values(setup.initialState.roomItems)
       .flat()
@@ -86,11 +94,11 @@ describe("ROOM_POSITIONS and ROOMS", () => {
         _.entries(itemsById).forEach(([id, item]) => {
           expect(item).toHaveProperty("id");
           expect(item).toHaveProperty("roomId");
-          expect(ROOMS[item.roomId].type).toBe("container");
+          expect(ROOMS_BY_ID[item.roomId].type).toBe("container");
           expect(item).toHaveProperty("name");
           expect(item).toHaveProperty("type");
-          expect(ITEMS[item.id]).toBeTruthy();
-          expect(ITEMS[id]).toBeTruthy();
+          expect(ITEMS_BY_ID[item.id]).toBeTruthy();
+          expect(ITEMS_BY_ID[id]).toBeTruthy();
           expect(item).toHaveProperty("quantity");
         });
       });
@@ -104,7 +112,7 @@ describe("ROOM_POSITIONS and ROOMS", () => {
       ).toBeTruthy();
       expect(recipe).toHaveProperty("name");
       expect(recipe).toHaveProperty("ingredients");
-      expect(recipe.ingredients.every((i) => ITEMS[i.itemId])).toBe(true);
+      expect(recipe.ingredients.every((i) => ITEMS_BY_ID[i.itemId])).toBe(true);
     });
   });
 });
