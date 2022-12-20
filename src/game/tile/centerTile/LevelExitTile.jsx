@@ -2,6 +2,7 @@ import React from "react";
 import DialogueBox from "../../components/DialogueBox";
 import { CenterTileContentContainer } from "../../CenterTileContentContainer";
 import { useOpen } from "../../useOpen";
+import { useGame } from "../../../state/GameContext";
 
 export function LevelExitTile({ room }) {
   const { open, toggleOpen } = useOpen();

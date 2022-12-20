@@ -167,4 +167,22 @@ describe("reset", () => {
     });
     expect(gameState.inventoryById.gildedGroat).toHaveProperty("quantity", 0);
   });
+  test("addAllToInventoryFromRoom", () => {
+    let gameState = {
+      ...initialState,
+    };
+    expect(gameState.inventoryById.gold).toHaveProperty("quantity", 0);
+    expect(gameState.inventoryById.tin).toHaveProperty("quantity", 0);
+    expect(gameState.inventoryById.frostEssence).toHaveProperty("quantity", 0);
+    expect(gameState.itemsByRoomId["0_C"].gold.quantity).toEqual(1);
+    expect(gameState.itemsByRoomId["0_C"].frostEssence.quantity).toEqual(3);
+    gameState = gameReducer(gameState, {
+      type: "addAllToInventoryFromRoom",
+    });
+    expect(gameState.inventoryById.gold).toHaveProperty("quantity", 1);
+    expect(gameState.inventoryById.tin).toHaveProperty("quantity", 1);
+    expect(gameState.inventoryById.frostEssence).toHaveProperty("quantity", 3);
+    expect(gameState.itemsByRoomId["0_C"].gold.quantity).toEqual(0);
+    expect(gameState.itemsByRoomId["0_C"].frostEssence.quantity).toEqual(0);
+  });
 });

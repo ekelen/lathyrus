@@ -151,6 +151,38 @@ export function gameReducer(state, action) {
         inventoryById: newInventoryItems,
       };
     }
+    case "addAllToInventoryFromRoom": {
+      const { inventoryById, itemsByRoomId, currentRoom } = state;
+      const roomItems = itemsByRoomId[currentRoom.id];
+
+      // const roomItem = itemsByRoomId[currentRoom.id][itemId];
+      // const inventoryItem = inventoryById[itemId];
+      // const newInventoryItems = {
+      //   ...inventoryById,
+      //   [itemId]: {
+      //     ...inventoryItem,
+      //     quantity: inventoryItem.quantity + quantity,
+      //   },
+      // };
+      const newInventoryItems = _.mapValues(roomItems, (item) => ({
+        ...item,
+        quantity: item.quantity + inventoryById[item.id].quantity,
+      }));
+
+      const newCurrentRoomItems = _.mapValues(roomItems, (item) => ({
+        ...item,
+        quantity: 0,
+      }));
+
+      return {
+        ...state,
+        itemsByRoomId: {
+          ...itemsByRoomId,
+          [currentRoom.id]: newCurrentRoomItems,
+        },
+        inventoryById: newInventoryItems,
+      };
+    }
     case "feed": {
       const { itemId } = action.payload;
       const { currentRoom, monstersByRoomId, inventoryById } = state;

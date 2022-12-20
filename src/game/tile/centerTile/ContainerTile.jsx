@@ -12,7 +12,11 @@ import { CenterTileContentContainer } from "../../CenterTileContentContainer";
 import { useOpen } from "../../useOpen";
 import _ from "lodash";
 
-function ContainerModalContents({ currentRoomItems, handleTakeItem }) {
+function ContainerModalContents({
+  currentRoomItems,
+  handleTakeItem,
+  handleTakeAllItems,
+}) {
   return (
     <div className="flex flex-wrap items-center content-start w-full">
       {currentRoomItems.map((item) => {
@@ -29,6 +33,16 @@ function ContainerModalContents({ currentRoomItems, handleTakeItem }) {
           />
         );
       })}
+      <button
+        className="rounded-sm bg-slate-800 whitespace-pre disabled:opacity-50 ml-auto h-6 mb-1 px-2 text-xs"
+        disabled={currentRoomItems.length < 1}
+        onClick={(e) => {
+          e.stopPropagation();
+          handleTakeAllItems();
+        }}
+      >
+        All
+      </button>
       <div className="h-6 w-0" />
     </div>
   );
@@ -53,6 +67,11 @@ export function ContainerTile({ room }) {
       payload: { itemId: item.id, quantity: 1 },
     });
   };
+  const handleTakeAllItems = () => {
+    dispatch({
+      type: "addAllToInventoryFromRoom",
+    });
+  };
 
   return (
     <>
@@ -67,7 +86,9 @@ export function ContainerTile({ room }) {
         roomId={room.id}
         style={{ minWidth: "280%", width: "280%" }}
       >
-        <ContainerModalContents {...{ currentRoomItems, handleTakeItem }} />
+        <ContainerModalContents
+          {...{ currentRoomItems, handleTakeItem, handleTakeAllItems }}
+        />
       </DialogueBox>
     </>
   );
