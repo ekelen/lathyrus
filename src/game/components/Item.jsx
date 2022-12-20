@@ -22,7 +22,7 @@ export function ItemWithQuantity({
 }) {
   return (
     <div
-      className={`flex items-center justify-center whitespace-pre ${wrapperClass}`}
+      className={`flex items-center justify-center whitespace-pre pr-2 ${wrapperClass}`}
     >
       <Item item={item} colorClass={colorClass} />
       <div className="text-xs">x {quantity}</div>
@@ -40,7 +40,7 @@ export function ItemWithQuantityButton({
 }) {
   return (
     <button
-      className={`flex items-center justify-center whitespace-pre ${wrapperClass}`}
+      className={`flex items-center justify-center whitespace-pre bg-slate-800 rounded-sm pr-2 mr-1 mb-1 disabled:bg-transparent ${wrapperClass}`}
       onClick={onClick}
       disabled={disabled}
     >

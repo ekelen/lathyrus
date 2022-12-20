@@ -142,7 +142,6 @@ function Inventory(props) {
     [selectedCaptive]
   );
   useEffect(() => {
-    console.log(`[=] selectedCaptiveRecipe:`, selectedCaptiveRecipe);
     if (selectedCaptiveRecipe) {
       setOpen(true);
     } else {
@@ -160,7 +159,7 @@ function Inventory(props) {
   }, [selectedCaptive]);
 
   return (
-    <div className="flex h-24 w-100 mt-2 gap-1 relative">
+    <div className="flex h-28 w-100 mt-2 gap-1 relative">
       <div className="flex flex-col flex-wrap h-full p-2 grow border-2 border-slate-700 border-double rounded-md align-start content-start justify-start">
         <_Inventory
           inventoryById={inventoryById}
@@ -208,7 +207,7 @@ function Inventory(props) {
         }}
       >
         {!selectedCaptiveRecipe ? null : (
-          <div className="flex items-center justify-center mb-1">
+          <div className="flex items-center justify-center">
             {selectedCaptiveRecipe.ingredients.map((ingredient, i) => (
               <div
                 className="flex items-center justify-center whitespace-pre"
@@ -225,7 +224,7 @@ function Inventory(props) {
                 )}
               </div>
             ))}
-            <div className="whitespace-pre p-1 ml-2">
+            <div className="ml-1">
               <Item item={ITEMS_BY_ID[selectedCaptiveRecipe.id]} />
             </div>
           </div>

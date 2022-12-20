@@ -14,7 +14,7 @@ import _ from "lodash";
 
 function ContainerModalContents({ currentRoomItems, handleTakeItem }) {
   return (
-    <div className="flex flex-wrap items-center gap-2 content-start w-full">
+    <div className="flex flex-wrap items-center content-start w-full">
       {currentRoomItems.map((item) => {
         return (
           <ItemWithQuantityButton
