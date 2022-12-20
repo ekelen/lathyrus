@@ -55,7 +55,7 @@ export function CaptiveTile({ room }) {
                   handleFreeCaptive();
                 }}
                 disabled={!haveKey || captive.freed}
-                className="rounded-sm border border-white border-solid p-1 whitespace-pre w-min flex justify-center items-center gap-2 disabled:opacity-50"
+                className="p-1 whitespace-pre w-min flex justify-center items-center gap-2 disabled:opacity-50 disabled:bg-transparent bg-slate-800 rounded-sm"
               >
                 <div className="ml-2 flex items-center justify-center h-4 w-4 relative">
                   <div className={`relative h-full w-full ${colorClass}`}>
