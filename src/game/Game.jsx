@@ -1,11 +1,14 @@
 import React from "react";
-import { useGame, useGameDispatch } from "../state/GameContext";
+import { ModalContext, useGame, useGameDispatch } from "../state/GameContext";
+import Modal from "./components/Modal";
 import Inventory from "./Inventory";
+import Minimap from "./Minimap";
 import RoomFrame from "./Room";
 
 function Game() {
   const { currentRoom } = useGame();
   const dispatch = useGameDispatch();
+  const { showModal, handleShowModal } = React.useContext(ModalContext);
   return (
     <div
       className="flex flex-col h-100"
@@ -20,16 +23,30 @@ function Game() {
           &#128794;<span className="alchemy">&#128794;</span>
         </h1> */}
 
-        <button
-          onClick={() => {
-            dispatch({ type: "reset" });
-          }}
-        >
-          Reset
-        </button>
+        <div className="flex gap-2 text-sm text-slate-400">
+          <button
+            onClick={() => {
+              dispatch({ type: "reset" });
+            }}
+          >
+            Reset
+          </button>
+          <button
+            onClick={() => {
+              handleShowModal(true);
+            }}
+          >
+            Minimap
+          </button>
+        </div>
       </div>
       <RoomFrame />
       <Inventory />
+      {showModal && (
+        <Modal onClose={() => handleShowModal(false)}>
+          <Minimap />
+        </Modal>
+      )}
     </div>
   );
 }

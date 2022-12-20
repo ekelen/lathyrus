@@ -140,7 +140,6 @@ function Inventory(props) {
   const dispatch = useGameDispatch();
   const [selectedCaptiveId, setSelectedCaptiveId] = React.useState(null);
   const { open, toggleOpen, setOpen } = useOpen(false);
-  console.log(`[=] captivesByRoomId:`, captivesByRoomId);
   const selectedCaptive = useMemo(
     () => (selectedCaptiveId ? captivesByRoomId[selectedCaptiveId] : null),
     [selectedCaptiveId, captivesByRoomId]
@@ -155,21 +154,8 @@ function Inventory(props) {
     [selectedCaptive]
   );
   useEffect(() => {
-    if (selectedCaptiveRecipe) {
-      setOpen(true);
-    } else {
-      setOpen(false);
-    }
-  }, [freedCaptiveList, selectedCaptiveRecipe, setOpen]);
-
-  // React.useEffect(() => {
-  //   console.log(`[=] selectedCaptiveId changed`);
-  //   console.log(`[=] selectedCaptiveId:`, selectedCaptiveId);
-  //   console.log(
-  //     `[=] CAPTIVE_LIST[selectedCaptiveId]:`,
-  //     captivesByRoomId[selectedCaptiveId]
-  //   );
-  // }, [selectedCaptiveId]);
+    setOpen(!!selectedCaptiveRecipe);
+  }, [selectedCaptiveRecipe, setOpen]);
 
   return (
     <div className="flex h-28 w-100 mt-2 gap-1 relative">

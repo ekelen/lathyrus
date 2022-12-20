@@ -21,6 +21,11 @@ const GameContextProvider = (props) => {
   const [state, dispatch] = React.useReducer(gameReducer, initialState);
   const { monstersByRoomId, currentRoom, captivesByRoomId, learnedRecipeIds } =
     state;
+  const [showModal, setShowModal] = React.useState(false);
+
+  const handleShowModal = (show) => {
+    setShowModal(show);
+  };
 
   const freedCaptiveList = useMemo(() => {
     return _.values(captivesByRoomId).filter((c) => c.freed);
@@ -44,9 +49,9 @@ const GameContextProvider = (props) => {
       }}
     >
       <GameDispatchContext.Provider value={dispatch}>
-        {/* <ModalContext.Provider value={{ showModal, handleShowModal }}> */}
-        {props.children}
-        {/* </ModalContext.Provider> */}
+        <ModalContext.Provider value={{ showModal, handleShowModal }}>
+          {props.children}
+        </ModalContext.Provider>
       </GameDispatchContext.Provider>
     </GameContext.Provider>
   );
