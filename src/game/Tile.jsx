@@ -1,5 +1,5 @@
 import React from "react";
-import { ROOM_SIZE } from "../data/constants";
+import { CENTER_POSITION, ROOM_SIZE } from "../data/constants";
 import { getPositionFromCoordinates } from "../data/util";
 import { CenterTile } from "./CenterTile";
 import pine00 from "./img/trees/pine00.png";
@@ -42,7 +42,7 @@ function ExitTile({ room, position }) {
 
 function RoomTile({ row, col, room }) {
   const position = getPositionFromCoordinates(col, row);
-  const isCenter = position === room.centerPosition;
+  const isCenter = position === CENTER_POSITION;
   const isExitTile = room.exitTilePositions.includes(position);
   const backgroundClass = isCenter || isExitTile ? "bg-teal-900" : "bg-black";
   return (

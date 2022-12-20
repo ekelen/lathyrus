@@ -88,20 +88,14 @@ describe("ROOM_POSITIONS and ROOMS_BY_ID", () => {
     _.entries(constants.CONTAINER_ITEMS).forEach(([roomId, items]) => {
       expect(ROOMS_BY_ID[roomId].type).toBe("container");
     });
-    _.values(setup.initialState.itemsByRoomId)
-      .flat()
-      .forEach((itemsById) => {
-        _.entries(itemsById).forEach(([id, item]) => {
-          expect(item).toHaveProperty("id");
-          expect(item).toHaveProperty("roomId");
-          expect(ROOMS_BY_ID[item.roomId].type).toBe("container");
-          expect(item).toHaveProperty("name");
-          expect(item).toHaveProperty("type");
-          expect(ITEMS_BY_ID[item.id]).toBeTruthy();
+    _.toPairs(setup.initialState.itemsByRoomId).forEach(
+      ([roomId, itemsById]) => {
+        _.entries(itemsById).forEach(([id, quantity]) => {
           expect(ITEMS_BY_ID[id]).toBeTruthy();
-          expect(item).toHaveProperty("quantity");
+          expect(quantity).toBeGreaterThanOrEqual(0);
         });
-      });
+      }
+    );
   });
   test("Recipes", () => {
     _.entries(constants.RECIPES_BY_ID).forEach(([id, recipe]) => {

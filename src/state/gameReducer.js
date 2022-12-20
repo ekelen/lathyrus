@@ -1,6 +1,8 @@
 import _, { cloneDeep, max } from "lodash";
 import {
   DIRECTION_OPPOSITE,
+  ITEMS_BY_ID,
+  ITEM_IDS,
   RECIPES_BY_ID,
   ROOMS_BY_ID,
   ROOM_EXIT_POSITIONS,
@@ -46,100 +48,76 @@ export function gameReducer(state, action) {
         movedCameraToOnTransition: direction,
       };
     }
-    case "addToInventoryFromStorage": {
-      const { itemId, quantity } = action.payload;
-      const { inventoryById, storageItemsById } = state;
+    // case "addToInventoryFromStorage": {
+    //   const { itemId, quantity } = action.payload;
+    //   const { inventoryById, storageItemsById } = state;
 
-      const storageItem = storageItemsById[itemId];
-      const newStorageItems = {
-        ...storageItemsById,
-        [itemId]: {
-          ...storageItem,
-          quantity: storageItem.quantity - quantity,
-        },
-      };
-      const inventoryItem = inventoryById[itemId];
+    //   const storageItem = storageItemsById[itemId];
+    //   const newStorageItems = {
+    //     ...storageItemsById,
+    //     [itemId]: {
+    //       ...storageItem,
+    //       quantity: storageItem.quantity - quantity,
+    //     },
+    //   };
+    //   const inventoryItem = inventoryById[itemId];
 
-      const newInventoryItems = {
-        ...inventoryById,
-        [itemId]: {
-          ...inventoryItem,
-          quantity: inventoryItem.quantity + quantity,
-        },
-      };
+    //   const newInventoryItems = {
+    //     ...inventoryById,
+    //     [itemId]: {
+    //       ...inventoryItem,
+    //       quantity: inventoryItem.quantity + quantity,
+    //     },
+    //   };
 
-      return {
-        ...state,
-        storageItemsById: newStorageItems,
-        inventoryById: newInventoryItems,
-      };
-    }
-    case "addToStorageFromInventory": {
-      const { itemId, quantity } = action.payload;
-      const { inventoryById, storageItemsById } = state;
+    //   return {
+    //     ...state,
+    //     storageItemsById: newStorageItems,
+    //     inventoryById: newInventoryItems,
+    //   };
+    // }
+    // case "addToStorageFromInventory": {
+    //   const { itemId, quantity } = action.payload;
+    //   const { inventoryById, storageItemsById } = state;
 
-      const inventoryItem = inventoryById[itemId];
-      const newInventoryItems = {
-        ...inventoryById,
-        [itemId]: {
-          ...inventoryItem,
-          quantity: inventoryItem.quantity - quantity,
-        },
-      };
-      const storageItem = storageItemsById[itemId];
+    //   const inventoryItem = inventoryById[itemId];
+    //   const newInventoryItems = {
+    //     ...inventoryById,
+    //     [itemId]: {
+    //       ...inventoryItem,
+    //       quantity: inventoryItem.quantity - quantity,
+    //     },
+    //   };
+    //   const storageItem = storageItemsById[itemId];
 
-      const newStorageItems = {
-        ...storageItemsById,
-        [itemId]: {
-          ...storageItem,
-          quantity: storageItem.quantity + quantity,
-        },
-      };
+    //   const newStorageItems = {
+    //     ...storageItemsById,
+    //     [itemId]: {
+    //       ...storageItem,
+    //       quantity: storageItem.quantity + quantity,
+    //     },
+    //   };
 
-      return {
-        ...state,
-        storageItemsById: newStorageItems,
-        inventoryById: newInventoryItems,
-      };
-    }
-    case "updateInventoryQuantity": {
-      const { itemId, quantity } = action.payload;
-      const { inventoryById } = state;
-
-      const inventoryItem = inventoryById[itemId];
-      const newInventoryItems = {
-        ...inventoryById,
-        [itemId]: {
-          ...inventoryItem,
-          quantity: inventoryItem.quantity + quantity,
-        },
-      };
-
-      return {
-        ...state,
-        inventoryById: newInventoryItems,
-      };
-    }
+    //   return {
+    //     ...state,
+    //     storageItemsById: newStorageItems,
+    //     inventoryById: newInventoryItems,
+    //   };
+    // }
     case "addToInventoryFromRoom": {
       const { itemId, quantity } = action.payload;
       const { inventoryById, itemsByRoomId, currentRoom } = state;
 
-      const roomItem = itemsByRoomId[currentRoom.id][itemId];
-      const inventoryItem = inventoryById[itemId];
+      const currentRoomItemQuantity = itemsByRoomId[currentRoom.id][itemId];
+      const currentInventoryItemQuantity = inventoryById[itemId];
       const newInventoryItems = {
         ...inventoryById,
-        [itemId]: {
-          ...inventoryItem,
-          quantity: inventoryItem.quantity + quantity,
-        },
+        [itemId]: currentInventoryItemQuantity + quantity,
       };
 
       const newCurrentRoomItems = {
         ...itemsByRoomId[currentRoom.id],
-        [itemId]: {
-          ...roomItem,
-          quantity: roomItem.quantity - quantity,
-        },
+        [itemId]: currentRoomItemQuantity - quantity,
       };
 
       return {
@@ -153,26 +131,19 @@ export function gameReducer(state, action) {
     }
     case "addAllToInventoryFromRoom": {
       const { inventoryById, itemsByRoomId, currentRoom } = state;
-      const roomItems = itemsByRoomId[currentRoom.id];
+      const currentRoomItemQuantities = itemsByRoomId[currentRoom.id];
 
-      // const roomItem = itemsByRoomId[currentRoom.id][itemId];
-      // const inventoryItem = inventoryById[itemId];
-      // const newInventoryItems = {
-      //   ...inventoryById,
-      //   [itemId]: {
-      //     ...inventoryItem,
-      //     quantity: inventoryItem.quantity + quantity,
-      //   },
-      // };
-      const newInventoryItems = _.mapValues(roomItems, (item) => ({
-        ...item,
-        quantity: item.quantity + inventoryById[item.id].quantity,
-      }));
+      const newInventoryItems = _.zipObject(
+        ITEM_IDS,
+        ITEM_IDS.map(
+          (itemId) => currentRoomItemQuantities[itemId] + inventoryById[itemId]
+        )
+      );
 
-      const newCurrentRoomItems = _.mapValues(roomItems, (item) => ({
-        ...item,
-        quantity: 0,
-      }));
+      const newCurrentRoomItems = _.zipObject(
+        ITEM_IDS,
+        ITEM_IDS.map(() => 0)
+      );
 
       return {
         ...state,
@@ -192,8 +163,9 @@ export function gameReducer(state, action) {
         // console.log("monster is sated");
         return state;
       }
-      const inventoryItem = inventoryById[itemId];
-      const { value } = inventoryItem;
+      const item = ITEMS_BY_ID[itemId];
+      // const inventoryItem = inventoryById[itemId];
+      const { value } = item;
       const hunger = max([monster.hunger - value, 0]);
       const sated = hunger === 0;
       const newMonster = {
@@ -208,10 +180,7 @@ export function gameReducer(state, action) {
       };
       const newInventoryItems = {
         ...inventoryById,
-        [itemId]: {
-          ...inventoryItem,
-          quantity: inventoryItem.quantity - 1,
-        },
+        [itemId]: inventoryById[itemId] - 1,
       };
       if (newMonster.sated) {
         const haveKeysTo = hasKeyTo
@@ -268,36 +237,24 @@ export function gameReducer(state, action) {
       }
       const recipe = RECIPES_BY_ID[recipeId];
       const hasIngredients = recipe.ingredients.every((ingredient) => {
-        const inventoryItem = inventoryById[ingredient.itemId];
-        return inventoryItem.quantity >= ingredient.quantity;
+        const inventoryQuantity = inventoryById[ingredient.itemId];
+
+        return inventoryQuantity >= ingredient.quantity;
       });
       if (!hasIngredients) {
         // console.error(`don't have ingredients for ${recipeId}`);
         return state;
       }
-      const createdItem = {
-        ...inventoryById[recipeId],
-        quantity: inventoryById[recipeId].quantity + 1,
-      };
-      const ingredientInventoryItems = recipe.ingredients
-        .map((i) => i.itemId)
-        .reduce((acc, itemId) => {
-          const inventoryItem = inventoryById[itemId];
-          return {
-            ...acc,
-            [itemId]: {
-              ...inventoryItem,
-              quantity: inventoryItem.quantity - 1,
-            },
-          };
-        }, {});
-      // wip
+      const updatedIngredientInventory = _.zipObject(
+        recipe.ingredients.map((i) => i.itemId),
+        recipe.ingredients.map((i) => inventoryById[i.itemId] - i.quantity)
+      );
       return {
         ...state,
         inventoryById: {
           ...inventoryById,
-          ...ingredientInventoryItems,
-          [recipeId]: createdItem,
+          [recipeId]: inventoryById[recipeId] + 1,
+          ...updatedIngredientInventory,
         },
       };
     }

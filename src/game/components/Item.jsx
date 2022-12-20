@@ -1,13 +1,17 @@
 import React from "react";
 
-export function Item({ item, colorClass = item.colorClass }) {
+export function Item({
+  item = {},
+  colorClass = item.colorClass,
+  symbol = item.symbol,
+}) {
   return (
     <div
       className={`h-6 w-6 relative flex items-center justify-center ${colorClass}`}
     >
       <div className="table-row">
         <div className="alchemy table-cell align-middle text-center text-sm h-full w-full leading-6">
-          {item.symbol}
+          {symbol}
         </div>
       </div>
     </div>

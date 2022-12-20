@@ -3,3 +3,4 @@ build/
 stats.json
 *.tmp.svg
 .DS_Store
+*.stats.json

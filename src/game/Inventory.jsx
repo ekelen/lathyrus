@@ -1,24 +1,18 @@
 import _ from "lodash";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 
-import {
-  CAPTIVE_LIST,
-  ITEMS_BY_ID,
-  RECIPES_BY_ID,
-  ROOM_TYPES,
-} from "../data/constants";
-import { sortByName } from "../data/util";
+import { ITEMS_BY_ID, RECIPES_BY_ID, ROOM_TYPES } from "../data/constants";
 import { useGame, useGameDispatch } from "../state/GameContext";
 import { CaptiveImage } from "./components/Captive";
+import DialogueBox from "./components/DialogueBox";
 import {
   Item,
   ItemWithQuantity,
   ItemWithQuantityButton,
 } from "./components/Item";
-import Key from "./img/key.svg";
 import Svg from "./components/Svg";
-import DialogueBox from "./components/DialogueBox";
-import { useOpen } from "./useOpen";
+import Key from "./img/key.svg";
+import Flasks from "./img/flasks.svg";
 
 const KeyCodepoint = ({ className }) => (
   <div className={className}>&#x0e033;</div>
@@ -34,8 +28,8 @@ function Captives({
       {freedCaptiveList.map((captive) => {
         const { colorClass } = captive;
         return (
-          <div
-            className="flex items-center justify-center h-6 w-6 relative mx-1 mt-2 mb-0"
+          <button
+            className="flex items-center justify-center h-6 w-6 relative mx-1 mt-2 mb-0 rounded-md bg-slate-800 p-1"
             key={captive.id}
             onClick={() =>
               setSelectedCaptiveId(
@@ -46,14 +40,21 @@ function Captives({
             <div className={`${colorClass} w-full`}>
               <CaptiveImage captive={captive} color="currentColor" />
             </div>
-          </div>
+          </button>
         );
       })}
     </>
   );
 }
 
-function Keys({ captivesByRoomId, haveKeysTo }) {
+function Keys({ captivesByRoomId, haveKeysTo, currentRoomId, dispatch }) {
+  const handleFreeCaptive = ({ keyTo }) => {
+    dispatch({
+      type: "freeCaptive",
+      payload: { roomId: keyTo },
+    });
+  };
+
   return (
     <>
       {haveKeysTo
@@ -62,22 +63,26 @@ function Keys({ captivesByRoomId, haveKeysTo }) {
           const captive = captivesByRoomId[key];
           const { colorClass } = captive;
           return (
-            <div
-              className="flex items-center justify-center h-6 w-6 mx-2 mt-2 mb-0 relative"
+            <button
+              className={`flex items-center justify-center h-6 w-6 relative mx-1 mt-2 mb-0 rounded-md bg-slate-800 p-1 disabled:bg-transparent`}
               key={`${i}-${key}`}
+              disabled={currentRoomId !== captive.id || captive.freed}
+              onClick={() => handleFreeCaptive({ keyTo: captive.id })}
             >
-              <div className={`h-5 w-5 relative alchemy ${colorClass}`}>
+              <div
+                className={`relative alchemy w-full h-full flex items-center justify-center ${colorClass}`}
+              >
                 {/* <KeyCodepoint className={`${colorClass}`} /> */}
-                <Svg source={Key} height="70%" width="90%" />
+                <Svg source={Key} height="70%" width="100%" />
               </div>
-            </div>
+            </button>
           );
         })}
     </>
   );
 }
 
-function _Inventory({ inventoryById, type, currentRoomMonster, dispatch }) {
+function InventoryItems({ inventoryById, type, currentRoomMonster, dispatch }) {
   const disabled = type !== ROOM_TYPES.monster || currentRoomMonster?.sated;
 
   const handleItemClick = useCallback(
@@ -126,20 +131,11 @@ function _Inventory({ inventoryById, type, currentRoomMonster, dispatch }) {
   );
 }
 
-function Inventory(props) {
-  const {
-    inventoryById,
-    currentRoom,
-    freedCaptiveList,
-    currentRoomMonster,
-    haveKeysTo,
-    captivesByRoomId,
-    maxInventory,
-  } = useGame();
-  const { type } = currentRoom;
-  const dispatch = useGameDispatch();
-  const [selectedCaptiveId, setSelectedCaptiveId] = React.useState(null);
-  const { open, toggleOpen, setOpen } = useOpen(false);
+function CaptiveRecipeHint({
+  setSelectedCaptiveId,
+  selectedCaptiveId,
+  captivesByRoomId,
+}) {
   const selectedCaptive = useMemo(
     () => (selectedCaptiveId ? captivesByRoomId[selectedCaptiveId] : null),
     [selectedCaptiveId, captivesByRoomId]
@@ -153,22 +149,86 @@ function Inventory(props) {
     () => (selectedCaptive ? selectedCaptive.colorClass : ""),
     [selectedCaptive]
   );
-  useEffect(() => {
-    setOpen(!!selectedCaptiveRecipe);
-  }, [selectedCaptiveRecipe, setOpen]);
+
+  return (
+    <DialogueBox
+      onClick={() => setSelectedCaptiveId(null)}
+      isOpen={!!selectedCaptiveRecipe}
+      style={{
+        top: "unset",
+        bottom: 0,
+        left: 0,
+        width: "100%",
+        minWidth: "100%",
+      }}
+    >
+      {!selectedCaptiveRecipe ? null : (
+        <div className="flex items-center justify-center">
+          <div className={`${captiveColorClass} h-6 w-6 relative`}>
+            <CaptiveImage
+              height="80%"
+              width="100%"
+              captive={selectedCaptive}
+              color="currentColor"
+            />
+          </div>
+          <div>:</div>
+          {selectedCaptiveRecipe.ingredients.map((ingredient, i) => (
+            <div
+              className="flex items-center justify-center whitespace-pre"
+              key={`${ingredient.id}-${i}`}
+            >
+              <ItemWithQuantity
+                item={ITEMS_BY_ID[ingredient.itemId]}
+                quantity={ingredient.quantity}
+              />
+              {i < selectedCaptiveRecipe.ingredients.length - 1 ? (
+                <div>+</div>
+              ) : (
+                <div>=</div>
+              )}
+            </div>
+          ))}
+          <div className="ml-1">
+            <Item item={ITEMS_BY_ID[selectedCaptiveRecipe.id]} />
+          </div>
+        </div>
+      )}
+    </DialogueBox>
+  );
+}
+
+function Inventory() {
+  const {
+    inventoryById,
+    currentRoom,
+    freedCaptiveList,
+    currentRoomMonster,
+    haveKeysTo,
+    captivesByRoomId,
+    maxInventory,
+  } = useGame();
+  const { type } = currentRoom;
+  const dispatch = useGameDispatch();
+  const [selectedCaptiveId, setSelectedCaptiveId] = React.useState(null);
 
   return (
     <div className="flex h-28 w-100 mt-2 gap-1 relative">
       <div className="flex flex-col flex-wrap h-full p-2 grow border-2 border-slate-700 border-double rounded-md align-start content-start justify-start">
-        <_Inventory
+        <InventoryItems
           inventoryById={inventoryById}
           type={type}
           currentRoomMonster={currentRoomMonster}
           dispatch={dispatch}
         />
       </div>
-      <div className="flex flex-col flex-wrap relative h-full w-10 border-2 border-slate-700 border-double rounded-md">
-        <Keys captivesByRoomId={captivesByRoomId} haveKeysTo={haveKeysTo} />
+      <div className="flex flex-col items-center relative h-full w-10 border-2 border-slate-700 border-double rounded-md">
+        <Keys
+          captivesByRoomId={captivesByRoomId}
+          haveKeysTo={haveKeysTo}
+          currentRoomId={currentRoom.id}
+          dispatch={dispatch}
+        />
       </div>
       <div className="flex flex-col flex-wrap relative h-full w-10 border-2 border-slate-700 border-double rounded-md items-center">
         <Captives
@@ -177,50 +237,11 @@ function Inventory(props) {
           setSelectedCaptiveId={setSelectedCaptiveId}
         />
       </div>
-      <DialogueBox
-        onClick={() => setSelectedCaptiveId(null)}
-        isOpen={open}
-        style={{
-          top: "unset",
-          bottom: 0,
-          left: 0,
-          width: "100%",
-          minWidth: "100%",
-        }}
-      >
-        {!selectedCaptiveRecipe ? null : (
-          <div className="flex items-center justify-center">
-            <div className={`${captiveColorClass} h-6 w-6 relative`}>
-              <CaptiveImage
-                height="80%"
-                width="100%"
-                captive={selectedCaptive}
-                color="currentColor"
-              />
-            </div>
-            <div>:</div>
-            {selectedCaptiveRecipe.ingredients.map((ingredient, i) => (
-              <div
-                className="flex items-center justify-center whitespace-pre"
-                key={`${ingredient.id}-${i}`}
-              >
-                <ItemWithQuantity
-                  item={ITEMS_BY_ID[ingredient.itemId]}
-                  quantity={ingredient.quantity}
-                />
-                {i < selectedCaptiveRecipe.ingredients.length - 1 ? (
-                  <div>+</div>
-                ) : (
-                  <div>=</div>
-                )}
-              </div>
-            ))}
-            <div className="ml-1">
-              <Item item={ITEMS_BY_ID[selectedCaptiveRecipe.id]} />
-            </div>
-          </div>
-        )}
-      </DialogueBox>
+      <CaptiveRecipeHint
+        selectedCaptiveId={selectedCaptiveId}
+        captivesByRoomId={captivesByRoomId}
+        setSelectedCaptiveId={setSelectedCaptiveId}
+      />
     </div>
   );
 }

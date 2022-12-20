@@ -1,16 +1,13 @@
+import _ from "lodash";
 import React from "react";
+import { ITEMS_BY_ID } from "../../../data/constants";
 import { useGame, useGameDispatch } from "../../../state/GameContext";
+import { CenterTileContentContainer } from "../../CenterTileContentContainer";
 import DialogueBox from "../../components/DialogueBox";
+import { ItemWithQuantityButton } from "../../components/Item";
 import Svg from "../../components/Svg";
 import Chest from "../../img/chest.svg";
-import {
-  Item,
-  ItemWithQuantity,
-  ItemWithQuantityButton,
-} from "../../components/Item";
-import { CenterTileContentContainer } from "../../CenterTileContentContainer";
 import { useOpen } from "../../useOpen";
-import _ from "lodash";
 
 function ContainerModalContents({
   currentRoomItems,
@@ -19,15 +16,16 @@ function ContainerModalContents({
 }) {
   return (
     <div className="flex flex-wrap items-center content-start w-full">
-      {currentRoomItems.map((item) => {
+      {currentRoomItems.map(([itemId, quantity]) => {
+        const item = ITEMS_BY_ID[itemId];
         return (
           <ItemWithQuantityButton
-            key={item.id}
+            key={itemId}
             item={item}
-            quantity={item.quantity}
+            quantity={quantity}
             onClick={(e) => {
               e.stopPropagation();
-              handleTakeItem(item);
+              handleTakeItem(itemId);
             }}
             wrapperClass="disabled:opacity-50"
           />
@@ -49,22 +47,17 @@ function ContainerModalContents({
 }
 
 export function ContainerTile({ room }) {
-  const { itemsByRoomId, previousRoom } = useGame();
+  const { itemsByRoomId } = useGame();
   const dispatch = useGameDispatch();
-  const currentRoomItems = _.values(itemsByRoomId[room.id]).filter(
-    (i) => i.quantity > 0
-  );
+  const currentRoomItems = _.entries(itemsByRoomId[room.id]);
 
-  const { open, toggleOpen } = useOpen(
-    currentRoomItems.length > 0 && room.id !== previousRoom?.id
-  );
-  const openable = currentRoomItems.length > 0;
-  const openableClass = openable ? "opacity-100" : "opacity-20";
+  const open = currentRoomItems.length > 0;
+  const openableClass = open ? "opacity-100" : "opacity-20";
 
-  const handleTakeItem = (item) => {
+  const handleTakeItem = (itemId) => {
     dispatch({
       type: "addToInventoryFromRoom",
-      payload: { itemId: item.id, quantity: 1 },
+      payload: { itemId, quantity: 1 },
     });
   };
   const handleTakeAllItems = () => {
@@ -75,14 +68,13 @@ export function ContainerTile({ room }) {
 
   return (
     <>
-      <CenterTileContentContainer toggleOpen={toggleOpen}>
+      <CenterTileContentContainer>
         <div className={`${openableClass}`}>
           <Svg source={Chest} width="100%" height="80%" />
         </div>
       </CenterTileContentContainer>
       <DialogueBox
-        onClick={() => {}}
-        isOpen={openable}
+        isOpen={open}
         roomId={room.id}
         style={{ minWidth: "280%", width: "280%" }}
       >

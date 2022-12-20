@@ -19,9 +19,6 @@ function Game() {
     >
       <div className="flex items-center justify-between">
         <h3>{currentRoom.name}</h3>
-        {/* <h1 className="text-xl">
-          &#128794;<span className="alchemy">&#128794;</span>
-        </h1> */}
 
         <div className="flex gap-2 text-sm text-slate-400">
           <button

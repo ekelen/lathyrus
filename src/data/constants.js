@@ -12,7 +12,7 @@ const ROOM_TYPES = {
 };
 const ROOM_POSITIONS = [
   ["0_C", null, "rabbit", null, null],
-  ["1_LAB", "2_M", "13", null, "9_C"],
+  ["1_LAB", "2_M", "13_LAB", null, "9_C"],
   [null, "3_MY_STUFF", "11_C", "10_M", "14_LAB"],
   ["12_M_RABBIT", "4_C", null, null, null],
   [null, "5_M_TOAD", "toad", "exitGoblin", "7_EXIT"],
@@ -28,46 +28,45 @@ const DIRECTION_OPPOSITE = {
   west: "east",
 };
 
-let ITEMS_BY_ID = _.keyBy(
-  [
-    { id: "gold", name: "Gold", value: 2, symbol: "🜚", type: "alchemy" },
-    { id: "silver", name: "Silver", value: 2, symbol: "🜛", type: "alchemy" },
-    { id: "mercury", name: "Mercury", value: 2, symbol: "☿", type: "alchemy" },
-    { id: "copper", name: "Copper", value: 2, symbol: "♀", type: "alchemy" },
-    { id: "tin", name: "Tin", value: 2, symbol: "♃", type: "alchemy" },
-    {
-      id: "frostEssence",
-      name: "Frost Essence",
-      value: 2,
-      symbol: "🜄",
-      type: "element",
-    },
-    {
-      id: "frostFarthing",
-      name: "Frost Farthing",
-      value: 16,
-      symbol: "🜄",
-      type: "coin",
-    },
-    {
-      id: "earthEssence",
-      name: "Earth Essence",
-      value: 2,
-      symbol: "🜁",
-      type: "element",
-    },
-    {
-      id: "gildedGroat",
-      name: "Gilded Groat",
-      value: 32,
-      symbol: "🜁",
-      type: "coin",
-    },
-  ],
-  "id"
-);
+const BASE_ITEM_LIST = [
+  { id: "gold", name: "Gold", value: 2, symbol: "🜚", type: "alchemy" },
+  { id: "silver", name: "Silver", value: 2, symbol: "🜛", type: "alchemy" },
+  { id: "mercury", name: "Mercury", value: 2, symbol: "☿", type: "alchemy" },
+  { id: "copper", name: "Copper", value: 2, symbol: "♀", type: "alchemy" },
+  { id: "tin", name: "Tin", value: 2, symbol: "♃", type: "alchemy" },
+  {
+    id: "frostEssence",
+    name: "Frost Essence",
+    value: 2,
+    symbol: "🜄",
+    type: "element",
+  },
+  {
+    id: "frostFarthing",
+    name: "Frost Farthing",
+    value: 16,
+    symbol: "🜄",
+    type: "coin",
+  },
+  {
+    id: "earthEssence",
+    name: "Earth Essence",
+    value: 2,
+    symbol: "🜁",
+    type: "element",
+  },
+  {
+    id: "gildedGroat",
+    name: "Gilded Groat",
+    value: 32,
+    symbol: "🜁",
+    type: "coin",
+  },
+];
 
-const ambers = [
+const ITEM_IDS = BASE_ITEM_LIST.map((item) => item.id);
+
+const itemColorsByValue = [
   "text-amber-100",
   "text-amber-200",
   "text-amber-300",
@@ -79,10 +78,14 @@ const ambers = [
   "text-amber-900",
 ];
 
-ITEMS_BY_ID = _.mapValues(ITEMS_BY_ID, (item, id) => ({
-  ...item,
-  colorClass: ambers[Math.log2(item.value)],
-}));
+const ITEMS_BY_ID = _.keyBy(
+  BASE_ITEM_LIST.map((item) => ({
+    ...item,
+    quantity: 0,
+    colorClass: itemColorsByValue[Math.log2(item.value)],
+  })),
+  "id"
+);
 
 let ROOMS_BY_ID = _.keyBy(
   [
@@ -136,78 +139,54 @@ let ROOMS_BY_ID = _.keyBy(
     },
     { id: "12_M_RABBIT", name: "Room 12", type: ROOM_TYPES.monster },
     { id: "rabbit", name: "Room 13", type: ROOM_TYPES.captive },
-    { id: "13", name: "Room 13" },
+    { id: "13_LAB", name: "Lab 3", type: ROOM_TYPES.lab },
     { id: "14_LAB", name: "Lab 2", type: ROOM_TYPES.lab },
   ],
   "id"
 );
 
 const CONTAINER_ITEMS = {
-  "0_C": [
-    {
-      id: "gold",
-      quantity: 1,
-    },
-    {
-      id: "tin",
-      quantity: 1,
-    },
-    {
-      id: "silver",
-      quantity: 1,
-    },
-    {
-      id: "frostEssence",
-      quantity: 3,
-    },
-    {
-      id: "earthEssence",
-      quantity: 3,
-    },
-  ],
-  "4_C": [
-    {
-      id: "silver",
-      quantity: 1,
-    },
-    {
-      id: "earthEssence",
-      quantity: 3,
-    },
-    {
-      id: "frostEssence",
-      quantity: 5,
-    },
-  ],
-  "9_C": [
-    {
-      id: "gold",
-      quantity: 1,
-    },
-    {
-      id: "earthEssence",
-      quantity: 4,
-    },
-    {
-      id: "frostEssence",
-      quantity: 4,
-    },
-    {
-      id: "silver",
-      quantity: 2,
-    },
-    {
-      id: "tin",
-      quantity: 2,
-    },
-  ],
-  "11_C": [
-    {
-      id: "gold",
-      quantity: 1,
-    },
-  ],
+  "0_C": {
+    gold: 1,
+    tin: 1,
+    silver: 1,
+    frostEssence: 3,
+    earthEssence: 3,
+  },
+
+  "4_C": {
+    silver: 1,
+    earthEssence: 3,
+    frostEssence: 5,
+  },
+  "9_C": {
+    gold: 1,
+    earthEssence: 4,
+    frostEssence: 4,
+    silver: 2,
+    tin: 2,
+  },
+  "11_C": {
+    gold: 1,
+    frostEssence: 4,
+    silver: 2,
+    tin: 2,
+  },
 };
+
+const CONTAINER_ROOM_KEYS = _.keys(
+  _.pickBy(ROOMS_BY_ID, (room) => room.type === "container")
+);
+
+const ITEMS_BY_ROOM_ID = _.zipObject(
+  CONTAINER_ROOM_KEYS,
+  CONTAINER_ROOM_KEYS.map((roomId) =>
+    _.zipObject(
+      ITEM_IDS,
+      ITEM_IDS.map((itemId) => CONTAINER_ITEMS[roomId][itemId] ?? 0)
+    )
+  )
+);
 
 const MONSTER_LIST = [
   {
@@ -295,6 +274,8 @@ const ROOM_EXIT_POSITIONS = {
   west: getPositionFromCoordinates(0, 1),
 };
 
+const CENTER_POSITION = getPositionFromCoordinates(1, 1);
+
 ROOMS_BY_ID = _.mapValues(ROOMS_BY_ID, (room) => {
   if (!room.type) {
     room.type = ROOM_TYPES.empty;
@@ -329,7 +310,6 @@ ROOMS_BY_ID = _.mapValues(ROOMS_BY_ID, (room) => {
     exitTilePositions,
     lockedExitTilePositions: [],
     lockedDirections: [],
-    centerPosition: getPositionFromCoordinates(1, 1),
   };
 });
 
@@ -341,18 +321,52 @@ CAPTIVE_LIST = _.map(CAPTIVE_LIST, (captive) => ({
 
 const MAX_ITEMS = 5;
 
+const MONSTERS_BY_ROOM_ID = _.keyBy(
+  MONSTER_LIST.map((monster) => ({
+    ...monster,
+    hunger: monster.maxHunger,
+    sated: false,
+  })),
+  "roomId"
+);
+
+const INVENTORY_BY_ID = _.zipObject(
+  ITEM_IDS,
+  ITEM_IDS.map(() => 0)
+);
+
+console.log(`[=] INVENTORY_BY_ID:`, INVENTORY_BY_ID);
+
+const STORAGE_ITEMS_BY_ID = _.keyBy(
+  _.values(ITEMS_BY_ID).map((item) => ({
+    ...item,
+    quantity: 0,
+  })),
+  "id"
+);
+
+const CAPTIVES_BY_ID = _.keyBy(CAPTIVE_LIST, "id");
+
 export {
   CAPTIVE_LIST,
+  CAPTIVES_BY_ID,
+  CENTER_POSITION,
   CONTAINER_ITEMS,
   DIRECTION_OPPOSITE,
   ITEMS_BY_ID,
+  ITEMS_BY_ROOM_ID,
+  ITEM_IDS,
+  INVENTORY_BY_ID,
+  BASE_ITEM_LIST,
   MAP_SIZE,
   MAX_ITEMS,
   MONSTER_LIST,
+  MONSTERS_BY_ROOM_ID,
   RECIPES_BY_ID,
   ROOM_EXIT_POSITIONS,
   ROOM_POSITIONS,
   ROOM_SIZE,
   ROOM_TYPES,
   ROOMS_BY_ID,
+  STORAGE_ITEMS_BY_ID,
 };
