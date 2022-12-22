@@ -6,6 +6,7 @@ import Flasks from "../../img/flasks.svg";
 import { Item, ItemWithQuantity } from "../../components/Item";
 import { CenterTileContentContainer } from "../../CenterTileContentContainer";
 import { useOpen } from "../../useOpen";
+import { ITEMS_BY_ID } from "../../../data/constants";
 
 function LabTileDialogueContent({
   room,
@@ -17,7 +18,7 @@ function LabTileDialogueContent({
   const hasIngredients = useCallback(
     (recipe) => {
       return recipe.ingredients.every((ingredient) => {
-        return inventoryById[ingredient.itemId].quantity >= ingredient.quantity;
+        return inventoryById[ingredient.itemId] >= ingredient.quantity;
       });
     },
     [inventoryById]
@@ -25,7 +26,7 @@ function LabTileDialogueContent({
 
   const hasIngredient = useCallback(
     (ingredient) => {
-      return inventoryById[ingredient.itemId].quantity >= ingredient.quantity;
+      return inventoryById[ingredient.itemId] >= ingredient.quantity;
     },
     [inventoryById]
   );
@@ -58,8 +59,8 @@ function LabTileDialogueContent({
                       key={`${ingredient.itemId}-${i}`}
                     >
                       <ItemWithQuantity
-                        item={inventoryById[ingredient.itemId]}
-                        quantity={ingredient.quantity}
+                        item={ITEMS_BY_ID[ingredient.itemId]}
+                        quantity={inventoryById[ingredient.itemId]}
                         wrapperClass={itemWrapperClass}
                       />
                       {i < r.ingredients.length - 1 ? (
@@ -78,7 +79,7 @@ function LabTileDialogueContent({
                   disabled={!hasIngredients(r)}
                   className="rounded-sm bg-slate-800 whitespace-pre ml-2 disabled:opacity-50"
                 >
-                  <Item item={inventoryById[r.id]} />
+                  <Item item={ITEMS_BY_ID[r.id]} />
                 </button>
               </div>
             );

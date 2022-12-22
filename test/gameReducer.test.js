@@ -6,14 +6,19 @@ const { ROOMS_BY_ID, ROOM_TYPES } = require("../src/data/constants");
 
 describe("reset", () => {
   test("reset is valid", () => {
-    const gameState = {
+    let gameState = {
       ...initialState,
       currentRoom: ROOMS_BY_ID[_.keys(ROOMS_BY_ID)[2]],
       previousRoom: ROOMS_BY_ID[_.keys(ROOMS_BY_ID)[3]],
+      inventoryById: {
+        gold: 100,
+        silver: 100,
+      },
     };
-    const result = gameReducer(gameState, { type: "reset" });
-    expect(JSON.stringify(result)).toEqual(JSON.stringify(initialState));
-    expect(result).toEqual(initialState);
+    expect(JSON.stringify(gameState)).not.toEqual(JSON.stringify(initialState));
+    gameState = gameReducer(gameState, { type: "reset" });
+    expect(JSON.stringify(gameState)).toEqual(JSON.stringify(initialState));
+    expect(gameState).toEqual(initialState);
   });
   test("move", () => {
     const result = gameReducer(initialState, {
@@ -79,6 +84,12 @@ describe("reset", () => {
     expect(gameState.monstersByRoomId["2_M"]).toHaveProperty("hunger", 0);
     expect(gameState.monstersByRoomId["2_M"]).toHaveProperty("sated", true);
     expect(gameState.currentRoom.lockedDirections).toHaveLength(0);
+    // try to feed monster again
+    gameState = gameReducer(gameState, {
+      type: "feed",
+      payload: { itemId: "gold" },
+    });
+    expect(gameState.monstersByRoomId["2_M"]).toHaveProperty("sated", true);
   });
   test("freeCaptive", () => {
     let gameState = {

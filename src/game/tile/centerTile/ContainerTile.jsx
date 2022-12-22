@@ -49,7 +49,9 @@ function ContainerModalContents({
 export function ContainerTile({ room }) {
   const { itemsByRoomId } = useGame();
   const dispatch = useGameDispatch();
-  const currentRoomItems = _.entries(itemsByRoomId[room.id]);
+  const currentRoomItems = _.entries(itemsByRoomId[room.id]).filter(
+    ([_itemId, quantity]) => quantity > 0
+  );
 
   const open = currentRoomItems.length > 0;
   const openableClass = open ? "opacity-100" : "opacity-20";

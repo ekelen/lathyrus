@@ -83,21 +83,15 @@ function Keys({ captivesByRoomId, haveKeysTo, currentRoomId, dispatch }) {
 }
 
 function InventoryItems({ inventoryById, type, currentRoomMonster, dispatch }) {
-  const disabled = type !== ROOM_TYPES.monster || currentRoomMonster?.sated;
+  const disabled = currentRoomMonster?.sated;
 
   const handleItemClick = useCallback(
-    ({ item }) => {
+    ({ itemId }) => {
       switch (type) {
-        // case ROOM_TYPES.storage:
-        //   dispatch({
-        //     type: "addToStorageFromInventory",
-        //     payload: { itemId: item.id, quantity: 1 },
-        //   });
-        //   break;
         case ROOM_TYPES.monster:
           dispatch({
             type: "feed",
-            payload: { itemId: item.id },
+            payload: { itemId },
           });
           break;
         default:
@@ -107,21 +101,25 @@ function InventoryItems({ inventoryById, type, currentRoomMonster, dispatch }) {
     [type, dispatch]
   );
 
-  const inventoryValues = useMemo(
-    () => _.values(inventoryById).filter((item) => item.quantity > 0),
+  const inventoryKeys = useMemo(
+    () => _.keys(_.pickBy(inventoryById, (item) => item > 0)),
     [inventoryById]
+  );
+  const itemValues = useMemo(
+    () => _.pick(ITEMS_BY_ID, inventoryKeys),
+    [inventoryKeys]
   );
   return (
     <>
-      {inventoryValues.map((item) => {
+      {inventoryKeys.map((itemId) => {
         return (
           <ItemWithQuantityButton
-            key={item.id}
-            quantity={item.quantity}
-            item={item}
+            key={itemId}
+            quantity={inventoryById[itemId]}
+            item={itemValues[itemId]}
             disabled={disabled}
             onClick={() => {
-              handleItemClick({ item });
+              handleItemClick({ itemId });
             }}
             wrapperClass="disabled:opacity-50"
           />

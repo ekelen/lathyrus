@@ -22,7 +22,7 @@ export function gameReducer(state, action) {
         ROOM_EXIT_POSITIONS[direction]
       );
       if (isLocked) {
-        // console.error("That way is locked");
+        console.info("That way is locked");
         return state;
       }
 
@@ -48,67 +48,16 @@ export function gameReducer(state, action) {
         movedCameraToOnTransition: direction,
       };
     }
-    // case "addToInventoryFromStorage": {
-    //   const { itemId, quantity } = action.payload;
-    //   const { inventoryById, storageItemsById } = state;
 
-    //   const storageItem = storageItemsById[itemId];
-    //   const newStorageItems = {
-    //     ...storageItemsById,
-    //     [itemId]: {
-    //       ...storageItem,
-    //       quantity: storageItem.quantity - quantity,
-    //     },
-    //   };
-    //   const inventoryItem = inventoryById[itemId];
-
-    //   const newInventoryItems = {
-    //     ...inventoryById,
-    //     [itemId]: {
-    //       ...inventoryItem,
-    //       quantity: inventoryItem.quantity + quantity,
-    //     },
-    //   };
-
-    //   return {
-    //     ...state,
-    //     storageItemsById: newStorageItems,
-    //     inventoryById: newInventoryItems,
-    //   };
-    // }
-    // case "addToStorageFromInventory": {
-    //   const { itemId, quantity } = action.payload;
-    //   const { inventoryById, storageItemsById } = state;
-
-    //   const inventoryItem = inventoryById[itemId];
-    //   const newInventoryItems = {
-    //     ...inventoryById,
-    //     [itemId]: {
-    //       ...inventoryItem,
-    //       quantity: inventoryItem.quantity - quantity,
-    //     },
-    //   };
-    //   const storageItem = storageItemsById[itemId];
-
-    //   const newStorageItems = {
-    //     ...storageItemsById,
-    //     [itemId]: {
-    //       ...storageItem,
-    //       quantity: storageItem.quantity + quantity,
-    //     },
-    //   };
-
-    //   return {
-    //     ...state,
-    //     storageItemsById: newStorageItems,
-    //     inventoryById: newInventoryItems,
-    //   };
-    // }
     case "addToInventoryFromRoom": {
       const { itemId, quantity } = action.payload;
       const { inventoryById, itemsByRoomId, currentRoom } = state;
 
       const currentRoomItemQuantity = itemsByRoomId[currentRoom.id][itemId];
+      if (currentRoomItemQuantity < quantity) {
+        console.info("Not enough items in room");
+        return state;
+      }
       const currentInventoryItemQuantity = inventoryById[itemId];
       const newInventoryItems = {
         ...inventoryById,
@@ -160,11 +109,10 @@ export function gameReducer(state, action) {
       const monster = monstersByRoomId[currentRoom.id];
       const { hasKeyTo } = monster;
       if (monster.sated) {
-        // console.log("monster is sated");
+        console.info("monster is sated");
         return state;
       }
       const item = ITEMS_BY_ID[itemId];
-      // const inventoryItem = inventoryById[itemId];
       const { value } = item;
       const hunger = max([monster.hunger - value, 0]);
       const sated = hunger === 0;
@@ -210,7 +158,7 @@ export function gameReducer(state, action) {
       const { roomId } = action.payload;
       const captive = captivesByRoomId[roomId];
       if (!haveKeysTo.includes(captive.id)) {
-        // console.error(`don't have key for ${roomId} captive ${captive.id}`);
+        console.info(`don't have key for ${roomId} captive ${captive.id}`);
         return state;
       }
       return {
@@ -232,7 +180,7 @@ export function gameReducer(state, action) {
       const { recipeId } = action.payload;
 
       if (!learnedRecipeIds.includes(recipeId)) {
-        // console.error(`Don't have recipe for ${recipeId}`);
+        console.info(`Don't have recipe for ${recipeId}`);
         return state;
       }
       const recipe = RECIPES_BY_ID[recipeId];
@@ -242,7 +190,7 @@ export function gameReducer(state, action) {
         return inventoryQuantity >= ingredient.quantity;
       });
       if (!hasIngredients) {
-        // console.error(`don't have ingredients for ${recipeId}`);
+        console.info(`don't have ingredients for ${recipeId}`);
         return state;
       }
       const updatedIngredientInventory = _.zipObject(
