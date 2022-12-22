@@ -4,7 +4,7 @@ import DialogueBox from "../../components/DialogueBox";
 import Svg from "../../components/Svg";
 import Flasks from "../../img/flasks.svg";
 import { Item, ItemWithQuantity } from "../../components/Item";
-import { CenterTileContentContainer } from "../../CenterTileContentContainer";
+import { CenterTileContentContainer } from "../CenterTileContentContainer";
 import { useOpen } from "../../useOpen";
 import { ITEMS_BY_ID } from "../../../data/gameData";
 

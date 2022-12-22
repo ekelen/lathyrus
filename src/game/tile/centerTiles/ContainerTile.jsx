@@ -2,7 +2,7 @@ import _ from "lodash";
 import React from "react";
 import { ITEMS_BY_ID } from "../../../data/gameData";
 import { useGame, useGameDispatch } from "../../../state/GameContext";
-import { CenterTileContentContainer } from "../../CenterTileContentContainer";
+import { CenterTileContentContainer } from "../CenterTileContentContainer";
 import DialogueBox from "../../components/DialogueBox";
 import { ItemWithQuantityButton } from "../../components/Item";
 import Svg from "../../components/Svg";

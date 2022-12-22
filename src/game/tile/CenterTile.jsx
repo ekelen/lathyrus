@@ -1,12 +1,11 @@
 import React from "react";
 
-import SVG from "react-inlinesvg";
-import { ROOM_TYPES } from "../data/constants";
-import { CaptiveTile } from "./tile/centerTile/CaptiveTile";
-import { ContainerTile } from "./tile/centerTile/ContainerTile";
-import { LabTile } from "./tile/centerTile/LabTile";
-import { LevelExitTile } from "./tile/centerTile/LevelExitTile";
-import { MonsterTile } from "./tile/centerTile/MonsterTile";
+import { ROOM_TYPES } from "../../data/constants";
+import { CaptiveTile } from "./centerTiles/CaptiveTile";
+import { ContainerTile } from "./centerTiles/ContainerTile";
+import { LabTile } from "./centerTiles/LabTile";
+import { LevelExitTile } from "./centerTiles/LevelExitTile";
+import { MonsterTile } from "./centerTiles/MonsterTile";
 
 export function CenterTile({ room }) {
   return (

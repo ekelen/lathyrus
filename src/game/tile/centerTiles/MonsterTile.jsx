@@ -5,7 +5,7 @@ import DialogueBox from "../../components/DialogueBox";
 import Svg from "../../components/Svg";
 import Key from "../../img/key.svg";
 import { GET_MONSTER_IMAGE } from "../../img/Monster";
-import { CenterTileContentContainer } from "../../CenterTileContentContainer";
+import { CenterTileContentContainer } from "../CenterTileContentContainer";
 import { useOpen } from "../../useOpen";
 
 function MonsterTileContents({ monster, room }) {

@@ -2,7 +2,7 @@ import _ from "lodash";
 import React, { useEffect, useRef } from "react";
 import { ROOM_SIZE } from "../data/constants";
 import { useGame, useGameDispatch } from "../state/GameContext";
-import RoomTile from "./Tile";
+import RoomTile from "./tile/Tile";
 
 const FRAME_WIDTH = "2rem";
 

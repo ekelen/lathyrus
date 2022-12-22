@@ -1,7 +1,7 @@
 import React from "react";
 import { ITEMS_BY_ID } from "../../../data/gameData";
 import { useGame, useGameDispatch } from "../../../state/GameContext";
-import { CenterTileContentContainer } from "../../CenterTileContentContainer";
+import { CenterTileContentContainer } from "../CenterTileContentContainer";
 import { CaptiveImage } from "../../components/Captive";
 import DialogueBox from "../../components/DialogueBox";
 import { Item } from "../../components/Item";

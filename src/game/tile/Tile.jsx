@@ -1,11 +1,11 @@
 import React from "react";
-import { ROOM_SIZE } from "../data/constants";
-import { getPositionFromCoordinates, CENTER_POSITION } from "../data/util";
+import { ROOM_SIZE } from "../../data/constants";
+import { getPositionFromCoordinates, CENTER_POSITION } from "../../data/util";
 import { CenterTile } from "./CenterTile";
-import pine00 from "./img/trees/pine00.png";
-import pine01 from "./img/trees/pine01.png";
-import pine02 from "./img/trees/pine02.png";
-import pine04 from "./img/trees/pine04.png";
+import pine00 from "../img/trees/pine00.png";
+import pine01 from "../img/trees/pine01.png";
+import pine02 from "../img/trees/pine02.png";
+import pine04 from "../img/trees/pine04.png";
 
 const TREE_IMG = [pine00, pine01, pine02, pine04];
 
