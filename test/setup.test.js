@@ -1,7 +1,8 @@
-const setup = require("../src/data/setup");
-const constants = require("../src/data/constants");
+const setup = require("../src/state/setup");
+const gameData = require("../src/data/gameData");
 const util = require("../src/data/util");
 const _ = require("lodash");
+const { ROOM_TYPES } = require("../src/data/constants");
 
 const {
   MONSTER_LIST,
@@ -10,7 +11,7 @@ const {
   ROOM_POSITIONS,
   MAP_SIZE,
   CAPTIVE_LIST,
-} = constants;
+} = gameData;
 
 describe("ROOM_POSITIONS and ROOMS_BY_ID", () => {
   test("ROOM_POSITIONS size is valid", () => {
@@ -30,7 +31,7 @@ describe("ROOM_POSITIONS and ROOMS_BY_ID", () => {
   });
   test("All container items have keys that exist on map", () => {
     expect(
-      _.keys(constants.CONTAINER_ITEMS).every((roomId) => {
+      _.keys(gameData.CONTAINER_ITEMS).every((roomId) => {
         return ROOMS_BY_ID[roomId] && ROOMS_BY_ID[roomId].type === "container";
       })
     ).toBe(true);
@@ -45,14 +46,12 @@ describe("ROOM_POSITIONS and ROOMS_BY_ID", () => {
   test("All monsters must be in a room of type 'monster'", () => {
     expect(
       MONSTER_LIST.every((monster) => {
-        return (
-          ROOMS_BY_ID[monster.roomId].type === constants.ROOM_TYPES.monster
-        );
+        return ROOMS_BY_ID[monster.roomId].type === ROOM_TYPES.monster;
       })
     ).toBe(true);
     expect(
       _.values(ROOMS_BY_ID)
-        .filter((r) => r.type === constants.ROOM_TYPES.monster)
+        .filter((r) => r.type === ROOM_TYPES.monster)
         .every((r) => MONSTER_LIST.find((m) => m.roomId === r.id))
     ).toBe(true);
   });
@@ -85,7 +84,7 @@ describe("ROOM_POSITIONS and ROOMS_BY_ID", () => {
     });
   });
   test("Container items", () => {
-    _.entries(constants.CONTAINER_ITEMS).forEach(([roomId, items]) => {
+    _.entries(gameData.CONTAINER_ITEMS).forEach(([roomId, items]) => {
       expect(ROOMS_BY_ID[roomId].type).toBe("container");
     });
     _.toPairs(setup.initialState.itemsByRoomId).forEach(
@@ -98,7 +97,7 @@ describe("ROOM_POSITIONS and ROOMS_BY_ID", () => {
     );
   });
   test("Recipes", () => {
-    _.entries(constants.RECIPES_BY_ID).forEach(([id, recipe]) => {
+    _.entries(gameData.RECIPES_BY_ID).forEach(([id, recipe]) => {
       expect(
         CAPTIVE_LIST.find((c) => {
           return c.teaches.recipeId === id;

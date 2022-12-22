@@ -1,6 +1,6 @@
 import React from "react";
-import { CENTER_POSITION, ROOM_SIZE } from "../data/constants";
-import { getPositionFromCoordinates } from "../data/util";
+import { ROOM_SIZE } from "../data/constants";
+import { getPositionFromCoordinates, CENTER_POSITION } from "../data/util";
 import { CenterTile } from "./CenterTile";
 import pine00 from "./img/trees/pine00.png";
 import pine01 from "./img/trees/pine01.png";
@@ -9,14 +9,14 @@ import pine04 from "./img/trees/pine04.png";
 
 const TREE_IMG = [pine00, pine01, pine02, pine04];
 
-function RoomDeadspaceTile({ room, position }) {
+function RoomDeadspaceTile({ room, tilePosition }) {
   return (
     <div
       className="bg-black h-full w-full bg-contain bg-no-repeat"
       style={{
         backgroundImage: `url('${
           TREE_IMG[
-            (position + room.coordinates.x + room.coordinates.y) %
+            (tilePosition + room.coordinates.x + room.coordinates.y) %
               TREE_IMG.length
           ]
         }')`,
@@ -25,13 +25,13 @@ function RoomDeadspaceTile({ room, position }) {
   );
 }
 
-function ExitTile({ room, position }) {
+function ExitTile({ room, tilePosition }) {
   return (
     <div
-      key={`${room.id}-${position}`}
+      key={`${room.id}-${tilePosition}`}
       className="h-full w-full relative flex items-center justify-center"
     >
-      {room.lockedExitTilePositions.includes(position) ? (
+      {room.lockedExitTilePositions.includes(tilePosition) ? (
         <>
           <span style={{ color: "red" }}></span>
         </>
@@ -41,9 +41,9 @@ function ExitTile({ room, position }) {
 }
 
 function RoomTile({ row, col, room }) {
-  const position = getPositionFromCoordinates(col, row);
-  const isCenter = position === CENTER_POSITION;
-  const isExitTile = room.exitTilePositions.includes(position);
+  const tilePosition = getPositionFromCoordinates(col, row);
+  const isCenter = tilePosition === CENTER_POSITION;
+  const isExitTile = room.exitTilePositions.includes(tilePosition);
   const backgroundClass = isCenter || isExitTile ? "bg-teal-900" : "bg-black";
   return (
     <div
@@ -56,9 +56,9 @@ function RoomTile({ row, col, room }) {
       {isCenter ? (
         <CenterTile type={room.type} room={room} />
       ) : isExitTile ? (
-        <ExitTile {...{ room, position }} />
+        <ExitTile {...{ room, tilePosition }} />
       ) : (
-        <RoomDeadspaceTile {...{ room, position }} />
+        <RoomDeadspaceTile {...{ room, tilePosition }} />
       )}
     </div>
   );

@@ -1,14 +1,13 @@
 import _, { cloneDeep, max } from "lodash";
+import { DIRECTION_OPPOSITE } from "../data/constants";
 import {
-  DIRECTION_OPPOSITE,
   ITEMS_BY_ID,
   ITEM_IDS,
   RECIPES_BY_ID,
   ROOMS_BY_ID,
-  ROOM_EXIT_POSITIONS,
-} from "../data/constants";
-import { initialState } from "../data/setup";
-import { sortByName } from "../data/util";
+} from "../data/gameData";
+import { initialState } from "./setup";
+import { ROOM_EXIT_POSITIONS } from "../data/util";
 
 export function gameReducer(state, action) {
   switch (action.type) {

@@ -6,8 +6,7 @@ import {
   MAX_ITEMS,
   MONSTERS_BY_ROOM_ID,
   ROOMS_BY_ID,
-  STORAGE_ITEMS_BY_ID,
-} from "./constants";
+} from "../data/gameData";
 
 export const initialState = _.cloneDeep({
   currentRoom: ROOMS_BY_ID["0_C"],
@@ -18,7 +17,6 @@ export const initialState = _.cloneDeep({
   movedCameraToOnTransition: null,
   captivesByRoomId: CAPTIVES_BY_ID,
   haveKeysTo: [],
-  storageItemsById: STORAGE_ITEMS_BY_ID,
   learnedRecipeIds: [],
   maxInventory: MAX_ITEMS,
 });

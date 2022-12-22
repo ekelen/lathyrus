@@ -1,7 +1,7 @@
 import _ from "lodash";
 import React, { useCallback, useMemo } from "react";
 
-import { ITEMS_BY_ID, RECIPES_BY_ID, ROOM_TYPES } from "../data/constants";
+import { ITEMS_BY_ID, RECIPES_BY_ID } from "../data/gameData";
 import { useGame, useGameDispatch } from "../state/GameContext";
 import { CaptiveImage } from "./components/Captive";
 import DialogueBox from "./components/DialogueBox";
@@ -13,6 +13,7 @@ import {
 import Svg from "./components/Svg";
 import Key from "./img/key.svg";
 import Flasks from "./img/flasks.svg";
+import { ROOM_TYPES } from "../data/constants";
 
 const KeyCodepoint = ({ className }) => (
   <div className={className}>&#x0e033;</div>

@@ -1,8 +1,9 @@
 const _ = require("lodash");
-const { initialState } = require("../src/data/setup");
+const { initialState } = require("../src/state/setup");
 const { gameReducer } = require("../src/state/gameReducer");
 
-const { ROOMS_BY_ID, ROOM_TYPES } = require("../src/data/constants");
+const { ROOMS_BY_ID } = require("../src/data/gameData");
+const { ROOM_TYPES } = require("../src/data/constants");
 
 describe("reset", () => {
   test("reset is valid", () => {

@@ -1,5 +1,5 @@
 import React from "react";
-import { ROOMS_BY_ID, ROOM_POSITIONS } from "../data/constants";
+import { ROOMS_BY_ID, ROOM_POSITIONS } from "../data/gameData";
 import { ModalContext, useGame } from "../state/GameContext";
 
 function Minimap() {
@@ -25,9 +25,7 @@ function Minimap() {
                     <div className="text-red-200 text-3xl">✯</div>
                   )}
                   <div>
-                    {room
-                      ? ROOMS_BY_ID[room].type.replace(/(storage|empty)/, "")
-                      : ""}
+                    {room ? ROOMS_BY_ID[room].type.replace(/(empty)/, "") : ""}
                   </div>
                 </div>
               );

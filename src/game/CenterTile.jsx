@@ -7,7 +7,6 @@ import { ContainerTile } from "./tile/centerTile/ContainerTile";
 import { LabTile } from "./tile/centerTile/LabTile";
 import { LevelExitTile } from "./tile/centerTile/LevelExitTile";
 import { MonsterTile } from "./tile/centerTile/MonsterTile";
-import { StorageTile } from "./tile/centerTile/StorageTile";
 
 export function CenterTile({ room }) {
   return (
@@ -24,8 +23,6 @@ export function CenterTile({ room }) {
             return <LabTile room={room} />;
           case ROOM_TYPES.exit:
             return <LevelExitTile room={room} />;
-          // case ROOM_TYPES.storage:
-          //   return <StorageTile room={room} />;
           default:
             return null;
         }
