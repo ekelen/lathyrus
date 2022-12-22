@@ -1,5 +1,5 @@
 import React from "react";
-import { ROOMS_BY_ID, ROOM_POSITIONS } from "../data/gameData";
+import { ROOMS_BY_ID, ROOM_POSITIONS } from "../data/data";
 import { ModalContext, useGame } from "../state/GameContext";
 
 function Minimap() {

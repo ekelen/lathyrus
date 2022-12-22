@@ -1,6 +1,6 @@
 import _ from "lodash";
 import React from "react";
-import { ITEMS_BY_ID } from "../../../data/gameData";
+import { ITEMS_BY_ID } from "../../../data/data";
 import { useGame, useGameDispatch } from "../../../state/GameContext";
 import { CenterTileContentContainer } from "../CenterTileContentContainer";
 import DialogueBox from "../../components/DialogueBox";
@@ -13,6 +13,9 @@ function ContainerModalContents({
   currentRoomItems,
   handleTakeItem,
   handleTakeAllItems,
+
+  disableTakeAll,
+  disableTakeAny,
 }) {
   return (
     <div className="flex flex-wrap items-center content-start w-full">
@@ -23,6 +26,7 @@ function ContainerModalContents({
             key={itemId}
             item={item}
             quantity={quantity}
+            disabled={disableTakeAny}
             onClick={(e) => {
               e.stopPropagation();
               handleTakeItem(itemId);
@@ -33,7 +37,7 @@ function ContainerModalContents({
       })}
       <button
         className="rounded-sm bg-slate-800 whitespace-pre disabled:opacity-50 ml-auto h-6 mb-1 px-2 text-xs"
-        disabled={currentRoomItems.length < 1}
+        disabled={currentRoomItems.length < 1 || disableTakeAll}
         onClick={(e) => {
           e.stopPropagation();
           handleTakeAllItems();
@@ -47,14 +51,19 @@ function ContainerModalContents({
 }
 
 export function ContainerTile({ room }) {
-  const { itemsByRoomId } = useGame();
+  const { itemsByRoomId, maxInventory, totalInventoryQuantity } = useGame();
   const dispatch = useGameDispatch();
-  const currentRoomItems = _.entries(itemsByRoomId[room.id]).filter(
+  const currentRoomItems = Object.entries(itemsByRoomId[room.id]).filter(
     ([_itemId, quantity]) => quantity > 0
   );
+  const totalCurrentRoomQuantity = Object.values(itemsByRoomId[room.id]).reduce(
+    (a, b) => a + b
+  );
 
-  const open = currentRoomItems.length > 0;
-  const openableClass = open ? "opacity-100" : "opacity-20";
+  const disableTakeAny = totalInventoryQuantity >= maxInventory;
+  const disableTakeAll =
+    disableTakeAny ||
+    totalCurrentRoomQuantity + totalInventoryQuantity > maxInventory;
 
   const handleTakeItem = (itemId) => {
     dispatch({
@@ -71,17 +80,21 @@ export function ContainerTile({ room }) {
   return (
     <>
       <CenterTileContentContainer>
-        <div className={`${openableClass}`}>
-          <Svg source={Chest} width="100%" height="80%" />
-        </div>
+        <Svg source={Chest} width="100%" height="80%" />
       </CenterTileContentContainer>
       <DialogueBox
-        isOpen={open}
+        isOpen={true}
         roomId={room.id}
         style={{ minWidth: "280%", width: "280%" }}
       >
         <ContainerModalContents
-          {...{ currentRoomItems, handleTakeItem, handleTakeAllItems }}
+          {...{
+            currentRoomItems,
+            handleTakeItem,
+            handleTakeAllItems,
+            disableTakeAny,
+            disableTakeAll,
+          }}
         />
       </DialogueBox>
     </>

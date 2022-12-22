@@ -1,18 +1,18 @@
-import _, { cloneDeep, max } from "lodash";
+import _, { max } from "lodash";
 import { DIRECTION_OPPOSITE } from "../data/constants";
 import {
   ITEMS_BY_ID,
   ITEM_IDS,
   RECIPES_BY_ID,
   ROOMS_BY_ID,
-} from "../data/gameData";
-import { initialState } from "./setup";
+} from "../data/data";
 import { ROOM_EXIT_POSITIONS } from "../data/util";
+import { initialState } from "./setup";
 
 export function gameReducer(state, action) {
   switch (action.type) {
     case "reset": {
-      return cloneDeep(initialState);
+      return JSON.parse(JSON.stringify(initialState));
     }
     case "move": {
       const { direction } = action.payload;
@@ -27,7 +27,7 @@ export function gameReducer(state, action) {
 
       const targetRoom = ROOMS_BY_ID[currentRoom.exits[direction]];
       const { exits } = targetRoom;
-      const exitDirections = _.keys(exits).filter((dir) => exits[dir]);
+      const exitDirections = Object.keys(exits).filter((dir) => exits[dir]);
       const monster = monstersByRoomId[targetRoom.id] ?? null;
       const noLockedExits = !monster || monster.sated;
       const lockedDirections = noLockedExits
@@ -51,10 +51,15 @@ export function gameReducer(state, action) {
     case "addToInventoryFromRoom": {
       const { itemId, quantity } = action.payload;
       const { inventoryById, itemsByRoomId, currentRoom } = state;
+      const inventoryCount = _.sum(Object.values(inventoryById));
 
       const currentRoomItemQuantity = itemsByRoomId[currentRoom.id][itemId];
       if (currentRoomItemQuantity < quantity) {
         console.info("Not enough items in room");
+        return state;
+      }
+      if (inventoryCount + quantity > state.maxInventory) {
+        console.info("Not enough room in inventory");
         return state;
       }
       const currentInventoryItemQuantity = inventoryById[itemId];
@@ -77,9 +82,49 @@ export function gameReducer(state, action) {
         inventoryById: newInventoryItems,
       };
     }
+    case "addToRoomFromInventory": {
+      const { itemId, quantity } = action.payload;
+      const { inventoryById, itemsByRoomId, currentRoom } = state;
+      // const inventoryCount = _.sum(Object.values(inventoryById));
+
+      const currentRoomItemQuantity = itemsByRoomId[currentRoom.id][itemId];
+      // if (currentRoomItemQuantity < quantity) {
+      //   console.info("Not enough items in room");
+      //   return state;
+      // }
+      // if (inventoryCount + quantity > state.maxInventory) {
+      //   console.info("Not enough room in inventory");
+      //   return state;
+      // }
+      const currentInventoryItemQuantity = inventoryById[itemId];
+      const newInventoryItems = {
+        ...inventoryById,
+        [itemId]: currentInventoryItemQuantity - quantity,
+      };
+
+      const newCurrentRoomItems = {
+        ...itemsByRoomId[currentRoom.id],
+        [itemId]: currentRoomItemQuantity + quantity,
+      };
+
+      return {
+        ...state,
+        itemsByRoomId: {
+          ...itemsByRoomId,
+          [currentRoom.id]: newCurrentRoomItems,
+        },
+        inventoryById: newInventoryItems,
+      };
+    }
     case "addAllToInventoryFromRoom": {
       const { inventoryById, itemsByRoomId, currentRoom } = state;
       const currentRoomItemQuantities = itemsByRoomId[currentRoom.id];
+      const inventoryCount = _.sum(Object.values(inventoryById));
+      const roomItemCount = _.sum(Object.values(currentRoomItemQuantities));
+      if (inventoryCount + roomItemCount > state.maxInventory) {
+        console.info("Not enough room in inventory");
+        return state;
+      }
 
       const newInventoryItems = _.zipObject(
         ITEM_IDS,
@@ -113,7 +158,7 @@ export function gameReducer(state, action) {
       }
       const item = ITEMS_BY_ID[itemId];
       const { value } = item;
-      const hunger = max([monster.hunger - value, 0]);
+      const hunger = Math.max(monster.hunger - value, 0);
       const sated = hunger === 0;
       const newMonster = {
         ...monster,

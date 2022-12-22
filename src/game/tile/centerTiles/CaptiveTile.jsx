@@ -1,5 +1,5 @@
 import React from "react";
-import { ITEMS_BY_ID } from "../../../data/gameData";
+import { ITEMS_BY_ID } from "../../../data/data";
 import { useGame, useGameDispatch } from "../../../state/GameContext";
 import { CenterTileContentContainer } from "../CenterTileContentContainer";
 import { CaptiveImage } from "../../components/Captive";
@@ -54,30 +54,22 @@ export function CaptiveTile({ room }) {
                   handleFreeCaptive();
                 }}
                 disabled={!haveKey || captive.freed}
-                className="p-1 whitespace-pre w-min flex justify-center items-center gap-2 disabled:opacity-50 disabled:bg-transparent bg-slate-800 rounded-sm"
+                className="flex items-center justify-center h-6 w-6 relative mx-1 rounded-md bg-slate-800 p-1 disabled:bg-transparent disabled:opacity-50"
               >
                 <div
-                  className={`ml-2 flex items-center justify-center h-4 w-4 relative ${colorClass}`}
+                  className={`relative w-full h-full flex items-center justify-center ${colorClass}`}
                 >
-                  <Svg source={Key} height="80%" width="100%" />
+                  <Svg source={Key} height="70%" width="100%" />
                 </div>
-                :
-                {/* <div className="ml-1 flex items-center justify-center h-5 w-5 relative">
-                  <Svg source={Compass} height="100%" width="100%" />
-                </div>
-                <div className="h-10 w-12 relative">
-                  <Svg source={Flasks} height="100%" width="100%" />
-                </div> */}
+                {/* :
                 <Item symbol="?" colorClass={"text-slate-300"} />
                 <div>+</div>
                 <Item symbol="?" colorClass={"text-slate-300"} />
-                <div className="table-row">
-                  <div className="h-full table-cell align-middle">⟶</div>
-                </div>
+                <div>⟶</div>
                 <Item
                   item={ITEMS_BY_ID[captive.teaches.recipeId]}
                   // colorClass="text-slate-500"
-                />
+                /> */}
               </button>
             </>
           }

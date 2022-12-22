@@ -74,8 +74,7 @@ function Room({ room, isPreviousRoom = false }) {
           END_POSITION_PREVIOUS[movedCameraToOnTransition].top ?? 0
         }`;
       }, 10);
-    }
-    if (roomRef.current && !isPreviousRoom) {
+    } else if (roomRef.current && !isPreviousRoom) {
       timer = setTimeout(() => {
         roomRef.current.style.left = `0px`;
         roomRef.current.style.top = `0px`;
@@ -88,7 +87,7 @@ function Room({ room, isPreviousRoom = false }) {
 
   return (
     <div style={commonStyle} ref={roomRef}>
-      {_.range(ROOM_SIZE).map((row) => (
+      {[...Array(ROOM_SIZE).keys()].map((row) => (
         <div
           key={row}
           className="flex w-full"
@@ -96,7 +95,7 @@ function Room({ room, isPreviousRoom = false }) {
             height: `calc(100% / ${ROOM_SIZE})`,
           }}
         >
-          {_.range(ROOM_SIZE).map((col) => {
+          {[...Array(ROOM_SIZE).keys()].map((col) => {
             return (
               <RoomTile key={`${col}-${row}`} row={row} col={col} room={room} />
             );

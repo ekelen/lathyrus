@@ -11,7 +11,7 @@ import { useOpen } from "../../useOpen";
 function MonsterTileContents({ monster, room }) {
   const { sated, hunger, maxHunger, hasKeyTo } = monster;
   const { captivesByRoomId } = useGame();
-  const hungerPct = _.ceil((hunger / maxHunger) * 100);
+  const hungerPct = Math.ceil((hunger / maxHunger) * 100);
   const markerRef = useRef(null);
   const hungerRef = useRef(null);
   useEffect(() => {
@@ -65,7 +65,7 @@ export function MonsterTile({ room }) {
           <Svg
             source={GET_MONSTER_IMAGE(monster.image)}
             width={"100%"}
-            height="80%"
+            height="70%"
           />
         </div>
       </CenterTileContentContainer>

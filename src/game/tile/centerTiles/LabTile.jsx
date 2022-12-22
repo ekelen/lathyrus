@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useGame, useGameDispatch } from "../../../state/GameContext";
 import DialogueBox from "../../components/DialogueBox";
 import Svg from "../../components/Svg";
@@ -6,15 +6,17 @@ import Flasks from "../../img/flasks.svg";
 import { Item, ItemWithQuantity } from "../../components/Item";
 import { CenterTileContentContainer } from "../CenterTileContentContainer";
 import { useOpen } from "../../useOpen";
-import { ITEMS_BY_ID } from "../../../data/gameData";
+import { ITEMS_BY_ID, RECIPES_BY_ID } from "../../../data/data";
 
 function LabTileDialogueContent({
   room,
-  learnedRecipeList,
   inventoryById,
   learnedRecipeIds,
   dispatch,
 }) {
+  const learnedRecipeList = useMemo(() => {
+    return learnedRecipeIds.map((id) => RECIPES_BY_ID[id]);
+  }, [learnedRecipeIds]);
   const hasIngredients = useCallback(
     (recipe) => {
       return recipe.ingredients.every((ingredient) => {
@@ -23,14 +25,12 @@ function LabTileDialogueContent({
     },
     [inventoryById]
   );
-
   const hasIngredient = useCallback(
     (ingredient) => {
       return inventoryById[ingredient.itemId] >= ingredient.quantity;
     },
     [inventoryById]
   );
-
   const handleCombineItems = (recipeId) => {
     dispatch({
       type: "combineItems",
@@ -60,14 +60,10 @@ function LabTileDialogueContent({
                     >
                       <ItemWithQuantity
                         item={ITEMS_BY_ID[ingredient.itemId]}
-                        quantity={inventoryById[ingredient.itemId]}
+                        quantity={ingredient.quantity}
                         wrapperClass={itemWrapperClass}
                       />
-                      {i < r.ingredients.length - 1 ? (
-                        <div>+</div>
-                      ) : (
-                        <div>=</div>
-                      )}
+                      <div>{i < r.ingredients.length - 1 ? "+" : "⟶"}</div>
                     </div>
                   );
                 })}
@@ -77,7 +73,7 @@ function LabTileDialogueContent({
                     handleCombineItems(r.id);
                   }}
                   disabled={!hasIngredients(r)}
-                  className="rounded-sm bg-slate-800 whitespace-pre ml-2 disabled:opacity-50"
+                  className="rounded-sm bg-slate-800 whitespace-pre ml-2 disabled:opacity-50 active:bg-slate-900"
                 >
                   <Item item={ITEMS_BY_ID[r.id]} />
                 </button>
@@ -91,7 +87,7 @@ function LabTileDialogueContent({
 }
 
 export function LabTile({ room }) {
-  const { learnedRecipeIds, learnedRecipeList, inventoryById } = useGame();
+  const { learnedRecipeIds, inventoryById } = useGame();
   const { open, toggleOpen } = useOpen();
   const dispatch = useGameDispatch();
   const disabled = learnedRecipeIds.length < 1;
@@ -111,7 +107,6 @@ export function LabTile({ room }) {
       >
         <LabTileDialogueContent
           room={room}
-          learnedRecipeList={learnedRecipeList}
           inventoryById={inventoryById}
           learnedRecipeIds={learnedRecipeIds}
           dispatch={dispatch}

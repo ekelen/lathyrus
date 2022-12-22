@@ -2,15 +2,15 @@ const _ = require("lodash");
 const { initialState } = require("../src/state/setup");
 const { gameReducer } = require("../src/state/gameReducer");
 
-const { ROOMS_BY_ID } = require("../src/data/gameData");
-const { ROOM_TYPES } = require("../src/data/constants");
+const { ROOMS_BY_ID, ITEM_IDS } = require("../src/data/data");
+const { ROOM_TYPES, DIRECTION_OPPOSITE } = require("../src/data/constants");
 
-describe("reset", () => {
+describe("actions", () => {
   test("reset is valid", () => {
     let gameState = {
       ...initialState,
-      currentRoom: ROOMS_BY_ID[_.keys(ROOMS_BY_ID)[2]],
-      previousRoom: ROOMS_BY_ID[_.keys(ROOMS_BY_ID)[3]],
+      currentRoom: ROOMS_BY_ID[Object.keys(ROOMS_BY_ID)[2]],
+      previousRoom: ROOMS_BY_ID[Object.keys(ROOMS_BY_ID)[3]],
       inventoryById: {
         gold: 100,
         silver: 100,
@@ -26,48 +26,65 @@ describe("reset", () => {
       type: "move",
       payload: { direction: "south" },
     });
-    expect(result.currentRoom.id).toEqual("1_LAB");
+    expect(result.currentRoom.id).toEqual(result.previousRoom.exits.south);
     expect(result.previousRoom.id).toEqual(initialState.currentRoom.id);
     const result2 = gameReducer(result, {
       type: "move",
       payload: { direction: "north" },
     });
-    expect(result2.currentRoom.id).toEqual("0_C");
-    expect(result2.previousRoom.id).toEqual("1_LAB");
+    expect(result2.currentRoom.id).toEqual(initialState.currentRoom.id);
+    expect(result2.previousRoom.id).toEqual(
+      initialState.currentRoom.exits.south
+    );
   });
   test("move in locked room", () => {
-    const gameState = {
-      ...initialState,
-      currentRoom: ROOMS_BY_ID["1_LAB"],
+    const getExitDirections = (room) => {
+      const { exits } = room;
+      return Object.keys(exits).filter((dir) => exits[dir]);
     };
-    const result = gameReducer(gameState, {
+
+    const exitDirections = getExitDirections(ROOMS_BY_ID["2_M"]);
+    // start in neighboring room to one that locks
+    let gameState = {
+      ...initialState,
+      currentRoom: ROOMS_BY_ID[ROOMS_BY_ID["2_M"].exits[exitDirections[0]]],
+    };
+    // move successfully into locked room
+    gameState = gameReducer(gameState, {
       type: "move",
-      payload: { direction: "east" },
+      payload: { direction: DIRECTION_OPPOSITE[exitDirections[0]] },
     });
-    expect(result.currentRoom.id).toEqual("2_M");
-    expect(result.currentRoom.type).toEqual(ROOM_TYPES.monster);
-    expect(result.previousRoom.id).toEqual("1_LAB");
-    expect(result.currentRoom.lockedDirections).toEqual(["south", "east"]);
+    expect(gameState.currentRoom.id).toEqual("2_M");
+    expect(gameState.currentRoom.lockedDirections.length).toBeGreaterThan(0);
+    // try to move in locked direction
+    gameState = gameReducer(gameState, {
+      type: "move",
+      payload: { direction: gameState.currentRoom.lockedDirections[0] },
+    });
+    expect(gameState.currentRoom.id).toEqual("2_M");
+    // move in unlocked direction
+    gameState = gameReducer(gameState, {
+      type: "move",
+      payload: { direction: exitDirections[0] },
+    });
+    expect(gameState.currentRoom.id).toEqual(
+      ROOMS_BY_ID["2_M"].exits[exitDirections[0]]
+    );
   });
 
   test("sate monster", () => {
     let gameState = {
       ...initialState,
-      currentRoom: ROOMS_BY_ID["1_LAB"],
+      currentRoom: ROOMS_BY_ID["2_M"],
       inventoryById: {
         ...initialState.inventoryById,
         gold: 4,
       },
     };
-    gameState = gameReducer(gameState, {
-      type: "move",
-      payload: { direction: "east" },
-    });
     expect(gameState.currentRoom.id).toEqual("2_M");
-    expect(gameState.previousRoom.id).toEqual("1_LAB");
     expect(gameState.monstersByRoomId["2_M"]).toHaveProperty("sated", false);
     expect(gameState.monstersByRoomId["2_M"]).toHaveProperty("maxHunger");
-    expect(gameState.monstersByRoomId["2_M"].maxHunger).toEqual(4);
+    expect(gameState.monstersByRoomId["2_M"].maxHunger).toBeGreaterThan(0);
     expect(gameState.monstersByRoomId["2_M"].hunger).toEqual(
       gameState.monstersByRoomId["2_M"].maxHunger
     );
@@ -84,7 +101,7 @@ describe("reset", () => {
     });
     expect(gameState.monstersByRoomId["2_M"]).toHaveProperty("hunger", 0);
     expect(gameState.monstersByRoomId["2_M"]).toHaveProperty("sated", true);
-    expect(gameState.currentRoom.lockedDirections).toHaveLength(0);
+    // expect(gameState.currentRoom.lockedDirections).toHaveLength(0);
     // try to feed monster again
     gameState = gameReducer(gameState, {
       type: "feed",
@@ -127,17 +144,17 @@ describe("reset", () => {
       learnedRecipeIds: ["frostFarthing"],
       inventoryById: {
         ...initialState.inventoryById,
-        tin: 1,
+        copper: 1,
         frostEssence: 1,
       },
     };
-    expect(gameState.inventoryById.tin).toEqual(1);
+    expect(gameState.inventoryById.copper).toEqual(1);
     expect(gameState.inventoryById.frostFarthing).toEqual(0);
     gameState = gameReducer(gameState, {
       type: "combineItems",
       payload: { recipeId: "frostFarthing" },
     });
-    expect(gameState.inventoryById.tin).toEqual(0);
+    expect(gameState.inventoryById.copper).toEqual(0);
     expect(gameState.inventoryById.frostEssence).toEqual(0);
     expect(gameState.inventoryById.frostFarthing).toEqual(1);
     // try to combine items without items
@@ -156,19 +173,29 @@ describe("reset", () => {
   test("addAllToInventoryFromRoom", () => {
     let gameState = {
       ...initialState,
+      currentRoom: ROOMS_BY_ID["1_C"],
+      itemsByRoomId: {
+        "1_C": {
+          ..._.zipObject(ITEM_IDS, new Array(ITEM_IDS.length).fill(0)),
+          gold: 1,
+          copper: 1,
+          frostEssence: 3,
+        },
+      },
     };
     expect(gameState.inventoryById.gold).toEqual(0);
-    expect(gameState.inventoryById.tin).toEqual(0);
+    expect(gameState.inventoryById.copper).toEqual(0);
     expect(gameState.inventoryById.frostEssence).toEqual(0);
-    expect(gameState.itemsByRoomId["0_C"].gold).toEqual(1);
-    expect(gameState.itemsByRoomId["0_C"].frostEssence).toEqual(3);
+    expect(gameState.itemsByRoomId["1_C"].gold).toEqual(1);
+    expect(gameState.itemsByRoomId["1_C"].frostEssence).toEqual(3);
+    expect(gameState.currentRoom.id).toEqual("1_C");
     gameState = gameReducer(gameState, {
       type: "addAllToInventoryFromRoom",
     });
     expect(gameState.inventoryById.gold).toEqual(1);
-    expect(gameState.inventoryById.tin).toEqual(1);
+    expect(gameState.inventoryById.copper).toEqual(1);
     expect(gameState.inventoryById.frostEssence).toEqual(3);
-    expect(gameState.itemsByRoomId["0_C"].gold).toEqual(0);
-    expect(gameState.itemsByRoomId["0_C"].frostEssence).toEqual(0);
+    expect(gameState.itemsByRoomId["1_C"].gold).toEqual(0);
+    expect(gameState.itemsByRoomId["1_C"].frostEssence).toEqual(0);
   });
 });

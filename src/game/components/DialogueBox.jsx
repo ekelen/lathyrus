@@ -1,4 +1,3 @@
-import _ from "lodash";
 import React from "react";
 
 function DialogueBox({ children, onClick = () => {}, isOpen, style = {} }) {
@@ -7,17 +6,15 @@ function DialogueBox({ children, onClick = () => {}, isOpen, style = {} }) {
     <div
       ref={ref}
       className="xs:px-2 xs:py-1 sm:px-4 sm:py-2 px-4 py-2 bg-black flex flex-col items-center justify-center border-2 border-white border-double absolute rounded-md text-sm"
-      style={_.merge(
-        {
-          transition: `opacity 1s ease 0s`,
-          opacity: isOpen ? 1 : 0,
-          bottom: "105%",
-          pointerEvents: isOpen ? "all" : "none",
-          minWidth: "200%",
-          minHeight: "2.75rem",
-        },
-        style
-      )}
+      style={{
+        transition: `opacity 1s ease 0s`,
+        opacity: isOpen ? 1 : 0,
+        bottom: "105%",
+        pointerEvents: isOpen ? "all" : "none",
+        minWidth: "200%",
+        minHeight: "2.75rem",
+        ...style,
+      }}
       onClick={onClick}
     >
       {children}

@@ -2,7 +2,8 @@ import React, { useMemo } from "react";
 import { initialState } from "./setup";
 import _ from "lodash";
 import { gameReducer } from "./gameReducer";
-import { ITEMS_BY_ID, RECIPES_BY_ID } from "../data/gameData";
+import { ITEMS_BY_ID, RECIPES_BY_ID } from "../data/data";
+import { ROOM_TYPES } from "../data/constants";
 
 export const GameContext = React.createContext();
 const GameDispatchContext = React.createContext();
@@ -19,8 +20,7 @@ export function useGameDispatch() {
 
 const GameContextProvider = (props) => {
   const [state, dispatch] = React.useReducer(gameReducer, initialState);
-  const { monstersByRoomId, currentRoom, captivesByRoomId, learnedRecipeIds } =
-    state;
+  const { monstersByRoomId, currentRoom, captivesByRoomId } = state;
   const [showModal, setShowModal] = React.useState(false);
 
   const handleShowModal = (show) => {
@@ -28,16 +28,18 @@ const GameContextProvider = (props) => {
   };
 
   const freedCaptiveList = useMemo(() => {
-    return _.values(captivesByRoomId).filter((c) => c.freed);
+    return Object.values(captivesByRoomId).filter((c) => c.freed);
   }, [captivesByRoomId]);
 
   const currentRoomMonster = useMemo(() => {
     return monstersByRoomId[currentRoom.id] ?? null;
   }, [monstersByRoomId, currentRoom.id]);
 
-  const learnedRecipeList = useMemo(() => {
-    return learnedRecipeIds.map((id) => RECIPES_BY_ID[id]);
-  }, [learnedRecipeIds]);
+  const totalInventoryQuantity = useMemo(() => {
+    return Object.values(state.inventoryById).reduce((acc, val) => {
+      return acc + val;
+    });
+  }, [state.inventoryById]);
 
   return (
     <GameContext.Provider
@@ -45,7 +47,7 @@ const GameContextProvider = (props) => {
         ...state,
         freedCaptiveList,
         currentRoomMonster,
-        learnedRecipeList,
+        totalInventoryQuantity,
       }}
     >
       <GameDispatchContext.Provider value={dispatch}>

@@ -7,13 +7,9 @@ export function Item({
 }) {
   return (
     <div
-      className={`h-6 w-6 relative flex items-center justify-center ${colorClass}`}
+      className={`h-6 w-6 relative flex items-center justify-center alchemy text-center text-sm ${colorClass}`}
     >
-      <div className="table-row">
-        <div className="alchemy table-cell align-middle text-center text-sm h-full w-full leading-6">
-          {symbol}
-        </div>
-      </div>
+      {symbol}
     </div>
   );
 }
@@ -40,7 +36,7 @@ export function ItemWithQuantityButton({
   colorClass = item.colorClass,
   wrapperClass = "",
   disabled = false,
-  onClick,
+  onClick = () => {},
 }) {
   return (
     <button
