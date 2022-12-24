@@ -21,7 +21,7 @@ export function useGameDispatch() {
 const GameContextProvider = (props) => {
   const [state, dispatch] = React.useReducer(gameReducer, initialState);
   const { monstersByRoomId, currentRoom, captivesByRoomId } = state;
-  const [showModal, setShowModal] = React.useState(false);
+  const [showModal, setShowModal] = React.useState(true);
 
   const handleShowModal = (show) => {
     setShowModal(show);

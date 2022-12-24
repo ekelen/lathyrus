@@ -38,7 +38,7 @@ function MonsterTileContents({ monster, room }) {
           </div>
         )}
         <div
-          className="alchemy absolute h-full -top-1/2 text-amber-800 text-xl"
+          className={`alchemy absolute h-full -top-1/2 ${monster.colorClass} text-xl`}
           ref={markerRef}
         >
           <div className="leading-none -ml-2">🜊</div>

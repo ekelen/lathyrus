@@ -45,7 +45,7 @@ export function CaptiveRecipeHint({
               color="currentColor"
             />
           </div>
-          <div>:</div>
+          <div>: In a lab, </div>
           {selectedCaptiveRecipe.ingredients.map((ingredient, i) => (
             <div
               className="flex items-center justify-center whitespace-pre"
@@ -55,11 +55,6 @@ export function CaptiveRecipeHint({
                 item={ITEMS_BY_ID[ingredient.itemId]}
                 quantity={ingredient.quantity}
               />
-              {/* {i < selectedCaptiveRecipe.ingredients.length - 1 ? (
-                <div>+</div>
-              ) : (
-                <div>=</div>
-              )} */}
               <div>
                 {i < selectedCaptiveRecipe.ingredients.length - 1 ? "+" : "⟶"}
               </div>

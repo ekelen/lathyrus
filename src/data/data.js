@@ -21,15 +21,17 @@ const INVENTORY_BY_ID = Object.fromEntries(ITEM_IDS.map((id) => [id, 0]));
 const RECIPES_BY_ID = _.keyBy(BASE_RECIPE_LIST, "id");
 
 const itemColorsByValue = [
-  "text-amber-100",
-  "text-amber-200",
-  "text-amber-300",
-  "text-amber-400",
-  "text-amber-500",
-  "text-amber-600",
-  "text-amber-700",
-  "text-amber-800",
-  "text-amber-900",
+  "text-yellow-200",
+  "text-green-100",
+  "text-emerald-200",
+  "text-teal-300",
+  "text-cyan-300",
+  "text-sky-300",
+  "text-blue-300",
+  "text-indigo-500",
+  "text-violet-600",
+  "text-violet-700",
+  "text-violet-800",
 ];
 
 const ITEMS_BY_ID = _.keyBy(
@@ -99,6 +101,7 @@ const MONSTERS_BY_ROOM_ID = _.keyBy(
     ...monster,
     hunger: monster.maxHunger,
     sated: false,
+    colorClass: itemColorsByValue[Math.log2(monster.maxHunger)],
   })),
   "roomId"
 );

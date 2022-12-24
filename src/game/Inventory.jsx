@@ -5,6 +5,9 @@ import { CaptiveRecipeHint } from "./inventoryArea/CaptiveRecipeHint";
 import { InventoryItems } from "./inventoryArea/InventoryItems";
 import { Keys } from "./inventoryArea/Keys";
 import { Captives } from "./inventoryArea/Captives";
+import Key from "./img/key.svg";
+import Cage from "./img/cage.svg";
+import Svg from "./components/Svg";
 
 function Inventory() {
   const {
@@ -14,6 +17,8 @@ function Inventory() {
     currentRoomMonster,
     haveKeysTo,
     captivesByRoomId,
+    maxInventory,
+    totalInventoryQuantity,
   } = useGame();
   const { type } = currentRoom;
   const dispatch = useGameDispatch();
@@ -21,14 +26,6 @@ function Inventory() {
 
   return (
     <div className="flex h-28 w-100 mt-2 gap-1 relative">
-      <div className="flex flex-col flex-wrap h-full p-2 grow border-2 border-slate-700 border-double rounded-md align-start content-start justify-start">
-        <InventoryItems
-          inventoryById={inventoryById}
-          type={type}
-          currentRoomMonster={currentRoomMonster}
-          dispatch={dispatch}
-        />
-      </div>
       <div className="flex flex-col items-center relative h-full w-10 border-2 border-slate-700 border-double rounded-md">
         <Keys
           captivesByRoomId={captivesByRoomId}
@@ -36,6 +33,9 @@ function Inventory() {
           currentRoomId={currentRoom.id}
           dispatch={dispatch}
         />
+        <div className="absolute bottom-0 left-1/2 border rounded-md text-xs bg-black text-slate-500 border-slate-500 translate-y-1/2 -translate-x-1/2 p-0.5 h-5 w-5 flex items-center justify-center">
+          <Svg source={Key} height="70%" width="100%" />
+        </div>
       </div>
       <div className="flex flex-col flex-wrap relative h-full w-10 border-2 border-slate-700 border-double rounded-md items-center">
         <Captives
@@ -43,6 +43,20 @@ function Inventory() {
           selectedCaptiveId={selectedCaptiveId}
           setSelectedCaptiveId={setSelectedCaptiveId}
         />
+        <div className="absolute bottom-0 left-1/2 border rounded-md text-xs bg-black text-slate-500 border-slate-500 translate-y-1/2 -translate-x-1/2 p-0.5 h-5 w-5 flex items-center justify-center">
+          <Svg source={Cage} height="80%" width="100%" />
+        </div>
+      </div>
+      <div className="flex flex-col flex-wrap h-full p-2  grow border-2 border-slate-700 border-double rounded-md align-start content-start justify-start relative">
+        <InventoryItems
+          inventoryById={inventoryById}
+          type={type}
+          currentRoomMonster={currentRoomMonster}
+          dispatch={dispatch}
+        />
+        <div className="absolute bottom-0 left-1/2 border rounded-md text-xs bg-black text-slate-500 border-slate-500 translate-y-1/2 -translate-x-1/2 p-0.5">
+          inventory {totalInventoryQuantity}/{maxInventory}
+        </div>
       </div>
       <CaptiveRecipeHint
         selectedCaptiveId={selectedCaptiveId}

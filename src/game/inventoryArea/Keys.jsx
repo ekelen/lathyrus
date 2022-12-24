@@ -30,7 +30,7 @@ export function Keys({
               onClick={() => handleFreeCaptive({ keyTo: captive.id })}
             >
               <div
-                className={`relative alchemy w-full h-full flex items-center justify-center ${colorClass}`}
+                className={`relative w-full h-full flex items-center justify-center ${colorClass}`}
               >
                 <Svg source={Key} height="70%" width="100%" />
               </div>
