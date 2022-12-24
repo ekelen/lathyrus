@@ -7,7 +7,7 @@ function Miniminimap({ onClose = () => {} }) {
   const { coordinates } = currentRoom;
   return (
     <div
-      className="flex flex-col relative items-center justify-center"
+      className="flex flex-col relative items-center justify-center border border-slate-600"
       onClick={onClose}
     >
       {ROOM_POSITIONS.map((row, y) => {
@@ -23,9 +23,7 @@ function Miniminimap({ onClose = () => {} }) {
                   {x === coordinates.x && y === coordinates.y && (
                     <div className="text-red-500">✯</div>
                   )}
-                  <div>
-                    {/* {room ? ROOMS_BY_ID[room].type.replace(/(empty)/, "") : ""} */}
-                  </div>
+                  <div></div>
                 </div>
               );
             })}

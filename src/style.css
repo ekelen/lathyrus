@@ -3,6 +3,12 @@
 @tailwind utilities;
 @import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap");
 
+@layer components {
+  .btn {
+    @apply whitespace-pre bg-slate-800 rounded-sm  active:border-amber-500 border border-slate-800;
+  }
+}
+
 @font-face {
   font-family: "NewtonSans";
   src: url("./font/NewtonSans-2015-11-04.woff2") format("woff2");

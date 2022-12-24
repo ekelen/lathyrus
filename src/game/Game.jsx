@@ -3,7 +3,6 @@ import { ModalContext, useGame, useGameDispatch } from "../state/GameContext";
 import Modal from "./components/Modal";
 import Intro from "./Intro";
 import Inventory from "./Inventory";
-import Minimap from "./Minimap";
 import Miniminimap from "./Miniminimap";
 import RoomFrame from "./Room";
 
@@ -11,24 +10,23 @@ function Game() {
   const { currentRoom } = useGame();
   const dispatch = useGameDispatch();
   const { showModal, handleShowModal } = React.useContext(ModalContext);
-  const [showMiniModal, setShowMiniModal] = React.useState(true);
+  const [showMiniModal, setShowMiniModal] = React.useState(false);
   return (
     <div
       className="flex flex-col h-100"
       style={{
         width: "clamp(350px, 95vw, 450px)",
-        // border: "1px solid #333",
       }}
     >
       <div className="flex items-center justify-between">
-        <h3>{currentRoom.name}</h3>
+        <h3></h3>
 
         <div className="flex gap-2 text-sm text-slate-400">
           <button
             onClick={() => {
               dispatch({ type: "reset" });
             }}
-            className="bg-slate-800 rounded-md px-2 py-1 text-white"
+            className="btn px-2 py-1 text-white"
           >
             Reset
           </button>

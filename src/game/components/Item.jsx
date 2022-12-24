@@ -40,7 +40,7 @@ export function ItemWithQuantityButton({
 }) {
   return (
     <button
-      className={`flex items-center justify-center whitespace-pre bg-slate-800 rounded-sm pr-2 mr-1 mb-1 disabled:bg-transparent ${wrapperClass}`}
+      className={`btn flex items-center justify-center pr-2 mr-1 mb-1 disabled:bg-transparent ${wrapperClass}`}
       onClick={onClick}
       disabled={disabled}
     >

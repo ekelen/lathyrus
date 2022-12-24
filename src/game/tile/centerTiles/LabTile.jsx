@@ -73,7 +73,7 @@ function LabTileDialogueContent({
                     handleCombineItems(r.id);
                   }}
                   disabled={!hasIngredients(r)}
-                  className="rounded-sm bg-slate-800 whitespace-pre ml-2 disabled:opacity-50 active:bg-slate-900"
+                  className="rounded-sm bg-slate-800 whitespace-pre ml-2 disabled:opacity-50 active:border-amber-300 border border-slate-800 "
                 >
                   <Item item={ITEMS_BY_ID[r.id]} />
                 </button>
