@@ -4,8 +4,6 @@ import { ROOM_SIZE } from "../data/constants";
 import { useGame, useGameDispatch } from "../state/GameContext";
 import RoomTile from "./tile/Tile";
 
-const FRAME_WIDTH = "2rem";
-
 const START_POSITION_CURRENT = {
   south: {
     top: "100%",
@@ -43,13 +41,9 @@ function Room({ room, isPreviousRoom = false }) {
   const commonStyle = {
     height: "100%",
     width: "100%",
-    // ...getRoomGradient(room.coordinates.y),
     position: "absolute",
     transition: "left 750ms ease, top 750ms ease",
     zIndex: isPreviousRoom ? 5 : 20,
-    borderWidth: "0px",
-    borderStyle: "dashed",
-    borderColor: "rgba(255,255,255,0)",
     left:
       isPreviousRoom || !movedCameraToOnTransition
         ? 0
@@ -88,13 +82,7 @@ function Room({ room, isPreviousRoom = false }) {
   return (
     <div style={commonStyle} ref={roomRef}>
       {[...Array(ROOM_SIZE).keys()].map((row) => (
-        <div
-          key={row}
-          className="flex w-full"
-          style={{
-            height: `calc(100% / ${ROOM_SIZE})`,
-          }}
-        >
+        <div key={row} className="flex w-full h-1/3">
           {[...Array(ROOM_SIZE).keys()].map((col) => {
             return (
               <RoomTile key={`${col}-${row}`} row={row} col={col} room={room} />
@@ -107,16 +95,8 @@ function Room({ room, isPreviousRoom = false }) {
 }
 
 function RoomWrapper({ children }) {
-  const style = {
-    height: "100%",
-    border: `1px solid rgba(255,255,255,0)`,
-    width: "100%",
-    position: "relative",
-    overflowX: "hidden",
-    overflowY: "hidden",
-  };
   return (
-    <div style={style}>
+    <div className="h-full w-full border border-transparent relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-2.5 bg-gradient-to-b from-black to-transparent z-50" />
       <div className="absolute bottom-0 left-0 w-full h-2.5 bg-gradient-to-t from-black to-transparent z-50" />
       <div className="absolute top-0 left-0 w-2.5 h-full bg-gradient-to-r from-black to-transparent z-50" />
@@ -145,12 +125,7 @@ function RoomFrame() {
         border: "1px solid rgba(255,255,255,0)",
       }}
     >
-      <div
-        className="flex items-center justify-center"
-        style={{
-          height: FRAME_WIDTH,
-        }}
-      >
+      <div className="flex items-center justify-center h-8">
         <MoveButton
           exits={exits}
           direction="north"
@@ -159,12 +134,7 @@ function RoomFrame() {
         />
       </div>
       <div className="flex items-stretch flex-1">
-        <div
-          className="flex items-center justify-center"
-          style={{
-            width: FRAME_WIDTH,
-          }}
-        >
+        <div className="flex items-center justify-center w-8">
           <MoveButton
             exits={exits}
             direction="west"
@@ -186,12 +156,7 @@ function RoomFrame() {
             key={currentRoom.id}
           />
         </RoomWrapper>
-        <div
-          className="flex flex-col justify-center"
-          style={{
-            width: FRAME_WIDTH,
-          }}
-        >
+        <div className="flex flex-col justify-center w-8">
           <MoveButton
             exits={exits}
             direction="east"
@@ -200,12 +165,7 @@ function RoomFrame() {
           />
         </div>
       </div>
-      <div
-        className="flex items-center justify-center"
-        style={{
-          height: FRAME_WIDTH,
-        }}
-      >
+      <div className="flex items-center justify-center h-8">
         <MoveButton
           exits={exits}
           direction="south"
@@ -247,13 +207,7 @@ const MoveButton = ({
           visibility: exits[direction] === null ? "hidden" : "visible",
         }}
       >
-        <div className="table-row">
-          <div
-            className={`table-cell align-middle text-center w-full h-full text-sm ${rotateClass}`}
-          >
-            {content}
-          </div>
-        </div>
+        <div className={`text-sm ${rotateClass}`}>{content}</div>
       </button>
     </div>
   );

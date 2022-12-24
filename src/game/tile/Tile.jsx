@@ -25,21 +25,6 @@ function RoomDeadspaceTile({ room, tilePosition }) {
   );
 }
 
-function ExitTile({ room, tilePosition }) {
-  return (
-    <div
-      key={`${room.id}-${tilePosition}`}
-      className="h-full w-full relative flex items-center justify-center"
-    >
-      {room.lockedExitTilePositions.includes(tilePosition) ? (
-        <>
-          <span style={{ color: "red" }}></span>
-        </>
-      ) : null}
-    </div>
-  );
-}
-
 function RoomTile({ row, col, room }) {
   const tilePosition = getPositionFromCoordinates(col, row);
   const isCenter = tilePosition === CENTER_POSITION;
@@ -48,16 +33,11 @@ function RoomTile({ row, col, room }) {
   return (
     <div
       key={col}
-      className={`flex items-center justify-center relative h-100 ${backgroundClass}`}
-      style={{
-        width: `calc(100% / ${ROOM_SIZE})`,
-      }}
+      className={`flex items-center justify-center relative h-100 ${backgroundClass} w-1/3`}
     >
       {isCenter ? (
         <CenterTile type={room.type} room={room} />
-      ) : isExitTile ? (
-        <ExitTile {...{ room, tilePosition }} />
-      ) : (
+      ) : isExitTile ? null : (
         <RoomDeadspaceTile {...{ room, tilePosition }} />
       )}
     </div>
@@ -65,21 +45,3 @@ function RoomTile({ row, col, room }) {
 }
 
 export default RoomTile;
-
-// useEffect(() => {
-//   let timer;
-//   if (containerRef.current && prevRoomIdRef.current === room.id) {
-//     containerRef.current.style.borderColor = "yellow";
-//     timer = setTimeout(() => {
-//       if (containerRef.current) {
-//         containerRef.current.style.borderColor = "transparent";
-//       }
-//     }, 1000);
-//   }
-//   if (prevRoomIdRef.current !== room.id) {
-//     prevRoomIdRef.current = room.id;
-//   }
-//   return () => {
-//     clearTimeout(timer);
-//   };
-// }, [currentRoomItems, room.id]);
