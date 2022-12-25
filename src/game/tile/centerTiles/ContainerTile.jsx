@@ -1,13 +1,11 @@
-import _ from "lodash";
 import React from "react";
 import { ITEMS_BY_ID } from "../../../data/data";
 import { useGame, useGameDispatch } from "../../../state/GameContext";
-import { CenterTileContentContainer } from "../CenterTileContentContainer";
 import DialogueBox from "../../components/DialogueBox";
 import { ItemWithQuantityButton } from "../../components/Item";
 import Svg from "../../components/Svg";
 import Chest from "../../img/chest.svg";
-import { useOpen } from "../../useOpen";
+import { CenterTileContentContainer } from "../CenterTileContentContainer";
 
 function ContainerModalContents({
   currentRoomItems,
@@ -31,7 +29,7 @@ function ContainerModalContents({
               e.stopPropagation();
               handleTakeItem(itemId);
             }}
-            wrapperClass="disabled:opacity-50 active:border-amber-300 border border-slate-800"
+            wrapperClass="disabled:opacity-50 disabled:border-transparent active:border-amber-300 border border-slate-800"
           />
         );
       })}

@@ -85,17 +85,8 @@ export function gameReducer(state, action) {
     case "addToRoomFromInventory": {
       const { itemId, quantity } = action.payload;
       const { inventoryById, itemsByRoomId, currentRoom } = state;
-      // const inventoryCount = _.sum(Object.values(inventoryById));
 
       const currentRoomItemQuantity = itemsByRoomId[currentRoom.id][itemId];
-      // if (currentRoomItemQuantity < quantity) {
-      //   console.info("Not enough items in room");
-      //   return state;
-      // }
-      // if (inventoryCount + quantity > state.maxInventory) {
-      //   console.info("Not enough room in inventory");
-      //   return state;
-      // }
       const currentInventoryItemQuantity = inventoryById[itemId];
       const newInventoryItems = {
         ...inventoryById,
@@ -175,9 +166,9 @@ export function gameReducer(state, action) {
         [itemId]: inventoryById[itemId] - 1,
       };
       if (newMonster.sated) {
-        const haveKeysTo = hasKeyTo
-          ? [...state.haveKeysTo, hasKeyTo].sort()
-          : state.haveKeysTo;
+        const haveKeysTo = [...state.haveKeysTo, hasKeyTo]
+          .filter(Boolean)
+          .sort();
         return {
           ...state,
           currentRoom: {
@@ -196,6 +187,50 @@ export function gameReducer(state, action) {
           inventoryById: newInventoryItems,
         };
       }
+    }
+    case "feedCaptive": {
+      const { captiveId } = action.payload;
+      const { currentRoom, captivesByRoomId, monstersByRoomId, haveKeysTo } =
+        state;
+      if (!captivesByRoomId[captiveId].freed) {
+        console.info("captive not free");
+        return state;
+      }
+      if (captivesByRoomId[captiveId].dead) {
+        console.info("captive already dead");
+        return state;
+      }
+      if (monstersByRoomId[currentRoom.id].sated) {
+        console.info("monster is sated");
+        return state;
+      }
+      return {
+        ...state,
+        captivesByRoomId: {
+          ...captivesByRoomId,
+          [captiveId]: {
+            ...captivesByRoomId[captiveId],
+            dead: true,
+          },
+        },
+        monstersByRoomId: {
+          ...monstersByRoomId,
+          [currentRoom.id]: {
+            ...monstersByRoomId[currentRoom.id],
+            sated: true,
+            hunger: 0,
+            hasKeyTo: null,
+          },
+        },
+        currentRoom: {
+          ...currentRoom,
+          lockedExitTilePositions: [],
+          lockedDirections: [],
+        },
+        haveKeysTo: [...haveKeysTo, monstersByRoomId[currentRoom.id].hasKeyTo]
+          .filter(Boolean)
+          .sort(),
+      };
     }
     case "freeCaptive": {
       const { captivesByRoomId, haveKeysTo } = state;

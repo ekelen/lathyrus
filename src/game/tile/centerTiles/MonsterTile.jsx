@@ -1,4 +1,3 @@
-import _ from "lodash";
 import React, { useEffect, useRef } from "react";
 import { useGame } from "../../../state/GameContext";
 import DialogueBox from "../../components/DialogueBox";
@@ -6,11 +5,11 @@ import Svg from "../../components/Svg";
 import Key from "../../img/key.svg";
 import { GET_MONSTER_IMAGE } from "../../img/Monster";
 import { CenterTileContentContainer } from "../CenterTileContentContainer";
-import { useOpen } from "../../useOpen";
 
-function MonsterTileContents({ monster, room }) {
-  const { sated, hunger, maxHunger, hasKeyTo } = monster;
+function MonsterTileContents({ monster }) {
+  const { sated, hunger, maxHunger, hasKeyTo, colorClass } = monster;
   const { captivesByRoomId } = useGame();
+
   const hungerPct = Math.ceil((hunger / maxHunger) * 100);
   const markerRef = useRef(null);
   const hungerRef = useRef(null);
@@ -38,7 +37,7 @@ function MonsterTileContents({ monster, room }) {
           </div>
         )}
         <div
-          className={`alchemy absolute h-full -top-1/2 ${monster.colorClass} text-xl`}
+          className={`alchemy absolute h-full -top-1/2 ${colorClass} text-xl`}
           ref={markerRef}
         >
           <div className="leading-none -ml-2">🜊</div>
@@ -49,16 +48,13 @@ function MonsterTileContents({ monster, room }) {
 }
 
 export function MonsterTile({ room }) {
-  const { monstersByRoomId, previousRoom } = useGame();
+  const { monstersByRoomId } = useGame();
   const monster = monstersByRoomId[room.id];
-  const { open, toggleOpen } = useOpen(
-    !monster.sated && previousRoom?.id !== room.id
-  );
-  const opacityClass = monster.sated ? "opacity-50" : "opacity-100";
+  const opacityClass = monster.sated ? "opacity-50" : "";
 
   return (
     <>
-      <CenterTileContentContainer toggleOpen={toggleOpen}>
+      <CenterTileContentContainer>
         <div
           className={`${opacityClass} h-full w-full absolute p-3 transition-opacity duration-600`}
         >
@@ -70,12 +66,11 @@ export function MonsterTile({ room }) {
         </div>
       </CenterTileContentContainer>
       <DialogueBox
-        onClick={toggleOpen}
-        isOpen={open}
+        isOpen={true}
         roomId={room.id}
         style={{ minWidth: "280%", width: "280%" }}
       >
-        <MonsterTileContents {...{ monster, room }} />
+        <MonsterTileContents {...{ monster }} />
       </DialogueBox>
     </>
   );

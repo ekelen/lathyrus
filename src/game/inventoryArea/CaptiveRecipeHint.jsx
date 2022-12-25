@@ -18,10 +18,6 @@ export function CaptiveRecipeHint({
       !selectedCaptive ? null : RECIPES_BY_ID[selectedCaptive.teaches.recipeId],
     [selectedCaptive]
   );
-  const captiveColorClass = useMemo(
-    () => (selectedCaptive ? selectedCaptive.colorClass : ""),
-    [selectedCaptive]
-  );
 
   return (
     <DialogueBox
@@ -37,7 +33,7 @@ export function CaptiveRecipeHint({
     >
       {!selectedCaptiveRecipe ? null : (
         <div className="flex items-center justify-center">
-          <div className={`${captiveColorClass} h-6 w-6 relative`}>
+          <div className={`${selectedCaptive.colorClass} h-6 w-6 relative`}>
             <CaptiveImage
               height="80%"
               width="100%"

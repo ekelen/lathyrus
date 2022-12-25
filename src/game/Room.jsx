@@ -107,13 +107,9 @@ function RoomWrapper({ children }) {
 }
 
 function RoomFrame() {
-  const { currentRoom, previousRoom, movedCameraToOnTransition } = useGame();
+  const { currentRoom, previousRoom } = useGame();
   const dispatch = useGameDispatch();
-  const {
-    exits,
-    lockedDirections = [],
-    // moveCameraToOnTransition = null,
-  } = currentRoom;
+  const { exits, lockedDirections = [] } = currentRoom;
   const handleMove = (direction) => {
     dispatch({ type: "move", payload: { direction } });
   };

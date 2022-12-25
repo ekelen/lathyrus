@@ -5,7 +5,7 @@
 
 @layer components {
   .btn {
-    @apply whitespace-pre bg-slate-800 rounded-sm  active:border-amber-500 border border-slate-800;
+    @apply whitespace-pre bg-slate-800 rounded-sm border-2 border-slate-800 transition-colors disabled:border-transparent flex items-center justify-center;
   }
 }
 

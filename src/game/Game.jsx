@@ -7,7 +7,6 @@ import Miniminimap from "./Miniminimap";
 import RoomFrame from "./Room";
 
 function Game() {
-  const { currentRoom } = useGame();
   const dispatch = useGameDispatch();
   const { showModal, handleShowModal } = React.useContext(ModalContext);
   const [showMiniModal, setShowMiniModal] = React.useState(false);
@@ -16,6 +15,7 @@ function Game() {
       className="flex flex-col h-100"
       style={{
         width: "clamp(350px, 95vw, 450px)",
+        minWidth: "clamp(350px, 95vw, 450px)",
       }}
     >
       <div className="flex items-center justify-between">

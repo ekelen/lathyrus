@@ -21,13 +21,13 @@ const INVENTORY_BY_ID = Object.fromEntries(ITEM_IDS.map((id) => [id, 0]));
 const RECIPES_BY_ID = _.keyBy(BASE_RECIPE_LIST, "id");
 
 const itemColorsByValue = [
-  "text-yellow-200",
-  "text-green-100",
-  "text-emerald-200",
-  "text-teal-300",
-  "text-cyan-300",
-  "text-sky-300",
-  "text-blue-300",
+  "text-yellow-50",
+  "text-green-200",
+  "text-emerald-300",
+  "text-teal-400",
+  "text-cyan-400",
+  "text-sky-400",
+  "text-blue-400",
   "text-indigo-500",
   "text-violet-600",
   "text-violet-700",
@@ -92,8 +92,10 @@ const ROOMS_BY_ID = _.keyBy(
 const CAPTIVE_LIST = BASE_CAPTIVE_LIST.map((captive) => ({
   ...captive,
   freed: false,
+  dead: false,
   position: ROOMS_BY_ID[captive.roomId].position,
 }));
+
 const CAPTIVES_BY_ID = _.keyBy(CAPTIVE_LIST, "id");
 
 const MONSTERS_BY_ROOM_ID = _.keyBy(

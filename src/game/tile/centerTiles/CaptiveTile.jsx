@@ -1,13 +1,11 @@
 import React from "react";
-import { ITEMS_BY_ID } from "../../../data/data";
 import { useGame, useGameDispatch } from "../../../state/GameContext";
-import { CenterTileContentContainer } from "../CenterTileContentContainer";
 import { CaptiveImage } from "../../components/Captive";
 import DialogueBox from "../../components/DialogueBox";
-import { Item } from "../../components/Item";
 import Svg from "../../components/Svg";
 import Cage from "../../img/cage.svg";
 import Key from "../../img/key.svg";
+import { CenterTileContentContainer } from "../CenterTileContentContainer";
 
 export function CaptiveTile({ room }) {
   const { captivesByRoomId, haveKeysTo } = useGame();
@@ -45,11 +43,18 @@ export function CaptiveTile({ room }) {
           </div>
         ) : null}
       </CenterTileContentContainer>
-      <DialogueBox isOpen={!captive.freed} roomId={room.id}>
-        <div className="flex flex-col justify-center items-center align-center gap-2">
+      <DialogueBox isOpen={true} roomId={room.id}>
+        <div className="flex flex-col justify-center items-center align-center gap-2 text-xs">
           {
             <>
-              <button
+              {haveKey && !captive.freed ? (
+                <>Please free me! I can teach you a recipe...</>
+              ) : !haveKey && !captive.freed ? (
+                <>Please find the key to free me!</>
+              ) : (
+                <>An empty cage...</>
+              )}
+              {/* <button
                 onClick={(e) => {
                   handleFreeCaptive();
                 }}
@@ -61,16 +66,8 @@ export function CaptiveTile({ room }) {
                 >
                   <Svg source={Key} height="70%" width="100%" />
                 </div>
-                {/* :
-                <Item symbol="?" colorClass={"text-slate-300"} />
-                <div>+</div>
-                <Item symbol="?" colorClass={"text-slate-300"} />
-                <div>⟶</div>
-                <Item
-                  item={ITEMS_BY_ID[captive.teaches.recipeId]}
-                  // colorClass="text-slate-500"
-                /> */}
-              </button>
+
+              </button> */}
             </>
           }
         </div>

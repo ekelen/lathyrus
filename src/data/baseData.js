@@ -36,7 +36,7 @@ export const BASE_ITEM_LIST = [
   {
     id: "frostEssence",
     name: "Frost Essence",
-    value: 2,
+    value: 4,
     symbol: "🜄",
     type: "element",
   },
@@ -50,7 +50,7 @@ export const BASE_ITEM_LIST = [
   {
     id: "earthEssence",
     name: "Earth Essence",
-    value: 2,
+    value: 4,
     symbol: "🜁",
     type: "element",
   },
@@ -120,26 +120,25 @@ export const BASE_ROOMS_LIST = [
 
 export const CONTAINER_ITEMS = {
   "0_C": {
-    copper: 1,
+    copper: 3,
     frostEssence: 1,
   },
   "1_C": {
     gold: 2,
-    copper: 3,
-    frostEssence: 3,
+    copper: 4,
+    frostEssence: 2,
   },
   "4_C": {
     silver: 3,
     earthEssence: 3,
   },
   "9_C": {
-    silver: 2,
-    copper: 3,
-    frostEssence: 3,
+    copper: 4,
+    frostEssence: 2,
   },
   "11_C": {
     gold: 1,
-    frostEssence: 4,
+    earthEssence: 4,
     silver: 2,
     copper: 2,
   },

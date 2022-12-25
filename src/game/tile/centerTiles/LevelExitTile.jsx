@@ -7,6 +7,7 @@ import { useGame } from "../../../state/GameContext";
 export function LevelExitTile({ room }) {
   const { open, toggleOpen } = useOpen();
   const { freedCaptiveList } = useGame();
+  const deadCaptiveList = freedCaptiveList.filter((c) => c.dead);
 
   return (
     <>
@@ -14,11 +15,18 @@ export function LevelExitTile({ room }) {
         Exit!
       </CenterTileContentContainer>
       <DialogueBox onClick={toggleOpen} isOpen={open} roomId={room.id}>
-        <div className="text-xs">
-          You have reached the exit! And that's the end of the game for now...{" "}
-          {freedCaptiveList.length < 2
-            ? "You might want to go free the other captive though."
-            : ""}
+        <div className="text-md">
+          <div className="mb-3">You have reached the exit!</div>
+          <ul className="flex flex-col gap-2 text-xs">
+            <li>
+              {freedCaptiveList.length === 2 ? "☑" : "𐄂"} Freed all test
+              subjects
+            </li>
+            <li>
+              {deadCaptiveList.length === 0 ? "☑" : "𐄂"} Escaped without
+              sacrificing any test subjects
+            </li>
+          </ul>
         </div>
       </DialogueBox>
     </>

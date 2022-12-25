@@ -109,6 +109,49 @@ describe("actions", () => {
     });
     expect(gameState.monstersByRoomId["2_M"]).toHaveProperty("sated", true);
   });
+  test("feed captive to monster", () => {
+    let gameState = {
+      ...initialState,
+      currentRoom: ROOMS_BY_ID["5_M_TOAD"],
+      captivesByRoomId: {
+        ...initialState.captivesByRoomId,
+        rabbit: {
+          ...initialState.captivesByRoomId.rabbit,
+          freed: true,
+        },
+      },
+    };
+    expect(gameState.captivesByRoomId["rabbit"]).toHaveProperty("dead", false);
+    expect(gameState.monstersByRoomId["5_M_TOAD"]).toHaveProperty(
+      "sated",
+      false
+    );
+    gameState = gameReducer(gameState, {
+      type: "feedCaptive",
+      payload: { captiveId: "rabbit" },
+    });
+    expect(gameState.captivesByRoomId["rabbit"]).toHaveProperty("dead", true);
+    expect(gameState.monstersByRoomId["5_M_TOAD"]).toHaveProperty(
+      "sated",
+      true
+    );
+    // Try to feed dead captive to monster
+    gameState.currentRoom = ROOMS_BY_ID["2_M"];
+    expect(gameState.monstersByRoomId["2_M"]).toHaveProperty("sated", false);
+    gameState = gameReducer(gameState, {
+      type: "feedCaptive",
+      payload: { captiveId: "rabbit" },
+    });
+    expect(gameState.monstersByRoomId["2_M"]).toHaveProperty("sated", false);
+    // Try to feed unfreed captive to monster
+    gameState.currentRoom = ROOMS_BY_ID["2_M"];
+    expect(gameState.monstersByRoomId["2_M"]).toHaveProperty("sated", false);
+    gameState = gameReducer(gameState, {
+      type: "feedCaptive",
+      payload: { captiveId: "toad" },
+    });
+    expect(gameState.monstersByRoomId["2_M"]).toHaveProperty("sated", false);
+  });
   test("freeCaptive", () => {
     let gameState = {
       ...initialState,
