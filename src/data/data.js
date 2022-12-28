@@ -9,7 +9,12 @@ import {
   BASE_RECIPE_LIST,
 } from "./baseData";
 import { ROOM_TYPES } from "./constants";
-import { getPositionFromCoordinates, ROOM_EXIT_POSITIONS } from "./util";
+import {
+  getPositionFromCoordinates,
+  keyBy,
+  zipObject,
+  ROOM_EXIT_POSITIONS,
+} from "./util";
 
 const MAX_ITEMS = 10;
 
@@ -18,7 +23,7 @@ const MAP_SIZE = ROOM_POSITIONS.length;
 const ITEM_IDS = BASE_ITEM_LIST.map((item) => item.id);
 const INVENTORY_BY_ID = Object.fromEntries(ITEM_IDS.map((id) => [id, 0]));
 
-const RECIPES_BY_ID = _.keyBy(BASE_RECIPE_LIST, "id");
+const RECIPES_BY_ID = keyBy(BASE_RECIPE_LIST, "id");
 
 const itemColorsByValue = [
   "text-yellow-50",
@@ -34,7 +39,7 @@ const itemColorsByValue = [
   "text-violet-800",
 ];
 
-const ITEMS_BY_ID = _.keyBy(
+const ITEMS_BY_ID = keyBy(
   BASE_ITEM_LIST.map((item) => ({
     ...item,
     quantity: 0,
@@ -47,17 +52,17 @@ const CONTAINER_ROOM_KEYS = BASE_ROOMS_LIST.filter(
   (r) => r.type === "container"
 ).map((r) => r.id);
 
-const ITEMS_BY_ROOM_ID = _.zipObject(
+const ITEMS_BY_ROOM_ID = zipObject(
   CONTAINER_ROOM_KEYS,
   CONTAINER_ROOM_KEYS.map((roomId) =>
-    _.zipObject(
+    zipObject(
       ITEM_IDS,
       ITEM_IDS.map((itemId) => CONTAINER_ITEMS[roomId][itemId] ?? 0)
     )
   )
 );
 
-const ROOMS_BY_ID = _.keyBy(
+const ROOMS_BY_ID = keyBy(
   BASE_ROOMS_LIST.map((room) => {
     const type = room.type ?? ROOM_TYPES.empty;
     const y = ROOM_POSITIONS.findIndex((row) => row.includes(room.id));
@@ -68,13 +73,11 @@ const ROOMS_BY_ID = _.keyBy(
       east: ROOM_POSITIONS[y]?.[x + 1] ?? null,
       west: ROOM_POSITIONS[y]?.[x - 1] ?? null,
     };
-    const exitTilePositions = _.compact(
-      Object.values(
-        _.mapValues(exits, (roomId, direction) =>
-          roomId ? ROOM_EXIT_POSITIONS[direction] : null
-        )
+    const exitTilePositions = Object.values(
+      _.mapValues(exits, (roomId, direction) =>
+        roomId ? ROOM_EXIT_POSITIONS[direction] : null
       )
-    );
+    ).filter((pos) => pos !== null);
     return {
       ...room,
       type,
@@ -96,9 +99,9 @@ const CAPTIVE_LIST = BASE_CAPTIVE_LIST.map((captive) => ({
   position: ROOMS_BY_ID[captive.roomId].position,
 }));
 
-const CAPTIVES_BY_ID = _.keyBy(CAPTIVE_LIST, "id");
+const CAPTIVES_BY_ID = keyBy(CAPTIVE_LIST, "id");
 
-const MONSTERS_BY_ROOM_ID = _.keyBy(
+const MONSTERS_BY_ROOM_ID = keyBy(
   BASE_MONSTER_LIST.map((monster) => ({
     ...monster,
     hunger: monster.maxHunger,

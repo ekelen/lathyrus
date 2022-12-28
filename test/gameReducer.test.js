@@ -3,7 +3,7 @@ const { initialState } = require("../src/state/setup");
 const { gameReducer } = require("../src/state/gameReducer");
 
 const { ROOMS_BY_ID, ITEM_IDS } = require("../src/data/data");
-const { ROOM_TYPES, DIRECTION_OPPOSITE } = require("../src/data/constants");
+const { DIRECTION_OPPOSITE } = require("../src/data/constants");
 
 describe("actions", () => {
   test("reset is valid", () => {
@@ -167,7 +167,7 @@ describe("actions", () => {
     });
     expect(gameState.captivesByRoomId["rabbit"]).toHaveProperty("freed", false);
     expect(gameState.learnedRecipeIds).toHaveLength(0);
-
+    // actually free captive
     gameState = {
       ...gameState,
       haveKeysTo: ["rabbit"],
@@ -180,6 +180,12 @@ describe("actions", () => {
     expect(gameState.captivesByRoomId["rabbit"]).toHaveProperty("freed", true);
     expect(gameState.learnedRecipeIds).toHaveLength(1);
     expect(gameState.learnedRecipeIds).toContain("frostFarthing");
+    // try to free captive again
+    gameState = gameReducer(gameState, {
+      type: "freeCaptive",
+      payload: { roomId: "rabbit" },
+    });
+    expect(gameState.learnedRecipeIds).toHaveLength(1);
   });
   test("combineItems", () => {
     let gameState = {

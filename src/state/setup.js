@@ -1,4 +1,3 @@
-import _ from "lodash";
 import {
   CAPTIVES_BY_ID,
   INVENTORY_BY_ID,

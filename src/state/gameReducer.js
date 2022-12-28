@@ -1,4 +1,4 @@
-import _, { max } from "lodash";
+import _ from "lodash";
 import { DIRECTION_OPPOSITE } from "../data/constants";
 import {
   ITEMS_BY_ID,
@@ -6,7 +6,7 @@ import {
   RECIPES_BY_ID,
   ROOMS_BY_ID,
 } from "../data/data";
-import { ROOM_EXIT_POSITIONS } from "../data/util";
+import { ROOM_EXIT_POSITIONS, zipObject } from "../data/util";
 import { initialState } from "./setup";
 
 export function gameReducer(state, action) {
@@ -32,7 +32,7 @@ export function gameReducer(state, action) {
       const noLockedExits = !monster || monster.sated;
       const lockedDirections = noLockedExits
         ? []
-        : _.without(exitDirections, DIRECTION_OPPOSITE[direction]);
+        : exitDirections.filter((d) => d !== DIRECTION_OPPOSITE[direction]);
       const lockedExitTilePositions = lockedDirections.map(
         (dir) => ROOM_EXIT_POSITIONS[dir]
       );
@@ -51,7 +51,10 @@ export function gameReducer(state, action) {
     case "addToInventoryFromRoom": {
       const { itemId, quantity } = action.payload;
       const { inventoryById, itemsByRoomId, currentRoom } = state;
-      const inventoryCount = _.sum(Object.values(inventoryById));
+      const inventoryCount = Object.values(inventoryById).reduce(
+        (a, b) => a + b,
+        0
+      );
 
       const currentRoomItemQuantity = itemsByRoomId[currentRoom.id][itemId];
       if (currentRoomItemQuantity < quantity) {
@@ -110,21 +113,27 @@ export function gameReducer(state, action) {
     case "addAllToInventoryFromRoom": {
       const { inventoryById, itemsByRoomId, currentRoom } = state;
       const currentRoomItemQuantities = itemsByRoomId[currentRoom.id];
-      const inventoryCount = _.sum(Object.values(inventoryById));
-      const roomItemCount = _.sum(Object.values(currentRoomItemQuantities));
+      const inventoryCount = Object.values(inventoryById).reduce(
+        (a, b) => a + b,
+        0
+      );
+      const roomItemCount = Object.values(currentRoomItemQuantities).reduce(
+        (a, b) => a + b,
+        0
+      );
       if (inventoryCount + roomItemCount > state.maxInventory) {
         console.info("Not enough room in inventory");
         return state;
       }
 
-      const newInventoryItems = _.zipObject(
+      const newInventoryItems = zipObject(
         ITEM_IDS,
         ITEM_IDS.map(
           (itemId) => currentRoomItemQuantities[itemId] + inventoryById[itemId]
         )
       );
 
-      const newCurrentRoomItems = _.zipObject(
+      const newCurrentRoomItems = zipObject(
         ITEM_IDS,
         ITEM_IDS.map(() => 0)
       );
@@ -240,6 +249,10 @@ export function gameReducer(state, action) {
         console.info(`don't have key for ${roomId} captive ${captive.id}`);
         return state;
       }
+      if (captive.freed) {
+        console.info(`captive already freed`);
+        return state;
+      }
       return {
         ...state,
         captivesByRoomId: {
@@ -249,9 +262,10 @@ export function gameReducer(state, action) {
             freed: true,
           },
         },
-        learnedRecipeIds: _.union(state.learnedRecipeIds, [
+        learnedRecipeIds: [
+          ...state.learnedRecipeIds,
           captive.teaches.recipeId,
-        ]),
+        ].sort(),
       };
     }
     case "combineItems": {
@@ -272,7 +286,7 @@ export function gameReducer(state, action) {
         console.info(`don't have ingredients for ${recipeId}`);
         return state;
       }
-      const updatedIngredientInventory = _.zipObject(
+      const updatedIngredientInventory = zipObject(
         recipe.ingredients.map((i) => i.itemId),
         recipe.ingredients.map((i) => inventoryById[i.itemId] - i.quantity)
       );

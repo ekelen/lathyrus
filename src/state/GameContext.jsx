@@ -1,9 +1,6 @@
 import React, { useMemo } from "react";
-import { initialState } from "./setup";
-import _ from "lodash";
 import { gameReducer } from "./gameReducer";
-import { ITEMS_BY_ID, RECIPES_BY_ID } from "../data/data";
-import { ROOM_TYPES } from "../data/constants";
+import { initialState } from "./setup";
 
 export const GameContext = React.createContext();
 const GameDispatchContext = React.createContext();
