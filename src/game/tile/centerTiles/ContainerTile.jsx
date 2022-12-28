@@ -1,6 +1,7 @@
 import React from "react";
 import { ITEMS_BY_ID } from "../../../data/data";
 import { useGame, useGameDispatch } from "../../../state/GameContext";
+import { UsableButton } from "../../components/Button";
 import DialogueBox from "../../components/DialogueBox";
 import { ItemWithQuantityButton } from "../../components/Item";
 import Svg from "../../components/Svg";
@@ -29,12 +30,12 @@ function ContainerModalContents({
               e.stopPropagation();
               handleTakeItem(itemId);
             }}
-            wrapperClass="disabled:opacity-50"
+            className="disabled:opacity-50"
           />
         );
       })}
-      <button
-        className="btn usable disabled:opacity-50 ml-auto h-7 mb-1 px-2  text-xs"
+      <UsableButton
+        className="disabled:opacity-50 ml-auto h-7 mb-1 px-2 text-xs"
         disabled={currentRoomItems.length < 1 || disableTakeAll}
         onClick={(e) => {
           e.stopPropagation();
@@ -42,7 +43,7 @@ function ContainerModalContents({
         }}
       >
         All
-      </button>
+      </UsableButton>
       <div className="h-6 w-0" />
     </div>
   );

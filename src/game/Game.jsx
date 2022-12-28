@@ -1,5 +1,6 @@
 import React from "react";
 import { ModalContext, useGame, useGameDispatch } from "../state/GameContext";
+import { Button } from "./components/Button";
 import Modal from "./components/Modal";
 import Intro from "./Intro";
 import Inventory from "./Inventory";
@@ -21,27 +22,27 @@ function Game() {
       <div className="flex items-center justify-between">
         <h3></h3>
 
-        <div className="flex gap-2 text-sm text-slate-400">
-          <button
+        <div className="flex gap-2 text-sm">
+          <Button
             onClick={() => {
               dispatch({ type: "reset" });
             }}
-            className="btn px-2 py-1 text-white"
+            className="px-2 py-1"
           >
             Reset
-          </button>
+          </Button>
         </div>
       </div>
       <RoomFrame />
       <div className="flex items-center justify-end text-sm relative">
-        <button
-          className="bg-slate-800 rounded-md px-2 py-1"
+        <Button
+          className="px-2 py-1"
           onClick={() => {
             setShowMiniModal((o) => !o);
           }}
         >
           Minimap
-        </button>
+        </Button>
         {showMiniModal && (
           <div className="absolute z-50 bottom-12 right-0">
             <Miniminimap onClose={() => setShowMiniModal(false)} />

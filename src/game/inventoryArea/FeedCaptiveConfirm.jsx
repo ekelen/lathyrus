@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { ITEMS_BY_ID, RECIPES_BY_ID } from "../../data/data";
 import { useGameDispatch } from "../../state/GameContext";
+import { Button } from "../components/Button";
 import { CaptiveImage } from "../components/Captive";
 import DialogueBox from "../components/DialogueBox";
 import { Item, ItemWithQuantity } from "../components/Item";
@@ -34,7 +35,7 @@ export function FeedCaptiveConfirm({
       }}
     >
       {!selectedCaptive ? null : (
-        <div className="flex items-center justify-center gap-2 text-xs">
+        <div className="flex items-center justify-center gap-2">
           <div
             className={`${selectedCaptive.colorClass} h-6 w-6 relative grow`}
           >
@@ -47,8 +48,8 @@ export function FeedCaptiveConfirm({
           </div>
           <div>Feed me to the monster?</div>
           <div className="flex flex-col items-center gap-2 justify-center">
-            <button
-              className="btn px-2"
+            <Button
+              className="px-2"
               onClick={() =>
                 dispatch({
                   type: "feedCaptive",
@@ -57,13 +58,10 @@ export function FeedCaptiveConfirm({
               }
             >
               Yes.
-            </button>
-            <button
-              className="btn px-2"
-              onClick={() => setSelectedCaptiveId(null)}
-            >
+            </Button>
+            <Button className="px-2" onClick={() => setSelectedCaptiveId(null)}>
               Nope, you're staying with me.
-            </button>
+            </Button>
           </div>
         </div>
       )}

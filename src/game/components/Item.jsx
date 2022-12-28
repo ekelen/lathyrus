@@ -1,4 +1,5 @@
 import React from "react";
+import { UsableButton } from "./Button";
 
 export function Item({
   item = {},
@@ -18,11 +19,11 @@ export function ItemWithQuantity({
   item,
   quantity,
   colorClass = item.colorClass,
-  wrapperClass = "",
+  className = "",
 }) {
   return (
     <div
-      className={`flex items-center justify-center whitespace-pre pr-2 ${wrapperClass}`}
+      className={`flex items-center justify-center whitespace-pre pr-2 ${className}`}
     >
       <Item item={item} colorClass={colorClass} />
       <div className="text-xs">x {quantity}</div>
@@ -34,18 +35,18 @@ export function ItemWithQuantityButton({
   item,
   quantity,
   colorClass = item.colorClass,
-  wrapperClass = "",
+  className = "",
   disabled = false,
   onClick = () => {},
 }) {
   return (
-    <button
-      className={`btn usable pr-2 mr-1 mb-1 disabled:bg-transparent ${wrapperClass}`}
+    <UsableButton
+      className={`pr-2 mr-1 mb-1 disabled:bg-transparent ${className}`}
       onClick={onClick}
       disabled={disabled}
     >
       <Item item={item} colorClass={colorClass} />
       <div className="text-xs">x {quantity}</div>
-    </button>
+    </UsableButton>
   );
 }

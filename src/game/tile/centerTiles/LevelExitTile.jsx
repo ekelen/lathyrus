@@ -22,7 +22,7 @@ export function LevelExitTile({ room }) {
       >
         <div className="text-md">
           <div className="mb-3">You have reached the exit!</div>
-          <ul className="flex flex-col gap-2 text-xs">
+          <ul className="flex flex-col gap-2">
             <li>
               {freedCaptiveList.length === 2 ? "☑" : "𐄂"} Freed all test
               subjects

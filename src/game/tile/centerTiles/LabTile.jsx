@@ -57,7 +57,7 @@ function LabTileDialogueContent({
                       <ItemWithQuantity
                         item={ITEMS_BY_ID[ingredient.itemId]}
                         quantity={ingredient.quantity}
-                        wrapperClass={itemWrapperClass}
+                        className={itemWrapperClass}
                       />
                       <div>{i < r.ingredients.length - 1 ? "+" : "⟶"}</div>
                     </div>
