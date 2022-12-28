@@ -69,7 +69,7 @@ function LabTileDialogueContent({
                     handleCombineItems(r.id);
                   }}
                   disabled={!hasIngredients(r)}
-                  className="btn ml-2 disabled:opacity-50 "
+                  className="btn usable ml-2 disabled:opacity-50 "
                 >
                   <Item item={ITEMS_BY_ID[r.id]} />
                 </button>

@@ -40,7 +40,7 @@ export function ItemWithQuantityButton({
 }) {
   return (
     <button
-      className={`btn pr-2 mr-1 mb-1 disabled:bg-transparent ${wrapperClass}`}
+      className={`btn usable pr-2 mr-1 mb-1 disabled:bg-transparent ${wrapperClass}`}
       onClick={onClick}
       disabled={disabled}
     >

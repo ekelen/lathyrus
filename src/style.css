@@ -5,7 +5,10 @@
 
 @layer components {
   .btn {
-    @apply whitespace-pre bg-slate-800 rounded-sm border-2 border-slate-800 transition-colors disabled:border-transparent flex items-center justify-center;
+    @apply whitespace-pre bg-slate-800 rounded-md border border-slate-800 transition-colors disabled:border-transparent flex items-center justify-center;
+  }
+  .usable {
+    @apply border-amber-600;
   }
 }
 

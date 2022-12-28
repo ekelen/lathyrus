@@ -14,7 +14,12 @@ export function LevelExitTile({ room }) {
       <CenterTileContentContainer toggleOpen={toggleOpen}>
         Exit!
       </CenterTileContentContainer>
-      <DialogueBox onClick={toggleOpen} isOpen={open} roomId={room.id}>
+      <DialogueBox
+        onClick={toggleOpen}
+        isOpen={open}
+        roomId={room.id}
+        style={{ bottom: "0", zIndex: "100" }}
+      >
         <div className="text-md">
           <div className="mb-3">You have reached the exit!</div>
           <ul className="flex flex-col gap-2 text-xs">

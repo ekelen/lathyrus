@@ -20,7 +20,7 @@ export function Captives({
         const opacity = dead ? "opacity-50" : "";
         return (
           <button
-            className={`btn ${colorClass} ${opacity} h-6 w-6 relative mx-1 mt-2 mb-0 p-0.5 disabled:bg-transparent`}
+            className={`btn usable ${colorClass} ${opacity} h-6 w-6 relative mx-1 mt-2 mb-0 p-0.5 disabled:bg-transparent`}
             key={id}
             disabled={disabled || dead}
             onClick={() => {

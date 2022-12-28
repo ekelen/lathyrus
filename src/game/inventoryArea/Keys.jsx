@@ -24,7 +24,7 @@ export function Keys({
           const { colorClass } = captive;
           return (
             <button
-              className={`flex items-center justify-center h-6 w-6 relative mx-1 mt-2 mb-0 rounded-md bg-slate-800 p-1 disabled:bg-transparent`}
+              className={`btn usable h-6 w-6 relative mx-1 mt-2 mb-0 p-1 disabled:bg-transparent`}
               key={`${i}-${key}`}
               disabled={currentRoomId !== captive.id || captive.freed}
               onClick={() => handleFreeCaptive({ keyTo: captive.id })}

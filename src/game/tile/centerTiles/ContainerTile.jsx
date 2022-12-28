@@ -29,12 +29,12 @@ function ContainerModalContents({
               e.stopPropagation();
               handleTakeItem(itemId);
             }}
-            wrapperClass="disabled:opacity-50 disabled:border-transparent active:border-amber-300 border border-slate-800"
+            wrapperClass="disabled:opacity-50"
           />
         );
       })}
       <button
-        className="btn disabled:opacity-50 ml-auto h-6 mb-1 px-2 text-xs"
+        className="btn usable disabled:opacity-50 ml-auto h-7 mb-1 px-2  text-xs"
         disabled={currentRoomItems.length < 1 || disableTakeAll}
         onClick={(e) => {
           e.stopPropagation();
