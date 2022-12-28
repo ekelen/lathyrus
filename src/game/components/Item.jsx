@@ -8,7 +8,7 @@ export function Item({
 }) {
   return (
     <div
-      className={`h-6 w-6 relative flex items-center justify-center alchemy text-center text-sm ${colorClass}`}
+      className={`h-6 w-6 relative flex items-center justify-center font-alchemy text-center text-sm ${colorClass}`}
     >
       {symbol}
     </div>

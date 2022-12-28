@@ -4,9 +4,11 @@ module.exports = {
   theme: {
     fontFamily: {
       body: ["'Share Tech Mono'", "monospace"],
-      alchemy: ["NewtonSans", "sans-serif"],
     },
     extend: {
+      fontFamily: {
+        alchemy: ["NewtonSans", "sans-serif"],
+      },
       colors: {
         black: "rgb(4, 6, 8)",
         white: "#f0f0f0",
