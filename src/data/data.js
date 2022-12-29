@@ -1,14 +1,11 @@
 import _ from "lodash";
 import {
   BASE_ITEM_LIST,
-  ROOM_POSITIONS,
-  BASE_ROOMS_LIST,
-  BASE_MONSTER_LIST,
   BASE_CAPTIVE_LIST,
-  CONTAINER_ITEMS,
   BASE_RECIPE_LIST,
 } from "./baseData";
 import { ROOM_TYPES } from "./constants";
+import { levels } from "./levels";
 import {
   getPositionFromCoordinates,
   keyBy,
@@ -16,9 +13,11 @@ import {
   ROOM_EXIT_POSITIONS,
 } from "./util";
 
+const { level00, level01 } = levels;
+
 const MAX_ITEMS = 10;
 
-const MAP_SIZE = ROOM_POSITIONS.length;
+const MAP_SIZE = level00.LEVEL_ROOM_POSITIONS.length;
 
 const ITEM_IDS = BASE_ITEM_LIST.map((item) => item.id);
 const INVENTORY_BY_ID = Object.fromEntries(ITEM_IDS.map((id) => [id, 0]));
@@ -48,83 +47,115 @@ const ITEMS_BY_ID = keyBy(
   "id"
 );
 
-const CONTAINER_ROOM_KEYS = BASE_ROOMS_LIST.filter(
-  (r) => r.type === "container"
-).map((r) => r.id);
+const containerRoomIds = (baseRoomList) =>
+  baseRoomList.filter((r) => r.type === "container").map((r) => r.id);
 
-const ITEMS_BY_ROOM_ID = zipObject(
-  CONTAINER_ROOM_KEYS,
-  CONTAINER_ROOM_KEYS.map((roomId) =>
-    zipObject(
-      ITEM_IDS,
-      ITEM_IDS.map((itemId) => CONTAINER_ITEMS[roomId][itemId] ?? 0)
-    )
-  )
-);
-
-const ROOMS_BY_ID = keyBy(
-  BASE_ROOMS_LIST.map((room) => {
-    const type = room.type ?? ROOM_TYPES.empty;
-    const y = ROOM_POSITIONS.findIndex((row) => row.includes(room.id));
-    const x = ROOM_POSITIONS[y].findIndex((id) => id === room.id);
-    const exits = {
-      north: ROOM_POSITIONS[y - 1]?.[x] ?? null,
-      south: ROOM_POSITIONS[y + 1]?.[x] ?? null,
-      east: ROOM_POSITIONS[y]?.[x + 1] ?? null,
-      west: ROOM_POSITIONS[y]?.[x - 1] ?? null,
-    };
-    const exitTilePositions = Object.values(
-      _.mapValues(exits, (roomId, direction) =>
-        roomId ? ROOM_EXIT_POSITIONS[direction] : null
+const itemsByContainerRoomIds = (containerRoomIds, containerItems) =>
+  zipObject(
+    containerRoomIds,
+    containerRoomIds.map((roomId) =>
+      zipObject(
+        ITEM_IDS,
+        ITEM_IDS.map((itemId) => containerItems[roomId][itemId] ?? 0)
       )
-    ).filter((pos) => pos !== null);
-    return {
-      ...room,
-      type,
-      position: getPositionFromCoordinates(x, y),
-      coordinates: { x, y },
-      exits,
-      exitTilePositions,
-      lockedExitTilePositions: [],
-      lockedDirections: [],
-    };
-  }),
-  "id"
+    )
+  );
+
+const ITEMS_BY_CONTAINER_ROOM_ID = itemsByContainerRoomIds(
+  containerRoomIds([
+    ...level00.LEVEL_BASE_ROOMS_LIST,
+    ...level01.LEVEL_BASE_ROOMS_LIST,
+  ]),
+  { ...level00.LEVEL_CONTAINER_ITEMS, ...level01.LEVEL_CONTAINER_ITEMS }
 );
+
+const levelRoomsById = (baseRoomList, roomPositions, levelId) =>
+  keyBy(
+    baseRoomList.map((room) => {
+      const type = room.type ?? ROOM_TYPES.empty;
+      const y = roomPositions.findIndex((row) => row.includes(room.id));
+      const x = roomPositions[y].findIndex((id) => id === room.id);
+      const exits = {
+        north: roomPositions[y - 1]?.[x] ?? null,
+        south: roomPositions[y + 1]?.[x] ?? null,
+        east: roomPositions[y]?.[x + 1] ?? null,
+        west: roomPositions[y]?.[x - 1] ?? null,
+      };
+      const exitTilePositions = Object.values(
+        _.mapValues(exits, (roomId, direction) =>
+          roomId ? ROOM_EXIT_POSITIONS[direction] : null
+        )
+      ).filter((pos) => pos !== null);
+      return {
+        ...room,
+        type,
+        position: getPositionFromCoordinates(x, y),
+        coordinates: { x, y },
+        exits,
+        exitTilePositions,
+        lockedExitTilePositions: [],
+        lockedDirections: [],
+        levelId,
+      };
+    }),
+    "id"
+  );
+
+const ROOMS_BY_ID = {
+  ...levelRoomsById(
+    level00.LEVEL_BASE_ROOMS_LIST,
+    level00.LEVEL_ROOM_POSITIONS,
+    "level00"
+  ),
+  ...levelRoomsById(
+    level01.LEVEL_BASE_ROOMS_LIST,
+    level01.LEVEL_ROOM_POSITIONS,
+    "level01"
+  ),
+};
 
 const CAPTIVE_LIST = BASE_CAPTIVE_LIST.map((captive) => ({
   ...captive,
   freed: false,
   dead: false,
-  position: ROOMS_BY_ID[captive.roomId].position,
+  // position: ROOMS_BY_ID[captive.roomId].position,
 }));
 
 const CAPTIVES_BY_ID = keyBy(CAPTIVE_LIST, "id");
 
-const MONSTERS_BY_ROOM_ID = keyBy(
-  BASE_MONSTER_LIST.map((monster) => ({
-    ...monster,
-    hunger: monster.maxHunger,
-    sated: false,
-    colorClass: itemColorsByValue[Math.log2(monster.maxHunger)],
-  })),
-  "roomId"
-);
+const monstersByRoomId = (monsterList) =>
+  keyBy(
+    monsterList.map((monster) => ({
+      ...monster,
+      hunger: monster.maxHunger,
+      sated: false,
+      colorClass: itemColorsByValue[Math.log2(monster.maxHunger)],
+    })),
+    "roomId"
+  );
+
+const LEVEL_MONSTERS_BY_ROOM_ID = monstersByRoomId([
+  ...level00.LEVEL_BASE_MONSTER_LIST,
+  ...level01.LEVEL_BASE_MONSTER_LIST,
+]);
+
+const LEVEL_EXITS_BY_ROOM_ID = {
+  ...level00.LEVEL_EXITS_BY_ROOM_ID,
+  ...level01.LEVEL_EXITS_BY_ROOM_ID,
+};
 
 export {
   CAPTIVE_LIST,
   CAPTIVES_BY_ID,
-  CONTAINER_ITEMS,
   ITEMS_BY_ID,
-  ITEMS_BY_ROOM_ID,
+  ITEMS_BY_CONTAINER_ROOM_ID,
   ITEM_IDS,
   INVENTORY_BY_ID,
   BASE_ITEM_LIST,
   MAP_SIZE,
   MAX_ITEMS,
-  BASE_MONSTER_LIST,
-  MONSTERS_BY_ROOM_ID,
+  LEVEL_MONSTERS_BY_ROOM_ID,
   RECIPES_BY_ID,
   ROOMS_BY_ID,
-  ROOM_POSITIONS,
+  LEVEL_EXITS_BY_ROOM_ID,
 };

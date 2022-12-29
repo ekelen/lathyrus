@@ -26,13 +26,13 @@ export function CaptiveTile({ room }) {
     <>
       <CenterTileContentContainer>
         <div
-          className={`top-0 left-0 absolute w-full h-full flex items-center justify-center text-white z-40 ${opacityClass}`}
+          className={`top-0 left-0 absolute w-full h-full flex items-center justify-center z-40 ${opacityClass}`}
         >
           <Svg source={Cage} width="100%" height="80%" />
         </div>
         {!captive.freed ? (
           <div
-            className={`${captive.colorClass} top-0 left-0 absolute w-full h-full flex items-center justify-center text-white z-30`}
+            className={`${captive.colorClass} top-0 left-0 absolute w-full h-full flex items-center justify-center z-30`}
           >
             <CaptiveImage
               captive={captive}

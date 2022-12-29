@@ -71,7 +71,24 @@ describe("actions", () => {
       ROOMS_BY_ID["2_M"].exits[exitDirections[0]]
     );
   });
-
+  test("move levels", () => {
+    let gameState = {
+      ...initialState,
+      currentRoom: ROOMS_BY_ID["2_M"],
+    };
+    // Try to move levels in a non-exit room
+    gameState = gameReducer(gameState, {
+      type: "moveLevels",
+    });
+    expect(gameState.currentRoom.id).toEqual("2_M");
+    // actually move levels
+    gameState.currentRoom = ROOMS_BY_ID["7_EXIT"];
+    gameState = gameReducer(gameState, {
+      type: "moveLevels",
+    });
+    expect(gameState.levelId).not.toEqual(initialState.levelId);
+    expect(gameState.currentRoom.id).toEqual("ent");
+  });
   test("sate monster", () => {
     let gameState = {
       ...initialState,

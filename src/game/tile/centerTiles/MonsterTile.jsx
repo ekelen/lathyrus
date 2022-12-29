@@ -55,9 +55,7 @@ export function MonsterTile({ room }) {
   return (
     <>
       <CenterTileContentContainer>
-        <div
-          className={`${opacityClass} h-full w-full absolute p-3 transition-opacity duration-600`}
-        >
+        <div className={`${opacityClass} p-1 transition-opacity duration-600`}>
           <Svg
             source={GET_MONSTER_IMAGE(monster.image)}
             width={"100%"}

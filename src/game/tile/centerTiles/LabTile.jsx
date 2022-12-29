@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from "react";
 import { ITEMS_BY_ID, RECIPES_BY_ID } from "../../../data/data";
 import { useGame, useGameDispatch } from "../../../state/GameContext";
+import { UsableButton } from "../../components/Button";
 import DialogueBox from "../../components/DialogueBox";
 import { Item, ItemWithQuantity } from "../../components/Item";
 import Svg from "../../components/Svg";
@@ -63,16 +64,16 @@ function LabTileDialogueContent({
                     </div>
                   );
                 })}
-                <button
+                <UsableButton
                   onClick={(e) => {
                     e.stopPropagation();
                     handleCombineItems(r.id);
                   }}
                   disabled={!hasIngredients(r)}
-                  className="btn usable ml-2 disabled:opacity-50 "
+                  className="ml-2 disabled:opacity-50 disabled:animate-none animate-pulse"
                 >
                   <Item item={ITEMS_BY_ID[r.id]} />
-                </button>
+                </UsableButton>
               </div>
             );
           })
@@ -89,9 +90,7 @@ export function LabTile({ room }) {
   return (
     <>
       <CenterTileContentContainer>
-        <div className={`w-full h-full`}>
-          <Svg source={Flasks} width={"100%"} height="80%" />
-        </div>
+        <Svg source={Flasks} width={"100%"} height="80%" />
       </CenterTileContentContainer>
       <DialogueBox isOpen={true} roomId={room.id}>
         <LabTileDialogueContent

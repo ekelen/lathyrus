@@ -3,6 +3,7 @@ import { DIRECTION_OPPOSITE } from "../data/constants";
 import {
   ITEMS_BY_ID,
   ITEM_IDS,
+  LEVEL_EXITS_BY_ROOM_ID,
   RECIPES_BY_ID,
   ROOMS_BY_ID,
 } from "../data/data";
@@ -45,6 +46,27 @@ export function gameReducer(state, action) {
           lockedDirections,
         },
         movedCameraToOnTransition: direction,
+      };
+    }
+    case "moveLevels": {
+      const { currentRoom, levelId } = state;
+      const exitInfo = LEVEL_EXITS_BY_ROOM_ID[currentRoom.id] ?? {};
+      const { exitToLevelId, exitToRoomId } = exitInfo;
+      if (!exitToLevelId) {
+        console.info(`No exit level defined for ${currentRoom.id}`);
+        return state;
+      }
+      if (!exitToRoomId) {
+        console.info(`No exit roomID defined for ${currentRoom.id}`);
+        return state;
+      }
+
+      return {
+        ...state,
+        levelId: exitToLevelId,
+        previousLevelId: levelId,
+        previousRoom: null,
+        currentRoom: ROOMS_BY_ID[exitToRoomId],
       };
     }
 

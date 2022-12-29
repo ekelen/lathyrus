@@ -6,7 +6,7 @@ export function CenterTileContentContainer({
 }) {
   return (
     <div
-      className="flex items-center justify-center relative h-full w-full p-2"
+      className="flex items-center justify-center relative h-full w-full p-2 text-black"
       onClick={toggleOpen}
     >
       {children}

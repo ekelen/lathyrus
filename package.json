@@ -8,8 +8,7 @@
     "build": "webpack --mode production --config webpack.prod.js",
     "serve": "node server.js",
     "start": "webpack serve --open --config webpack.dev.js",
-    "analyze": "FILENAME=\"lathyrus-$(date +%Y%m%d%k%M%S).stats.json\"; webpack --mode production --config webpack.prod.js --profile --json > \"${FILENAME}\" && webpack-bundle-analyzer \"${FILENAME}\" build",
-    "analyze-dev": "webpack --mode development --config webpack.dev.js --profile --json > stats.json && webpack-bundle-analyzer stats.json build"
+    "analyze": "FILENAME=\"lathyrus-$(date +%Y%m%d%k%M%S).stats.json\"; webpack --mode production --config webpack.prod.js --profile --json > \"${FILENAME}\" && webpack-bundle-analyzer \"${FILENAME}\" build"
   },
   "keywords": [],
   "author": "",

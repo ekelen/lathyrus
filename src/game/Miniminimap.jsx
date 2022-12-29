@@ -1,16 +1,18 @@
 import React from "react";
-import { ROOMS_BY_ID, ROOM_POSITIONS } from "../data/data";
+import { ROOMS_BY_ID, LEVEL_ROOM_POSITIONS } from "../data/data";
+import { levels } from "../data/levels";
 import { ModalContext, useGame } from "../state/GameContext";
 
 function Miniminimap({ onClose = () => {} }) {
-  const { currentRoom } = useGame();
+  const { currentRoom, levelId } = useGame();
   const { coordinates } = currentRoom;
+  const roomPositions = levels[levelId].LEVEL_ROOM_POSITIONS;
   return (
     <div
       className="flex flex-col relative items-center justify-center border border-slate-600"
       onClick={onClose}
     >
-      {ROOM_POSITIONS.map((row, y) => {
+      {roomPositions.map((row, y) => {
         return (
           <div key={y + "row"} className="flex items-center justify-center">
             {row.map((room, x) => {
