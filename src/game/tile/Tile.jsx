@@ -29,7 +29,6 @@ function RoomTile({ row, col, room }) {
   const tilePosition = getPositionFromCoordinates(col, row);
   const isCenter = tilePosition === CENTER_POSITION;
   const { levelId } = room;
-  console.log(`[=] levelId:`, levelId);
   const isExitTile = room.exitTilePositions.includes(tilePosition);
   const backgroundClass =
     isCenter || isExitTile ? levels[levelId].LEVEL_COLOR : "bg-black";

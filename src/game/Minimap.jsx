@@ -4,34 +4,53 @@ import { ROOMS_BY_ID } from "../data/data";
 import { levels } from "../data/levels";
 import Cage2 from "../game/img/cage2.svg";
 import Chest2 from "../game/img/chest2.svg";
+import Gate from "../game/img/gate.svg";
 import { useGame } from "../state/GameContext";
 import Svg from "./components/Svg";
 
 function MinimapRoomTile({ room, roomId }) {
-  const { freedCaptiveList, itemsByRoomId } = useGame();
-  const isContainerRoom = room.type === ROOM_TYPES.container;
-  const isCaptiveRoom = room.type === ROOM_TYPES.captive;
-  const containerHasItems =
-    isContainerRoom &&
-    Object.values(itemsByRoomId[roomId]).reduce((a, b) => a + b, 0) > 0;
-  const captiveIsFree = isCaptiveRoom && freedCaptiveList.includes(roomId);
+  const { freedCaptiveList, itemsByRoomId, monstersByRoomId } = useGame();
+
+  const monsterColorClass =
+    room.type === ROOM_TYPES.monster && monstersByRoomId[roomId].sated
+      ? "text-gray-500"
+      : "text-orange-700";
   const containerColorClass =
-    isContainerRoom && containerHasItems ? "text-amber-500" : "text-gray-500";
-  const captiveColorClass = captiveIsFree ? "text-gray-500" : "text-amber-200";
+    room.type === ROOM_TYPES.container &&
+    Object.values(itemsByRoomId[roomId]).reduce((a, b) => a + b, 0) > 0
+      ? "text-amber-500"
+      : "text-gray-500";
+  const captiveColorClass =
+    room.type === ROOM_TYPES.captive &&
+    freedCaptiveList.find((captive) => captive.id === roomId)
+      ? "text-gray-500"
+      : "text-amber-200";
 
   return (
     <>
-      {isContainerRoom ? (
+      {room.type === ROOM_TYPES.container ? (
         <div
           className={`${containerColorClass} w-full h-full flex items-center justify-center`}
         >
           <Svg source={Chest2} width="70%" height="50%" />
         </div>
-      ) : isCaptiveRoom ? (
+      ) : room.type === ROOM_TYPES.captive ? (
         <div
           className={`${captiveColorClass} w-full h-full flex items-center justify-center`}
         >
           <Svg source={Cage2} width="100%" height="80%" />
+        </div>
+      ) : room.type === ROOM_TYPES.exit ? (
+        <div
+          className={`text-black w-full h-full flex items-center justify-center`}
+        >
+          <Svg source={Gate} width="100%" height="80%" />
+        </div>
+      ) : room.type === ROOM_TYPES.monster ? (
+        <div
+          className={`${monsterColorClass} w-full h-full flex items-center justify-center`}
+        >
+          <div className="font-alchemy h-3">🜊</div>
         </div>
       ) : null}
     </>

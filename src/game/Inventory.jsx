@@ -9,6 +9,7 @@ import Key from "./img/key.svg";
 import Cage from "./img/cage.svg";
 import Svg from "./components/Svg";
 import Scroll from "./img/scroll.svg";
+import Chest from "./img/chest2.svg";
 import { Recipes } from "./inventoryArea/Recipes";
 import { RecipeHint } from "./inventoryArea/RecipeHint";
 import { FeedCaptiveConfirm } from "./inventoryArea/FeedCaptiveConfirm";
@@ -71,8 +72,8 @@ function Inventory() {
           currentRoomMonster={currentRoomMonster}
           dispatch={dispatch}
         />
-        <div className="absolute bottom-0 left-1/2 border rounded-md text-xs bg-black text-slate-500 border-slate-500 translate-y-1/2 -translate-x-1/2 p-0.5">
-          inventory {totalInventoryQuantity}/{maxInventory}
+        <div className="absolute bottom-0 left-1/2 border rounded-md text-xs bg-black text-slate-500 border-slate-500 translate-y-1/2 -translate-x-1/2 py-0.5 px-2 h-5 flex items-center justify-center gap-2">
+          <Svg source={Chest} /> {totalInventoryQuantity}/{maxInventory}
         </div>
       </div>
       <CaptiveRecipeHint

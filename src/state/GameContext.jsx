@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { gameReducer } from "./gameReducer";
 import { initialState } from "./setup";
 
@@ -17,12 +17,21 @@ export function useGameDispatch() {
 
 const GameContextProvider = (props) => {
   const [state, dispatch] = React.useReducer(gameReducer, initialState);
-  const { monstersByRoomId, currentRoom, captivesByRoomId } = state;
+  const { monstersByRoomId, currentRoom, captivesByRoomId, errorMessage } =
+    state;
   const [showModal, setShowModal] = React.useState(true);
 
   const handleShowModal = (show) => {
     setShowModal(show);
   };
+
+  useEffect(() => {
+    if (errorMessage) {
+      setTimeout(() => {
+        dispatch({ type: "clearErrorMessage" });
+      }, 1000);
+    }
+  }, [errorMessage]);
 
   const freedCaptiveList = useMemo(() => {
     return Object.values(captivesByRoomId).filter((c) => c.freed);

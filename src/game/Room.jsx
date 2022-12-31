@@ -188,7 +188,8 @@ const MoveButton = ({
     south: "rotate-180",
     west: "-rotate-90",
   };
-  const content = isLocked ? <span className="text-xs">🔒</span> : <>&#8593;</>;
+  const fontClass = isLocked ? "text-orange-800" : "";
+  const content = isLocked ? <>&#x1f70a;</> : <>&#x1f70d;</>;
 
   const rotateClass = isLocked ? "" : rotateClasses[direction];
 
@@ -199,12 +200,14 @@ const MoveButton = ({
           handleMove(direction);
         }}
         disabled={isLocked}
-        className="h-full w-full flex items-center bg-gray-800 rounded-full justify-center"
+        className="h-full w-full flex items-center rounded-sm justify-center relative"
         style={{
           visibility: exits[direction] === null ? "hidden" : "visible",
         }}
       >
-        <div className={`text-sm ${rotateClass}`}>{content}</div>
+        <div className={`font-alchemy text-lg ${rotateClass} ${fontClass}`}>
+          {content}
+        </div>
       </button>
     </div>
   );

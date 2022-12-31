@@ -7,7 +7,7 @@ import { GET_MONSTER_IMAGE } from "../../img/Monster";
 import { CenterTileContentContainer } from "../CenterTileContentContainer";
 
 function MonsterTileDialogueContents({ monster, errorMessage }) {
-  const { sated, hunger, maxHunger, hasKeyTo, colorClass } = monster;
+  const { sated, hunger, maxHunger, hasKeyTo } = monster;
   const { captivesByRoomId } = useGame();
 
   const hungerPct = Math.ceil((hunger / maxHunger) * 100);
@@ -30,22 +30,22 @@ function MonsterTileDialogueContents({ monster, errorMessage }) {
     >
       {errorMessage ? (
         <div className="absolute w-full h-full bg-black rounded-md flex items-center justify-center z-10">
-          <div className="text-red-500 text-sm">{errorMessage}</div>
+          <div className="text-orange-900 text-sm">{errorMessage}</div>
         </div>
       ) : null}
       <div className="relative h-2" style={{ width: widthPct }}>
         <div className="absolute w-full h-2 bg-slate-900 rounded-md" />
-        <div className="absolute h-2 bg-slate-700" ref={hungerRef} />
+        <div className="absolute h-2 bg-slate-800 rounded-md" ref={hungerRef} />
         {!hasKeyTo ? null : (
           <div className={`absolute h-6 w-6 -left-2 -top-2 ${keyColorClass}`}>
             <Svg source={Key} />
           </div>
         )}
         <div
-          className={`font-alchemy absolute h-full -top-1/2 ${colorClass} text-xl`}
+          className={`font-alchemy absolute h-full -top-1/2 text-orange-700 text-xl`}
           ref={markerRef}
         >
-          <div className="leading-none -ml-2">🜊</div>
+          <div className="leading-none -ml-2 font-alchemy">🜊</div>
         </div>
       </div>
     </div>
@@ -54,17 +54,9 @@ function MonsterTileDialogueContents({ monster, errorMessage }) {
 
 export function MonsterTile({ room }) {
   const { monstersByRoomId, errorMessage } = useGame();
-  const dispatch = useGameDispatch();
+
   const monster = monstersByRoomId[room.id];
   const opacityClass = monster.sated ? "opacity-50" : "";
-
-  useEffect(() => {
-    if (errorMessage) {
-      setTimeout(() => {
-        dispatch({ type: "clearErrorMessage" });
-      }, 1000);
-    }
-  }, [errorMessage]);
 
   return (
     <>
@@ -80,10 +72,11 @@ export function MonsterTile({ room }) {
       <DialogueBox
         isOpen={true}
         roomId={room.id}
+        className={errorMessage ? "border-orange-900" : ""}
         style={{
           minWidth: "280%",
           width: "280%",
-          ...(!!errorMessage && { borderColor: "red" }),
+          // ...(!!errorMessage && { borderColor: "red" }),
         }}
       >
         <MonsterTileDialogueContents {...{ monster, errorMessage }} />

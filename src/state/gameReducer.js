@@ -191,10 +191,15 @@ export function gameReducer(state, action) {
         console.info("not enough items in inventory");
         return state;
       }
+      const newInventoryItems = {
+        ...inventoryById,
+        [itemId]: inventoryById[itemId] - 1,
+      };
       if (value < monster.minimumItemValueAccepted) {
         console.info("item too weak");
         return {
           ...state,
+          inventoryById: newInventoryItems,
           errorMessage: "*ineffectual*",
         };
       }
@@ -210,10 +215,7 @@ export function gameReducer(state, action) {
         ...monstersByRoomId,
         [currentRoom.id]: newMonster,
       };
-      const newInventoryItems = {
-        ...inventoryById,
-        [itemId]: inventoryById[itemId] - 1,
-      };
+
       if (newMonster.sated) {
         const haveKeysTo = [...state.haveKeysTo, hasKeyTo]
           .filter(Boolean)

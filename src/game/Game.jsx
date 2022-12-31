@@ -6,6 +6,8 @@ import Intro from "./Intro";
 import Inventory from "./Inventory";
 import Minimap from "./Minimap";
 import RoomFrame from "./Room";
+import Compass from "./img/compass.svg";
+import Svg from "./components/Svg";
 
 function Game() {
   const dispatch = useGameDispatch();
@@ -42,15 +44,15 @@ function Game() {
       <RoomFrame />
       <div className="flex items-end justify-end text-sm relative portrait:h-24 landscape:h-auto mt-2">
         <Button
-          className="px-2 py-1"
+          className="h-6 w-6 p-0.5"
           onClick={() => {
             setShowMiniModal((o) => !o);
           }}
         >
-          Minimap
+          <Svg source={Compass} />
         </Button>
         {showMiniModal && (
-          <div className="absolute z-50 bottom-12 right-0">
+          <div className="absolute z-50 bottom-0 right-0">
             <Minimap onClose={() => setShowMiniModal(false)} />
           </div>
         )}

@@ -1,6 +1,5 @@
 const setup = require("../src/state/setup");
 const gameData = require("../src/data/data");
-const util = require("../src/data/util");
 const _ = require("lodash");
 const { ROOM_TYPES } = require("../src/data/constants");
 const { levels } = require("../src/data/levels");
