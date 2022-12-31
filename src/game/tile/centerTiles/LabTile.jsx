@@ -8,6 +8,50 @@ import Svg from "../../components/Svg";
 import Flasks from "../../img/flasks.svg";
 import { CenterTileContentContainer } from "../CenterTileContentContainer";
 
+function Recipe({ recipe, inventoryById, handleCombineItems }) {
+  const hasIngredients = recipe.ingredients.every((ingredient) => {
+    return inventoryById[ingredient.itemId] >= ingredient.quantity;
+  });
+
+  const hasIngredient = useCallback(
+    (ingredient) => {
+      return inventoryById[ingredient.itemId] >= ingredient.quantity;
+    },
+    [inventoryById]
+  );
+
+  return (
+    <div className="flex items-center justify-center mb-1">
+      {recipe.ingredients.map((ingredient, i) => {
+        const itemWrapperClass = hasIngredient(ingredient) ? "" : "opacity-50";
+        return (
+          <div
+            className="flex items-center justify-center whitespace-pre"
+            key={`${ingredient.itemId}-${i}`}
+          >
+            <ItemWithQuantity
+              item={ITEMS_BY_ID[ingredient.itemId]}
+              quantity={ingredient.quantity}
+              className={itemWrapperClass}
+            />
+            <div>{i < recipe.ingredients.length - 1 ? "+" : "⟶"}</div>
+          </div>
+        );
+      })}
+      <UsableButton
+        onClick={(e) => {
+          e.stopPropagation();
+          handleCombineItems(recipe.id);
+        }}
+        disabled={!hasIngredients}
+        className="ml-2 disabled:opacity-50 disabled:animate-none animate-pulse"
+      >
+        <Item item={ITEMS_BY_ID[recipe.id]} />
+      </UsableButton>
+    </div>
+  );
+}
+
 function LabTileDialogueContent({
   room,
   inventoryById,
@@ -17,26 +61,14 @@ function LabTileDialogueContent({
   const learnedRecipeList = useMemo(() => {
     return learnedRecipeIds.map((id) => RECIPES_BY_ID[id]);
   }, [learnedRecipeIds]);
-  const hasIngredients = useCallback(
-    (recipe) => {
-      return recipe.ingredients.every((ingredient) => {
-        return inventoryById[ingredient.itemId] >= ingredient.quantity;
-      });
-    },
-    [inventoryById]
-  );
-  const hasIngredient = useCallback(
-    (ingredient) => {
-      return inventoryById[ingredient.itemId] >= ingredient.quantity;
-    },
-    [inventoryById]
-  );
+
   const handleCombineItems = (recipeId) => {
     dispatch({
       type: "combineItems",
       payload: { recipeId },
     });
   };
+
   return (
     <>
       <div className="flex flex-col items-center justify-center">
@@ -45,36 +77,12 @@ function LabTileDialogueContent({
         ) : (
           learnedRecipeList.map((r) => {
             return (
-              <div className="flex items-center justify-center mb-1" key={r.id}>
-                {r.ingredients.map((ingredient, i) => {
-                  const itemWrapperClass = hasIngredient(ingredient)
-                    ? ""
-                    : "opacity-50";
-                  return (
-                    <div
-                      className="flex items-center justify-center whitespace-pre"
-                      key={`${ingredient.itemId}-${i}`}
-                    >
-                      <ItemWithQuantity
-                        item={ITEMS_BY_ID[ingredient.itemId]}
-                        quantity={ingredient.quantity}
-                        className={itemWrapperClass}
-                      />
-                      <div>{i < r.ingredients.length - 1 ? "+" : "⟶"}</div>
-                    </div>
-                  );
-                })}
-                <UsableButton
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleCombineItems(r.id);
-                  }}
-                  disabled={!hasIngredients(r)}
-                  className="ml-2 disabled:opacity-50 disabled:animate-none animate-pulse"
-                >
-                  <Item item={ITEMS_BY_ID[r.id]} />
-                </UsableButton>
-              </div>
+              <Recipe
+                key={r.id}
+                recipe={r}
+                inventoryById={inventoryById}
+                handleCombineItems={handleCombineItems}
+              />
             );
           })
         )}

@@ -13,14 +13,20 @@ function Game() {
   const [showMiniModal, setShowMiniModal] = React.useState(false);
   return (
     <div
-      className="flex flex-col h-100"
+      className="flex flex-col h-full"
       style={{
         width: "clamp(350px, 95vw, 450px)",
         minWidth: "clamp(350px, 95vw, 450px)",
       }}
     >
-      <div className="flex items-center justify-between">
-        <h3></h3>
+      <div className="flex items-center justify-between mt-3">
+        <div className="text-2xl text-slate-500 leading-none relative tracking-widest">
+          <span>L</span>
+          <span className="font-alchemy">&#x1f753;</span>TH
+          <span className="font-alchemy">&#x1f756;</span>R
+          <span className="font-alchemy">&#x1f709;</span>S
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent to-black opacity-50 z-10 " />
+        </div>
 
         <div className="flex gap-2 text-sm">
           <Button
@@ -34,7 +40,7 @@ function Game() {
         </div>
       </div>
       <RoomFrame />
-      <div className="flex items-center justify-end text-sm relative">
+      <div className="flex items-end justify-end text-sm relative portrait:h-24 landscape:h-auto mt-2">
         <Button
           className="px-2 py-1"
           onClick={() => {

@@ -115,9 +115,10 @@ function RoomFrame() {
   };
   return (
     <div
-      className="flex flex-col items-stretch relative z-10"
+      className="flex flex-col items-stretch relative z-10 portrait:mt-12 landscape:mt-4"
       style={{
         height: "clamp(350px, 95vw, 450px)",
+        minHeight: "clamp(350px, 95vw, 450px)",
         border: "1px solid rgba(255,255,255,0)",
       }}
     >
