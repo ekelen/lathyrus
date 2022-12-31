@@ -95,6 +95,7 @@ const LEVEL_BASE_MONSTER_LIST = [
     maxHunger: 4,
     roomId: "2_M",
     image: "goblin",
+    minimumItemValueAccepted: 2,
   },
   {
     name: "zombie",
@@ -102,12 +103,14 @@ const LEVEL_BASE_MONSTER_LIST = [
     roomId: "5_M_TOAD",
     image: "zombie",
     hasKeyTo: "toad",
+    minimumItemValueAccepted: 8,
   },
   {
     name: "small goblin",
     maxHunger: 4,
     roomId: "10_M",
     image: "goblin",
+    minimumItemValueAccepted: 2,
   },
   {
     name: "frost goblin",
@@ -115,12 +118,14 @@ const LEVEL_BASE_MONSTER_LIST = [
     roomId: "12_M_RABBIT",
     hasKeyTo: "rabbit",
     image: "goblin",
+    minimumItemValueAccepted: 2,
   },
   {
     name: "dragon",
     maxHunger: 64,
     roomId: "exitGoblin",
     image: "dragon",
+    minimumItemValueAccepted: 16,
   },
 ];
 

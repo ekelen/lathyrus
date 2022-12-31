@@ -264,4 +264,15 @@ describe("actions", () => {
     expect(gameState.itemsByRoomId["1_C"].gold).toEqual(0);
     expect(gameState.itemsByRoomId["1_C"].frostEssence).toEqual(0);
   });
+  test("clear error message", () => {
+    let gameState = {
+      ...initialState,
+      errorMessage: "test error",
+    };
+    expect(gameState.errorMessage).toEqual("test error");
+    gameState = gameReducer(gameState, {
+      type: "clearErrorMessage",
+    });
+    expect(gameState.errorMessage).toEqual(null);
+  });
 });

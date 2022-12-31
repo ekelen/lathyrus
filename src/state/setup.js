@@ -21,5 +21,6 @@ export const initialState = JSON.parse(
     haveKeysTo: [],
     learnedRecipeIds: [],
     maxInventory: MAX_ITEMS,
+    errorMessage: null,
   })
 );

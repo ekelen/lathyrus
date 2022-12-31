@@ -8,7 +8,7 @@ import { useGame } from "../state/GameContext";
 import Svg from "./components/Svg";
 
 function MinimapRoomTile({ room, roomId }) {
-  const { freedCaptiveList, currentRoom, itemsByRoomId } = useGame();
+  const { freedCaptiveList, itemsByRoomId } = useGame();
   const isContainerRoom = room.type === ROOM_TYPES.container;
   const isCaptiveRoom = room.type === ROOM_TYPES.captive;
   const containerHasItems =

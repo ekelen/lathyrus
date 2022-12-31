@@ -69,12 +69,14 @@ const LEVEL_BASE_MONSTER_LIST = [
     maxHunger: 4,
     roomId: "01_0M",
     image: "goblin",
+    minimumItemValueAccepted: 2,
   },
   {
     name: "small goblin",
     maxHunger: 4,
     roomId: "01_1M",
     image: "goblin",
+    minimumItemValueAccepted: 2,
   },
 ];
 

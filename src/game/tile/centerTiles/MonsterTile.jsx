@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from "react";
-import { useGame } from "../../../state/GameContext";
+import { useGame, useGameDispatch } from "../../../state/GameContext";
 import DialogueBox from "../../components/DialogueBox";
 import Svg from "../../components/Svg";
 import Key from "../../img/key.svg";
 import { GET_MONSTER_IMAGE } from "../../img/Monster";
 import { CenterTileContentContainer } from "../CenterTileContentContainer";
 
-function MonsterTileContents({ monster }) {
+function MonsterTileDialogueContents({ monster, errorMessage }) {
   const { sated, hunger, maxHunger, hasKeyTo, colorClass } = monster;
   const { captivesByRoomId } = useGame();
 
@@ -28,6 +28,11 @@ function MonsterTileContents({ monster }) {
     <div
       className={`relative w-full ${opacityClass} py-3 flex items-center justify-center`}
     >
+      {errorMessage ? (
+        <div className="absolute w-full h-full bg-black rounded-md flex items-center justify-center z-10">
+          <div className="text-red-500 text-sm">{errorMessage}</div>
+        </div>
+      ) : null}
       <div className="relative h-2" style={{ width: widthPct }}>
         <div className="absolute w-full h-2 bg-slate-900 rounded-md" />
         <div className="absolute h-2 bg-slate-700" ref={hungerRef} />
@@ -48,9 +53,18 @@ function MonsterTileContents({ monster }) {
 }
 
 export function MonsterTile({ room }) {
-  const { monstersByRoomId } = useGame();
+  const { monstersByRoomId, errorMessage } = useGame();
+  const dispatch = useGameDispatch();
   const monster = monstersByRoomId[room.id];
   const opacityClass = monster.sated ? "opacity-50" : "";
+
+  useEffect(() => {
+    if (errorMessage) {
+      setTimeout(() => {
+        dispatch({ type: "clearErrorMessage" });
+      }, 1000);
+    }
+  }, [errorMessage]);
 
   return (
     <>
@@ -66,9 +80,13 @@ export function MonsterTile({ room }) {
       <DialogueBox
         isOpen={true}
         roomId={room.id}
-        style={{ minWidth: "280%", width: "280%" }}
+        style={{
+          minWidth: "280%",
+          width: "280%",
+          ...(!!errorMessage && { borderColor: "red" }),
+        }}
       >
-        <MonsterTileContents {...{ monster }} />
+        <MonsterTileDialogueContents {...{ monster, errorMessage }} />
       </DialogueBox>
     </>
   );

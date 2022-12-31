@@ -70,6 +70,13 @@ export function gameReducer(state, action) {
       };
     }
 
+    case "clearErrorMessage": {
+      return {
+        ...state,
+        errorMessage: null,
+      };
+    }
+
     case "addToInventoryFromRoom": {
       const { itemId, quantity } = action.payload;
       const { inventoryById, itemsByRoomId, currentRoom } = state;
@@ -180,6 +187,17 @@ export function gameReducer(state, action) {
       }
       const item = ITEMS_BY_ID[itemId];
       const { value } = item;
+      if (inventoryById[itemId] < 1) {
+        console.info("not enough items in inventory");
+        return state;
+      }
+      if (value < monster.minimumItemValueAccepted) {
+        console.info("item too weak");
+        return {
+          ...state,
+          errorMessage: "*ineffectual*",
+        };
+      }
       const hunger = Math.max(monster.hunger - value, 0);
       const sated = hunger === 0;
       const newMonster = {

@@ -5,14 +5,13 @@ import { UsableButton } from "../../components/Button";
 import DialogueBox from "../../components/DialogueBox";
 import { ItemWithQuantityButton } from "../../components/Item";
 import Svg from "../../components/Svg";
-import Chest from "../../img/chest.svg";
+import Chest from "../../img/chest2.svg";
 import { CenterTileContentContainer } from "../CenterTileContentContainer";
 
 function ContainerModalContents({
   currentRoomItems,
   handleTakeItem,
   handleTakeAllItems,
-
   disableTakeAll,
   disableTakeAny,
 }) {
@@ -79,7 +78,7 @@ export function ContainerTile({ room }) {
   return (
     <>
       <CenterTileContentContainer>
-        <Svg source={Chest} width="100%" height="80%" />
+        <Svg source={Chest} width="70%" height="50%" />
       </CenterTileContentContainer>
       <DialogueBox
         isOpen={true}

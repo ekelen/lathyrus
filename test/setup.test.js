@@ -7,7 +7,7 @@ const { levels } = require("../src/data/levels");
 const { ITEMS_BY_ID, ROOMS_BY_ID, MAP_SIZE, CAPTIVE_LIST } = gameData;
 const { level00, level01 } = levels;
 
-describe("LEVEL_ROOM_POSITIONS and ROOMS_BY_ID", () => {
+describe("Base data and initial state", () => {
   test("LEVEL_ROOM_POSITIONS size is valid", () => {
     expect(level00.LEVEL_ROOM_POSITIONS).toHaveLength(MAP_SIZE);
     expect(level01.LEVEL_ROOM_POSITIONS).toHaveLength(MAP_SIZE);
