@@ -29,13 +29,13 @@ module.exports = merge(common, {
         ],
       },
       {
-        test: /\.(png|svg|jpg|jpeg|gif|webp|woff2?)$/i,
+        test: /\.(png|svg|jpg|jpeg|gif|webp|woff2)$/i,
         type: "asset/resource",
       },
       {
         test: /\.(js|jsx)$/,
         include: path.resolve(__dirname, "./src"),
-        exclude: /node_modules/,
+        exclude: [/node_modules/, /\.test\.js(x)?$/],
         use: [
           {
             loader: "babel-loader",
