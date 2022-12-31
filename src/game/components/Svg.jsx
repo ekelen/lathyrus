@@ -4,7 +4,7 @@ import SVG from "react-inlinesvg";
 export default function Svg({
   source,
   width = "100%",
-  height = width,
+  height = "80%",
   color = "currentColor",
   title = "",
 }) {

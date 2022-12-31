@@ -4,7 +4,7 @@ import { Button } from "./components/Button";
 import Modal from "./components/Modal";
 import Intro from "./Intro";
 import Inventory from "./Inventory";
-import Miniminimap from "./Miniminimap";
+import Minimap from "./Minimap";
 import RoomFrame from "./Room";
 
 function Game() {
@@ -51,7 +51,7 @@ function Game() {
         </Button>
         {showMiniModal && (
           <div className="absolute z-50 bottom-12 right-0">
-            <Miniminimap onClose={() => setShowMiniModal(false)} />
+            <Minimap onClose={() => setShowMiniModal(false)} />
           </div>
         )}
       </div>
