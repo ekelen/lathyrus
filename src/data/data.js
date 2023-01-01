@@ -1,4 +1,3 @@
-import _ from "lodash";
 import {
   BASE_ITEM_LIST,
   BASE_CAPTIVE_LIST,
@@ -11,6 +10,7 @@ import {
   keyBy,
   zipObject,
   ROOM_EXIT_POSITIONS,
+  mapValues,
 } from "./util";
 
 const { level00, level01 } = levels;
@@ -82,7 +82,7 @@ const levelRoomsById = (baseRoomList, roomPositions, levelId) =>
         west: roomPositions[y]?.[x - 1] ?? null,
       };
       const exitTilePositions = Object.values(
-        _.mapValues(exits, (roomId, direction) =>
+        mapValues(exits, (roomId, direction) =>
           roomId ? ROOM_EXIT_POSITIONS[direction] : null
         )
       ).filter((pos) => pos !== null);

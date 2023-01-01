@@ -20,6 +20,22 @@ const zipObject = (keys, values) => {
   return Object.fromEntries(keys.map((key, i) => [key, values[i]]));
 };
 
+const pickBy = (object, predicate) => {
+  return Object.fromEntries(
+    Object.entries(object).filter(([key, value]) => predicate(value, key))
+  );
+};
+
+const pick = (object, keys) => {
+  return pickBy(object, (value, key) => keys.includes(key));
+};
+
+const mapValues = (object, mapper) => {
+  return Object.fromEntries(
+    Object.entries(object).map(([key, value]) => [key, mapper(value, key)])
+  );
+};
+
 const ROOM_EXIT_POSITIONS = {
   north: getPositionFromCoordinates(1, 0),
   east: getPositionFromCoordinates(2, 1),
@@ -33,7 +49,10 @@ export {
   getCoordinatesFromPosition,
   getPositionFromCoordinates,
   keyBy,
+  mapValues,
   zipObject,
+  pick,
+  pickBy,
   CENTER_POSITION,
   ROOM_EXIT_POSITIONS,
 };

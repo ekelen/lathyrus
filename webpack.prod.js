@@ -35,7 +35,7 @@ module.exports = merge(common, {
       {
         test: /\.(js|jsx)$/,
         include: path.resolve(__dirname, "./src"),
-        exclude: [/node_modules/, /test/],
+        exclude: [/node_modules/, /\.test\.js(x)?$/],
         use: [
           {
             loader: "babel-loader",

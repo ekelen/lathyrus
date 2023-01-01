@@ -1,8 +1,8 @@
-import _ from "lodash";
 import React, { useCallback, useMemo } from "react";
 import { ITEMS_BY_ID } from "../../data/data";
 import { ItemWithQuantityButton } from "../components/Item";
 import { ROOM_TYPES } from "../../data/constants";
+import { pick, pickBy } from "../../data/util";
 
 export function InventoryItems({
   inventoryById,
@@ -37,10 +37,10 @@ export function InventoryItems({
   );
 
   const inventoryKeys = useMemo(() => {
-    return Object.keys(_.pickBy(inventoryById, (item) => item > 0));
+    return Object.keys(pickBy(inventoryById, (item) => item > 0));
   }, [inventoryById]);
   const itemValues = useMemo(() => {
-    return _.pick(ITEMS_BY_ID, inventoryKeys);
+    return pick(ITEMS_BY_ID, inventoryKeys);
   }, [inventoryKeys]);
   return (
     <>
