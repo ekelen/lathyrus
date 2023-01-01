@@ -42,16 +42,25 @@ function Room({ room, isPreviousRoom = false }) {
     height: "100%",
     width: "100%",
     position: "absolute",
-    transition: "left 750ms ease, top 750ms ease",
+    transition: "left 750ms ease, top 750ms ease, transform 750ms ease",
+    transform: `translateX(${
+      isPreviousRoom || !movedCameraToOnTransition
+        ? 0
+        : START_POSITION_CURRENT[movedCameraToOnTransition].left ?? 0
+    }) translateY(${
+      isPreviousRoom || !movedCameraToOnTransition
+        ? 0
+        : START_POSITION_CURRENT[movedCameraToOnTransition].top ?? 0
+    })`,
     zIndex: isPreviousRoom ? 5 : 20,
-    left:
-      isPreviousRoom || !movedCameraToOnTransition
-        ? 0
-        : START_POSITION_CURRENT[movedCameraToOnTransition].left ?? 0,
-    top:
-      isPreviousRoom || !movedCameraToOnTransition
-        ? 0
-        : START_POSITION_CURRENT[movedCameraToOnTransition].top ?? 0,
+    // left:
+    //   isPreviousRoom || !movedCameraToOnTransition
+    //     ? 0
+    //     : START_POSITION_CURRENT[movedCameraToOnTransition].left ?? 0,
+    // top:
+    //   isPreviousRoom || !movedCameraToOnTransition
+    //     ? 0
+    //     : START_POSITION_CURRENT[movedCameraToOnTransition].top ?? 0,
   };
 
   useEffect(() => {
@@ -61,17 +70,23 @@ function Room({ room, isPreviousRoom = false }) {
     // );
     if (roomRef.current && isPreviousRoom) {
       timer = setTimeout(() => {
-        roomRef.current.style.left = `${
+        roomRef.current.style.transform = `translateX(${
           END_POSITION_PREVIOUS[movedCameraToOnTransition].left ?? 0
-        }`;
-        roomRef.current.style.top = `${
+        }) translateY(${
           END_POSITION_PREVIOUS[movedCameraToOnTransition].top ?? 0
-        }`;
+        })`;
+        // roomRef.current.style.left = `${
+        //   END_POSITION_PREVIOUS[movedCameraToOnTransition].left ?? 0
+        // }`;
+        // roomRef.current.style.top = `${
+        //   END_POSITION_PREVIOUS[movedCameraToOnTransition].top ?? 0
+        // }`;
       }, 10);
     } else if (roomRef.current && !isPreviousRoom) {
       timer = setTimeout(() => {
-        roomRef.current.style.left = `0px`;
-        roomRef.current.style.top = `0px`;
+        roomRef.current.style.transform = `translateX(0px) translateY(0px)`;
+        // roomRef.current.style.left = `0px`;
+        // roomRef.current.style.top = `0px`;
       }, 10);
     }
     return () => {
