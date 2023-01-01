@@ -7,6 +7,14 @@ const { ITEMS_BY_ID, ROOMS_BY_ID, MAP_SIZE, CAPTIVE_LIST } = gameData;
 const { level00, level01 } = levels;
 
 describe("Base data and initial state", () => {
+  const LEVEL_CONTAINER_ITEMS = {
+    ...level00.LEVEL_CONTAINER_ITEMS,
+    ...level01.LEVEL_CONTAINER_ITEMS,
+  };
+  const LEVEL_BASE_MONSTER_LIST = [
+    ...level00.LEVEL_BASE_MONSTER_LIST,
+    ...level01.LEVEL_BASE_MONSTER_LIST,
+  ];
   test("LEVEL_ROOM_POSITIONS size is valid", () => {
     expect(level00.LEVEL_ROOM_POSITIONS).toHaveLength(MAP_SIZE);
     expect(level01.LEVEL_ROOM_POSITIONS).toHaveLength(MAP_SIZE);
@@ -99,7 +107,7 @@ describe("Base data and initial state", () => {
   test("All captivesByRoomId must have a monster with key", () => {
     CAPTIVE_LIST.forEach((captive) => {
       expect(
-        level00.LEVEL_BASE_MONSTER_LIST.find((m) => m.hasKeyTo === captive.id)
+        LEVEL_BASE_MONSTER_LIST.find((m) => m.hasKeyTo === captive.id)
       ).toBeTruthy();
       expect(ROOMS_BY_ID[captive.roomId].type).toBe(ROOM_TYPES.captive);
     });

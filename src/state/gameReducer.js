@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { DIRECTION_OPPOSITE } from "../data/constants";
+import { DIRECTION_OPPOSITE, ROOM_TYPES } from "../data/constants";
 import {
   ITEMS_BY_ID,
   ITEM_IDS,
@@ -7,7 +7,13 @@ import {
   RECIPES_BY_ID,
   ROOMS_BY_ID,
 } from "../data/data";
-import { ROOM_EXIT_POSITIONS, zipObject } from "../data/util";
+import {
+  mapValues,
+  pickBy,
+  ROOM_EXIT_POSITIONS,
+  uniq,
+  zipObject,
+} from "../data/util";
 import { initialState } from "./setup";
 
 export function gameReducer(state, action) {
@@ -49,7 +55,7 @@ export function gameReducer(state, action) {
       };
     }
     case "moveLevels": {
-      const { currentRoom, levelId } = state;
+      const { currentRoom, levelId, visitedLevels } = state;
       const exitInfo = LEVEL_EXITS_BY_ROOM_ID[currentRoom.id] ?? {};
       const { exitToLevelId, exitToRoomId } = exitInfo;
       if (!exitToLevelId) {
@@ -67,6 +73,7 @@ export function gameReducer(state, action) {
         previousLevelId: levelId,
         previousRoom: null,
         currentRoom: ROOMS_BY_ID[exitToRoomId],
+        visitedLevels: uniq([...visitedLevels, exitToLevelId]),
       };
     }
 
@@ -338,6 +345,78 @@ export function gameReducer(state, action) {
           ...inventoryById,
           [recipeId]: inventoryById[recipeId] + 1,
           ...updatedIngredientInventory,
+        },
+      };
+    }
+    case "toggleDebug": {
+      return {
+        ...state,
+        debug: !state.debug,
+      };
+    }
+    case "debugMoveToRoomId": {
+      const { roomId } = action.payload;
+      const { roomsById } = state;
+      const room = roomsById[roomId];
+      return {
+        ...state,
+        previousRoom: null,
+        currentRoom: room,
+      };
+    }
+    case "debugEndLevel": {
+      const {
+        levelId,
+        captivesByRoomId,
+        monstersByRoomId,
+        itemsByRoomId,
+        inventoryById,
+        learnedRecipeIds,
+        currentRoom,
+        debug,
+      } = state;
+
+      if (!debug) {
+        console.info("not in debug mode");
+        return state;
+      }
+
+      const firstLevelExitRoomId = (
+        Object.values(ROOMS_BY_ID).find(
+          (room) =>
+            room.levelId === levelId &&
+            (room.type === ROOM_TYPES.exit ||
+              room.type === ROOM_TYPES.finish) &&
+            room.id !== currentRoom.id
+        ) || {}
+      ).id;
+      if (!firstLevelExitRoomId) {
+        console.info("no exit room found");
+        return state;
+      }
+
+      const newLearnedRecipeIds = Object.values(
+        pickBy(captivesByRoomId, (captive) => captive.levelId === levelId)
+      ).map((captive) => captive.teaches.recipeId);
+
+      return {
+        ...state,
+        learnedRecipeIds: newLearnedRecipeIds,
+        currentRoom: ROOMS_BY_ID[firstLevelExitRoomId],
+        inventoryById: mapValues(inventoryById, (quantity, itemId) =>
+          newLearnedRecipeIds.includes(itemId) ? 3 : 0
+        ),
+        previousRoom: null,
+        captivesByRoomId: {
+          ...captivesByRoomId,
+          ...mapValues(
+            pickBy(captivesByRoomId, (captive) => captive.levelId === levelId),
+            (captive) => ({
+              ...captive,
+              freed: true,
+              dead: false,
+            })
+          ),
         },
       };
     }

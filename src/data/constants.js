@@ -5,7 +5,7 @@ const ROOM_TYPES = {
   captive: "captive",
   empty: "empty",
   exit: "exit",
-  levelExit: "levelExit",
+  finish: "finish",
 };
 
 const DIRECTION_OPPOSITE = {

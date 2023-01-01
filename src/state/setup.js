@@ -22,5 +22,7 @@ export const initialState = JSON.parse(
     learnedRecipeIds: [],
     maxInventory: MAX_ITEMS,
     errorMessage: null,
+    debug: false,
+    visitedLevels: ["level00"],
   })
 );

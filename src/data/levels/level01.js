@@ -3,8 +3,8 @@ import { ROOM_TYPES } from "../constants";
 const LEVEL_ROOM_POSITIONS = [
   [null, null, null, null, "ent"],
   [null, null, null, null, "01_0C"],
-  [null, null, null, null, "01_0M"],
-  [null, null, null, null, "01_1C"],
+  [null, "finish", null, null, "01_0M"],
+  ["01_M_tortoise", "tortoise", null, null, "01_1C"],
   [null, "01_1M", "01_2C", "01_0E", "01_0L"],
 ];
 
@@ -48,6 +48,21 @@ const LEVEL_BASE_ROOMS_LIST = [
     name: "01_2C",
     type: ROOM_TYPES.container,
   },
+  {
+    id: "tortoise",
+    name: "tortoise",
+    type: ROOM_TYPES.captive,
+  },
+  {
+    id: "01_M_tortoise",
+    name: "01_M_tortoise",
+    type: ROOM_TYPES.monster,
+  },
+  {
+    id: "finish",
+    name: "finish",
+    type: ROOM_TYPES.finish,
+  },
 ];
 
 const LEVEL_CONTAINER_ITEMS = {
@@ -77,6 +92,14 @@ const LEVEL_BASE_MONSTER_LIST = [
     roomId: "01_1M",
     image: "goblin",
     minimumItemValueAccepted: 2,
+  },
+  {
+    name: "zombie",
+    maxHunger: 8,
+    roomId: "01_M_tortoise",
+    image: "zombie",
+    minimumItemValueAccepted: 2,
+    hasKeyTo: "tortoise",
   },
 ];
 

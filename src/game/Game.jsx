@@ -11,6 +11,7 @@ import Svg from "./components/Svg";
 
 function Game() {
   const dispatch = useGameDispatch();
+  const { debug } = useGame();
   const { showModal, handleShowModal } = React.useContext(ModalContext);
   const [showMiniModal, setShowMiniModal] = React.useState(false);
   return (
@@ -33,6 +34,14 @@ function Game() {
         <div className="flex gap-2 text-sm">
           <Button
             onClick={() => {
+              dispatch({ type: "toggleDebug" });
+            }}
+            className="px-2 py-1"
+          >
+            &lt;/&gt;
+          </Button>
+          <Button
+            onClick={() => {
               dispatch({ type: "reset" });
             }}
             className="px-2 py-1"
@@ -41,6 +50,20 @@ function Game() {
           </Button>
         </div>
       </div>
+      {debug && (
+        <div className="flex items-center justify-between mt-3">
+          <div className="flex gap-2 text-sm">
+            <Button
+              onClick={() => {
+                dispatch({ type: "debugEndLevel" });
+              }}
+              className="px-2 py-1"
+            >
+              End Level
+            </Button>
+          </div>
+        </div>
+      )}
       <RoomFrame />
       <div className="flex items-end justify-end text-sm relative portrait:h-24 landscape:h-auto mt-2">
         <Button

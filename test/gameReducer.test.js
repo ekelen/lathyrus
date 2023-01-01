@@ -76,6 +76,7 @@ describe("actions", () => {
       ...initialState,
       currentRoom: ROOMS_BY_ID["2_M"],
     };
+    expect(gameState.visitedLevels).toEqual([initialState.levelId]);
     // Try to move levels in a non-exit room
     gameState = gameReducer(gameState, {
       type: "moveLevels",
@@ -88,6 +89,10 @@ describe("actions", () => {
     });
     expect(gameState.levelId).not.toEqual(initialState.levelId);
     expect(gameState.currentRoom.id).toEqual("ent");
+    expect(gameState.visitedLevels).toEqual([
+      initialState.levelId,
+      gameState.levelId,
+    ]);
   });
   test("sate monster", () => {
     let gameState = {

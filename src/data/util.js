@@ -36,6 +36,10 @@ const mapValues = (object, mapper) => {
   );
 };
 
+const uniq = (array) => {
+  return [...new Set(array)];
+};
+
 const ROOM_EXIT_POSITIONS = {
   north: getPositionFromCoordinates(1, 0),
   east: getPositionFromCoordinates(2, 1),
@@ -53,6 +57,7 @@ export {
   zipObject,
   pick,
   pickBy,
+  uniq,
   CENTER_POSITION,
   ROOM_EXIT_POSITIONS,
 };

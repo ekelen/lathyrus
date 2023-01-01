@@ -24,7 +24,7 @@ const INVENTORY_BY_ID = Object.fromEntries(ITEM_IDS.map((id) => [id, 0]));
 
 const RECIPES_BY_ID = keyBy(BASE_RECIPE_LIST, "id");
 
-const itemColorsByValue = [
+const _itemColorsByValue = [
   "text-yellow-50",
   "text-green-200",
   "text-emerald-300",
@@ -42,18 +42,18 @@ const ITEMS_BY_ID = keyBy(
   BASE_ITEM_LIST.map((item) => ({
     ...item,
     quantity: 0,
-    colorClass: itemColorsByValue[Math.log2(item.value)],
+    colorClass: _itemColorsByValue[Math.log2(item.value)],
   })),
   "id"
 );
 
-const containerRoomIds = (baseRoomList) =>
+const _containerRoomIds = (baseRoomList) =>
   baseRoomList.filter((r) => r.type === "container").map((r) => r.id);
 
-const itemsByContainerRoomIds = (containerRoomIds, containerItems) =>
+const _itemsByContainerRoomIds = (_containerRoomIds, containerItems) =>
   zipObject(
-    containerRoomIds,
-    containerRoomIds.map((roomId) =>
+    _containerRoomIds,
+    _containerRoomIds.map((roomId) =>
       zipObject(
         ITEM_IDS,
         ITEM_IDS.map((itemId) => containerItems[roomId][itemId] ?? 0)
@@ -61,15 +61,15 @@ const itemsByContainerRoomIds = (containerRoomIds, containerItems) =>
     )
   );
 
-const ITEMS_BY_CONTAINER_ROOM_ID = itemsByContainerRoomIds(
-  containerRoomIds([
+const ITEMS_BY_CONTAINER_ROOM_ID = _itemsByContainerRoomIds(
+  _containerRoomIds([
     ...level00.LEVEL_BASE_ROOMS_LIST,
     ...level01.LEVEL_BASE_ROOMS_LIST,
   ]),
   { ...level00.LEVEL_CONTAINER_ITEMS, ...level01.LEVEL_CONTAINER_ITEMS }
 );
 
-const levelRoomsById = (baseRoomList, roomPositions, levelId) =>
+const _levelRoomsById = (baseRoomList, roomPositions, levelId) =>
   keyBy(
     baseRoomList.map((room) => {
       const type = room.type ?? ROOM_TYPES.empty;
@@ -102,12 +102,12 @@ const levelRoomsById = (baseRoomList, roomPositions, levelId) =>
   );
 
 const ROOMS_BY_ID = {
-  ...levelRoomsById(
+  ..._levelRoomsById(
     level00.LEVEL_BASE_ROOMS_LIST,
     level00.LEVEL_ROOM_POSITIONS,
     "level00"
   ),
-  ...levelRoomsById(
+  ..._levelRoomsById(
     level01.LEVEL_BASE_ROOMS_LIST,
     level01.LEVEL_ROOM_POSITIONS,
     "level01"
@@ -123,18 +123,18 @@ const CAPTIVE_LIST = BASE_CAPTIVE_LIST.map((captive) => ({
 
 const CAPTIVES_BY_ID = keyBy(CAPTIVE_LIST, "id");
 
-const monstersByRoomId = (monsterList) =>
+const _monstersByRoomId = (monsterList) =>
   keyBy(
     monsterList.map((monster) => ({
       ...monster,
       hunger: monster.maxHunger,
       sated: false,
-      colorClass: itemColorsByValue[Math.log2(monster.maxHunger)],
+      colorClass: _itemColorsByValue[Math.log2(monster.maxHunger)],
     })),
     "roomId"
   );
 
-const LEVEL_MONSTERS_BY_ROOM_ID = monstersByRoomId([
+const LEVEL_MONSTERS_BY_ROOM_ID = _monstersByRoomId([
   ...level00.LEVEL_BASE_MONSTER_LIST,
   ...level01.LEVEL_BASE_MONSTER_LIST,
 ]);

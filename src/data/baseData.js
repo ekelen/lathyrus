@@ -1,13 +1,5 @@
 import { ROOM_TYPES } from "./constants";
 
-export const LEVEL_ROOM_POSITIONS = [
-  ["0_C", "rabbit", "10_M", "13_LAB", "9_C"],
-  ["1_C", "14_LAB", null, null, "12_M_RABBIT"],
-  [null, "5_M_TOAD", "2_M", "11_C", null],
-  [null, "4_C", null, null, null],
-  [null, "3_LAB", "toad", "exitGoblin", "7_EXIT"],
-];
-
 export const BASE_RECIPE_LIST = [
   {
     name: "Frost Farthing",
@@ -23,6 +15,14 @@ export const BASE_RECIPE_LIST = [
     ingredients: [
       { itemId: "earthEssence", quantity: 1 },
       { itemId: "silver", quantity: 1 },
+    ],
+  },
+  {
+    name: "Earth Blood",
+    id: "earthBlood",
+    ingredients: [
+      { itemId: "earthEssence", quantity: 2 },
+      { itemId: "mercury", quantity: 1 },
     ],
   },
 ];
@@ -61,6 +61,13 @@ export const BASE_ITEM_LIST = [
     symbol: "🝁",
     type: "coin",
   },
+  {
+    id: "earthBlood",
+    name: "Earth Blood",
+    value: 64,
+    symbol: "🜭",
+    type: "coin",
+  },
 ];
 
 export const BASE_CAPTIVE_LIST = [
@@ -69,7 +76,7 @@ export const BASE_CAPTIVE_LIST = [
     name: "Rabbit",
     roomId: "rabbit",
     image: "rabbit",
-    level: "level00",
+    levelId: "level00",
     colorClass: "text-pink-300",
     teaches: {
       recipeId: "frostFarthing",
@@ -80,10 +87,21 @@ export const BASE_CAPTIVE_LIST = [
     name: "Toad",
     roomId: "toad",
     image: "toad",
-    level: "level00",
+    levelId: "level00",
     colorClass: "text-pink-600",
     teaches: {
       recipeId: "gildedGroat",
+    },
+  },
+  {
+    id: "tortoise",
+    name: "tortoise",
+    roomId: "tortoise",
+    image: "tortoise",
+    levelId: "level01",
+    colorClass: "text-pink-400",
+    teaches: {
+      recipeId: "earthBlood",
     },
   },
 ];
