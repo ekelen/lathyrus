@@ -5,10 +5,11 @@ export function Item({
   item = {},
   colorClass = item.colorClass,
   symbol = item.symbol,
+  className = "",
 }) {
   return (
     <div
-      className={`h-6 w-6 relative flex items-center justify-center font-alchemy text-center text-sm ${colorClass}`}
+      className={`h-6 w-6 relative flex items-center justify-center font-alchemy text-center text-sm ${colorClass} ${className}`}
     >
       {symbol}
     </div>
@@ -47,6 +48,25 @@ export function ItemWithQuantityButton({
     >
       <Item item={item} colorClass={colorClass} />
       <div className="text-xs">x {quantity}</div>
+    </UsableButton>
+  );
+}
+
+export function ItemButton({
+  item = {},
+  symbol = item.symbol,
+  colorClass = item.colorClass,
+  className = "",
+  disabled = false,
+  onClick = () => {},
+}) {
+  return (
+    <UsableButton
+      className={`disabled:bg-transparent ${className}`}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      <Item item={item} colorClass={colorClass} symbol={symbol} />
     </UsableButton>
   );
 }

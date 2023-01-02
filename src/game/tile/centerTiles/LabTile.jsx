@@ -39,8 +39,7 @@ function Recipe({ recipe, inventoryById, handleCombineItems }) {
         );
       })}
       <UsableButton
-        onClick={(e) => {
-          e.stopPropagation();
+        onClick={() => {
           handleCombineItems(recipe.id);
         }}
         disabled={!hasIngredients}

@@ -8,10 +8,11 @@ import Minimap from "./Minimap";
 import RoomFrame from "./Room";
 import Compass from "./img/compass.svg";
 import Svg from "./components/Svg";
+import EndGame from "./EndGame";
 
 function Game() {
   const dispatch = useGameDispatch();
-  const { debug } = useGame();
+  const { debug, currentRoom } = useGame();
   const { showModal, handleShowModal } = React.useContext(ModalContext);
   const [showMiniModal, setShowMiniModal] = React.useState(false);
   return (
@@ -51,7 +52,7 @@ function Game() {
         </div>
       </div>
       {debug && (
-        <div className="flex items-center justify-between mt-3">
+        <div className="flex items-center justify-between mt-3 absolute top-10 z-20">
           <div className="flex gap-2 text-sm">
             <Button
               onClick={() => {
@@ -60,6 +61,14 @@ function Game() {
               className="px-2 py-1"
             >
               End Level
+            </Button>
+            <Button
+              onClick={() => {
+                dispatch({ type: "debugGoToEndGame" });
+              }}
+              className="px-2 py-1"
+            >
+              Go to End Game
             </Button>
           </div>
         </div>
@@ -82,11 +91,16 @@ function Game() {
       </div>
       <Inventory />
 
-      {showModal && (
-        <Modal onClose={() => handleShowModal(false)}>
-          <Intro />
-        </Modal>
-      )}
+      {showModal &&
+        (currentRoom.id === "0_C" ? (
+          <Modal onClose={() => handleShowModal(false)}>
+            <Intro />
+          </Modal>
+        ) : currentRoom.id === "finish" ? (
+          <Modal onClose={() => {}}>
+            <EndGame />
+          </Modal>
+        ) : null)}
     </div>
   );
 }

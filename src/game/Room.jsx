@@ -53,21 +53,10 @@ function Room({ room, isPreviousRoom = false }) {
         : START_POSITION_CURRENT[movedCameraToOnTransition].top ?? 0
     })`,
     zIndex: isPreviousRoom ? 5 : 20,
-    // left:
-    //   isPreviousRoom || !movedCameraToOnTransition
-    //     ? 0
-    //     : START_POSITION_CURRENT[movedCameraToOnTransition].left ?? 0,
-    // top:
-    //   isPreviousRoom || !movedCameraToOnTransition
-    //     ? 0
-    //     : START_POSITION_CURRENT[movedCameraToOnTransition].top ?? 0,
   };
 
   useEffect(() => {
     let timer;
-    // console.log(
-    //   `[=] remounting room ${room.id} - isPreviousRoom: ${isPreviousRoom}`
-    // );
     if (roomRef.current && isPreviousRoom) {
       timer = setTimeout(() => {
         roomRef.current.style.transform = `translateX(${
@@ -75,19 +64,11 @@ function Room({ room, isPreviousRoom = false }) {
         }) translateY(${
           END_POSITION_PREVIOUS[movedCameraToOnTransition].top ?? 0
         })`;
-        // roomRef.current.style.left = `${
-        //   END_POSITION_PREVIOUS[movedCameraToOnTransition].left ?? 0
-        // }`;
-        // roomRef.current.style.top = `${
-        //   END_POSITION_PREVIOUS[movedCameraToOnTransition].top ?? 0
-        // }`;
-      }, 10);
+      }, 50);
     } else if (roomRef.current && !isPreviousRoom) {
       timer = setTimeout(() => {
         roomRef.current.style.transform = `translateX(0px) translateY(0px)`;
-        // roomRef.current.style.left = `0px`;
-        // roomRef.current.style.top = `0px`;
-      }, 10);
+      }, 50);
     }
     return () => {
       clearTimeout(timer);

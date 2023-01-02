@@ -420,6 +420,50 @@ export function gameReducer(state, action) {
         },
       };
     }
+    case "debugGoToEndGame": {
+      const {
+        levelId,
+        captivesByRoomId,
+        monstersByRoomId,
+        itemsByRoomId,
+        inventoryById,
+        learnedRecipeIds,
+        currentRoom,
+        debug,
+      } = state;
+
+      if (!debug) {
+        console.info("not in debug mode");
+        return state;
+      }
+
+      const newLearnedRecipeIds = Object.values(captivesByRoomId).map(
+        (captive) => captive.teaches.recipeId
+      );
+
+      return {
+        ...state,
+        learnedRecipeIds: newLearnedRecipeIds,
+        previousLevelId: levelId,
+        levelId: ROOMS_BY_ID["finish"].levelId,
+        currentRoom: ROOMS_BY_ID["finish"],
+        inventoryById: mapValues(inventoryById, (quantity, itemId) =>
+          newLearnedRecipeIds.includes(itemId) ? 3 : 0
+        ),
+        previousRoom: null,
+        captivesByRoomId: {
+          ...captivesByRoomId,
+          ...mapValues(
+            pickBy(captivesByRoomId, (captive) => captive.levelId === levelId),
+            (captive) => ({
+              ...captive,
+              freed: true,
+              dead: false,
+            })
+          ),
+        },
+      };
+    }
     default: {
       console.error("Unknown action: " + action);
       return state;

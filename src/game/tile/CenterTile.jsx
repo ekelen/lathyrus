@@ -6,12 +6,15 @@ import { ContainerTile } from "./centerTiles/ContainerTile";
 import { LabTile } from "./centerTiles/LabTile";
 import { LevelExitTile } from "./centerTiles/LevelExitTile";
 import { MonsterTile } from "./centerTiles/MonsterTile";
+import { EndTile } from "./centerTiles/EndTile";
 
 export function CenterTile({ room }) {
   return (
     <div className="flex flex-col justify-center items-center relative h-full w-full">
       {(() => {
         switch (room.type) {
+          case ROOM_TYPES.empty:
+            return null;
           case ROOM_TYPES.container:
             return <ContainerTile room={room} />;
           case ROOM_TYPES.monster:
@@ -22,6 +25,8 @@ export function CenterTile({ room }) {
             return <LabTile room={room} />;
           case ROOM_TYPES.exit:
             return <LevelExitTile room={room} />;
+          case ROOM_TYPES.finish:
+            return <EndTile room={room} />;
           default:
             return null;
         }

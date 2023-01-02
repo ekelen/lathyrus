@@ -76,7 +76,6 @@ export function MonsterTile({ room }) {
         style={{
           minWidth: "280%",
           width: "280%",
-          // ...(!!errorMessage && { borderColor: "red" }),
         }}
       >
         <MonsterTileDialogueContents {...{ monster, errorMessage }} />

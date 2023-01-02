@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { ModalContext } from "../state/GameContext";
+import { Button } from "./components/Button";
 
 function Intro() {
   const { handleShowModal } = React.useContext(ModalContext);
@@ -28,12 +29,12 @@ function Intro() {
       className="w-60 min-w-60 h-96 px-4 py-4 rounded-sm border whitespace-pre-line bg-black text-sm text-slate-200 border-slate-200 flex flex-col justify-between"
     >
       <div>{displayedText}</div>
-      <button
+      <Button
         onClick={() => handleShowModal(false)}
         className="bg-slate-800 rounded-sm p-2"
       >
         I don't like this...
-      </button>
+      </Button>
     </div>
   );
 }

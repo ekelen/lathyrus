@@ -32,7 +32,7 @@ function Inventory() {
   const [selectedRecipeId, setSelectedRecipeId] = React.useState(null);
 
   return (
-    <div className="flex h-36 w-full mt-2 mb-10 gap-1 relative">
+    <div className="flex h-36 shrink-0 w-full mt-2 mb-10 gap-1 relative">
       <div className="flex flex-col items-center relative h-full w-10 border-2 border-slate-700 border-double rounded-md">
         <Keys
           captivesByRoomId={captivesByRoomId}
