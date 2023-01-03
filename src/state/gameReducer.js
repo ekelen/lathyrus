@@ -311,10 +311,7 @@ export function gameReducer(state, action) {
             freed: true,
           },
         },
-        learnedRecipeIds: [
-          ...state.learnedRecipeIds,
-          captive.teaches.recipeId,
-        ].sort(),
+        learnedRecipeIds: [...state.learnedRecipeIds, captive.teaches].sort(),
       };
     }
     case "combineItems": {
@@ -397,7 +394,7 @@ export function gameReducer(state, action) {
 
       const newLearnedRecipeIds = Object.values(
         pickBy(captivesByRoomId, (captive) => captive.levelId === levelId)
-      ).map((captive) => captive.teaches.recipeId);
+      ).map((captive) => captive.teaches);
 
       return {
         ...state,
@@ -438,7 +435,7 @@ export function gameReducer(state, action) {
       }
 
       const newLearnedRecipeIds = Object.values(captivesByRoomId).map(
-        (captive) => captive.teaches.recipeId
+        (captive) => captive.teaches
       );
 
       return {
@@ -448,7 +445,7 @@ export function gameReducer(state, action) {
         levelId: ROOMS_BY_ID["finish"].levelId,
         currentRoom: ROOMS_BY_ID["finish"],
         inventoryById: mapValues(inventoryById, (quantity, itemId) =>
-          newLearnedRecipeIds.includes(itemId) ? 3 : 0
+          newLearnedRecipeIds.includes(itemId) ? 5 : 0
         ),
         previousRoom: null,
         captivesByRoomId: {

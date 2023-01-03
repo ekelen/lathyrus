@@ -16,11 +16,6 @@ export function FeedCaptiveConfirm({
     () => (selectedCaptiveId ? captivesByRoomId[selectedCaptiveId] : null),
     [selectedCaptiveId, captivesByRoomId]
   );
-  //   const selectedCaptiveRecipe = useMemo(
-  //     () =>
-  //       !selectedCaptive ? null : RECIPES_BY_ID[selectedCaptive.teaches.recipeId],
-  //     [selectedCaptive]
-  //   );
 
   return (
     <DialogueBox

@@ -25,7 +25,7 @@ export function Keys({
           const { colorClass } = captive;
           return (
             <UsableButton
-              className={`h-6 w-6 relative mx-1 mt-2 mb-0 p-1 disabled:bg-transparent disabled:animate-none animate-ping hover:animate-none`}
+              className={`h-6 w-6 relative mx-1 mt-2 mb-0 p-1 disabled:bg-transparent disabled:animate-none animate-bounce hover:animate-none`}
               key={`${i}-${key}`}
               disabled={currentRoomId !== captive.id || captive.freed}
               onClick={() => handleFreeCaptive({ keyTo: captive.id })}

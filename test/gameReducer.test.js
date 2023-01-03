@@ -201,7 +201,7 @@ describe("actions", () => {
     });
     expect(gameState.captivesByRoomId["rabbit"]).toHaveProperty("freed", true);
     expect(gameState.learnedRecipeIds).toHaveLength(1);
-    expect(gameState.learnedRecipeIds).toContain("frostFarthing");
+    expect(gameState.learnedRecipeIds).toContain("R_00");
     // try to free captive again
     gameState = gameReducer(gameState, {
       type: "freeCaptive",
@@ -212,7 +212,7 @@ describe("actions", () => {
   test("combineItems", () => {
     let gameState = {
       ...initialState,
-      learnedRecipeIds: ["frostFarthing"],
+      learnedRecipeIds: ["R_00"],
       inventoryById: {
         ...initialState.inventoryById,
         copper: 1,
@@ -220,26 +220,26 @@ describe("actions", () => {
       },
     };
     expect(gameState.inventoryById.copper).toEqual(1);
-    expect(gameState.inventoryById.frostFarthing).toEqual(0);
+    expect(gameState.inventoryById.R_00).toEqual(0);
     gameState = gameReducer(gameState, {
       type: "combineItems",
-      payload: { recipeId: "frostFarthing" },
+      payload: { recipeId: "R_00" },
     });
     expect(gameState.inventoryById.copper).toEqual(0);
     expect(gameState.inventoryById.frostEssence).toEqual(0);
-    expect(gameState.inventoryById.frostFarthing).toEqual(1);
+    expect(gameState.inventoryById.R_00).toEqual(1);
     // try to combine items without items
     gameReducer(gameState, {
       type: "combineItems",
-      payload: { recipeId: "frostFarthing" },
+      payload: { recipeId: "R_00" },
     });
-    expect(gameState.inventoryById.frostFarthing).toEqual(1);
+    expect(gameState.inventoryById.R_00).toEqual(1);
     // try to combine items without recipe
     gameReducer(gameState, {
       type: "combineItems",
-      payload: { recipeId: "gildedGroat" },
+      payload: { recipeId: "R_01" },
     });
-    expect(gameState.inventoryById.gildedGroat).toEqual(0);
+    expect(gameState.inventoryById.R_01).toEqual(0);
   });
   test("addAllToInventoryFromRoom", () => {
     let gameState = {

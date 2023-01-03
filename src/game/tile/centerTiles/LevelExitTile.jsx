@@ -8,7 +8,6 @@ import Gate from "../../img/gate.svg";
 
 export function LevelExitTile({ room }) {
   const dispatch = useGameDispatch();
-  const { levelId } = useGame();
 
   const handleMoveLevels = () => {
     dispatch({ type: "moveLevels" });
@@ -23,7 +22,7 @@ export function LevelExitTile({ room }) {
       </CenterTileContentContainer>
       <DialogueBox isOpen={true} roomId={room.id} style={{ zIndex: "100" }}>
         <div className="text-md">
-          <div className="mb-3">You have reached the exit to {levelId}!</div>
+          <div className="">An unwelcoming gate...</div>
         </div>
       </DialogueBox>
     </>

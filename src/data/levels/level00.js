@@ -5,62 +5,53 @@ const LEVEL_ROOM_POSITIONS = [
   ["1_C", "14_LAB", null, null, "12_M_RABBIT"],
   [null, "5_M_TOAD", "2_M", "11_C", null],
   [null, "4_C", null, null, null],
-  [null, "3_LAB", "toad", "exitGoblin", "7_EXIT"],
+  [null, "3_LAB", "toad", "6_M", "7_EXIT"],
 ];
 
 const LEVEL_BASE_ROOMS_LIST = [
   {
     id: "0_C",
-    name: "Room 0",
     type: ROOM_TYPES.container,
   },
   {
     id: "1_C",
-    name: "Room 1",
     type: ROOM_TYPES.container,
   },
-  { id: "2_M", name: "Room 2", type: ROOM_TYPES.monster },
+  { id: "2_M", type: ROOM_TYPES.monster },
   {
     id: "3_LAB",
-    name: "Room 3",
     type: ROOM_TYPES.lab,
   },
   {
     id: "4_C",
-    name: "Room 4",
     type: ROOM_TYPES.container,
   },
-  { id: "5_M_TOAD", name: "Room 5", type: ROOM_TYPES.monster },
+  { id: "5_M_TOAD", type: ROOM_TYPES.monster },
   {
     id: "toad",
-    name: "Room 6",
     type: ROOM_TYPES.captive,
   },
   {
     id: "7_EXIT",
-    name: "Room 7",
     type: ROOM_TYPES.exit,
   },
   {
-    id: "exitGoblin",
-    name: "Room 8",
+    id: "6_M",
     type: ROOM_TYPES.monster,
   },
   {
     id: "9_C",
-    name: "Room 9",
     type: ROOM_TYPES.container,
   },
-  { id: "10_M", name: "Room 10", type: ROOM_TYPES.monster },
+  { id: "10_M", type: ROOM_TYPES.monster },
   {
     id: "11_C",
-    name: "Room 11",
     type: ROOM_TYPES.container,
   },
-  { id: "12_M_RABBIT", name: "Room 12", type: ROOM_TYPES.monster },
-  { id: "rabbit", name: "Room 13", type: ROOM_TYPES.captive },
-  { id: "13_LAB", name: "Lab 3", type: ROOM_TYPES.lab },
-  { id: "14_LAB", name: "Lab 2", type: ROOM_TYPES.lab },
+  { id: "12_M_RABBIT", type: ROOM_TYPES.monster },
+  { id: "rabbit", type: ROOM_TYPES.captive },
+  { id: "13_LAB", type: ROOM_TYPES.lab },
+  { id: "14_LAB", type: ROOM_TYPES.lab },
 ];
 
 const LEVEL_CONTAINER_ITEMS = {
@@ -91,14 +82,12 @@ const LEVEL_CONTAINER_ITEMS = {
 
 const LEVEL_BASE_MONSTER_LIST = [
   {
-    name: "small goblin",
     maxHunger: 4,
     roomId: "2_M",
     image: "goblin",
     minimumItemValueAccepted: 2,
   },
   {
-    name: "zombie",
     maxHunger: 32,
     roomId: "5_M_TOAD",
     image: "zombie",
@@ -106,14 +95,12 @@ const LEVEL_BASE_MONSTER_LIST = [
     minimumItemValueAccepted: 8,
   },
   {
-    name: "small goblin",
     maxHunger: 4,
     roomId: "10_M",
     image: "goblin",
     minimumItemValueAccepted: 2,
   },
   {
-    name: "frost goblin",
     maxHunger: 8,
     roomId: "12_M_RABBIT",
     hasKeyTo: "rabbit",
@@ -121,9 +108,8 @@ const LEVEL_BASE_MONSTER_LIST = [
     minimumItemValueAccepted: 2,
   },
   {
-    name: "dragon",
     maxHunger: 64,
-    roomId: "exitGoblin",
+    roomId: "6_M",
     image: "dragon",
     minimumItemValueAccepted: 16,
   },

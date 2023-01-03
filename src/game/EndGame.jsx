@@ -9,10 +9,38 @@ import Cage from "./img/cage2.svg";
 import { GET_MONSTER_IMAGE } from "./img/Monster";
 import Wizard from "./img/wizard.svg";
 
+/**
+ *
+ * TODO: Clean up this file yikes
+ */
+
 function ComplainingMonsterOverlay() {
+  const goblinRef = useRef(null);
+  const zombieRef = useRef(null);
+  const dragonRef = useRef(null);
+  useEffect(() => {
+    let timer, timer2, timer3;
+    if (goblinRef.current && zombieRef.current && dragonRef.current) {
+      timer = setTimeout(() => {
+        goblinRef.current.classList.remove("invisible");
+      }, 100);
+      timer2 = setTimeout(() => {
+        zombieRef.current.classList.remove("invisible");
+      }, 400);
+      timer3 = setTimeout(() => {
+        dragonRef.current.classList.remove("invisible");
+      }, 800);
+    }
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+    };
+  }, [goblinRef, zombieRef, dragonRef]);
+
   return (
     <div className="absolute flex flex-col w-full">
-      <div className="flex w-full items-center">
+      <div className="flex w-full items-center invisible" ref={goblinRef}>
         <div className="h-12 w-12 min-w-max text-blue-500">
           <Svg source={GET_MONSTER_IMAGE("goblin")} />
         </div>
@@ -20,13 +48,13 @@ function ComplainingMonsterOverlay() {
           Yo, we are really sick of your crap, man.
         </div>
       </div>
-      <div className="flex w-full items-center">
+      <div className="flex w-full items-center invisible" ref={zombieRef}>
         <div className="h-12 w-12 text-blue-700">
           <Svg source={GET_MONSTER_IMAGE("zombie")} />
         </div>
         <div className="bg-black rounded-md border z-20 p-1">Word.</div>
       </div>
-      <div className="flex w-full items-center ">
+      <div className="flex w-full items-center invisible" ref={dragonRef}>
         <div className="h-12 w-12 text-blue-800">
           <Svg source={GET_MONSTER_IMAGE("dragon")} />
         </div>
@@ -41,13 +69,14 @@ function ComplainingMonsterOverlay() {
 function DropCageScreen() {
   const cageRef = useRef(null);
   const dragonRef = useRef(null);
+  const innerDragonRef = useRef(null);
   useEffect(() => {
     let timer;
-    if (cageRef.current && dragonRef.current) {
+    if (cageRef.current && dragonRef.current && innerDragonRef.current) {
       timer = setTimeout(() => {
         cageRef.current.style.transform = "translateY(0)";
-        dragonRef.current.style.transform = "translateY(300%)";
-        dragonRef.current.classList.add("animate-bounce");
+        dragonRef.current.style.transform = "translateY(100%)";
+        innerDragonRef.current.classList.add("animate-bounce");
       }, 400);
     }
     return () => clearTimeout(timer);
@@ -56,10 +85,15 @@ function DropCageScreen() {
     <>
       <div
         ref={dragonRef}
-        className={`absolute top-0 left-1/4 min-w-max h-32 transition-transform duration-700 ease-in-out delay-1000 text-blue-400 z-30`}
+        className={`absolute top-0 left-1/4 w-32 h-32 transition-transform duration-700 ease-in-out delay-1000 text-blue-400 z-30`}
         style={{ transform: `translateY(-100vh)` }}
       >
-        <Svg source={GET_MONSTER_IMAGE("dragon")} height="80%" />
+        <div
+          className="absolute w-full h-full top-0 left-0"
+          ref={innerDragonRef}
+        >
+          <Svg source={GET_MONSTER_IMAGE("dragon")} height="80%" />
+        </div>
       </div>
       <div
         ref={cageRef}
@@ -165,7 +199,7 @@ function Challenge({
       <div className="flex items-center justify-center gap-3 h-16 mt-4">
         {recipeList.map((recipe) => {
           const isHinted =
-            relatedCaptive.teaches.recipeId === recipe.id &&
+            relatedCaptive.teaches === recipe.id &&
             relatedCaptive.freed &&
             !relatedCaptive.dead;
           return (
@@ -248,6 +282,9 @@ function EndGame() {
     if (error) {
       timer = setTimeout(() => setError(false), 800);
     }
+    return () => {
+      clearTimeout(timer);
+    };
   }, [error]);
 
   const recipeList = Object.values(RECIPES_BY_ID);
@@ -265,7 +302,7 @@ function EndGame() {
     return !selectedRecipe
       ? null
       : Object.values(captivesByRoomId).find((captive) => {
-          return captive.teaches.recipeId === selectedRecipe.id;
+          return captive.teaches === selectedRecipe.id;
         });
   }, [selectedRecipe]);
 

@@ -1,71 +1,73 @@
-import { ROOM_TYPES } from "./constants";
-
 export const BASE_RECIPE_LIST = [
   {
-    name: "Frost Farthing",
-    id: "frostFarthing",
+    id: "R_00",
     ingredients: [
       { itemId: "frostEssence", quantity: 1 },
       { itemId: "copper", quantity: 1 },
     ],
   },
   {
-    name: "Gilded Groat",
-    id: "gildedGroat",
+    id: "R_01",
     ingredients: [
       { itemId: "earthEssence", quantity: 1 },
       { itemId: "silver", quantity: 1 },
     ],
   },
   {
-    name: "Earth Blood",
-    id: "earthBlood",
+    id: "R_02",
     ingredients: [
       { itemId: "earthEssence", quantity: 2 },
       { itemId: "mercury", quantity: 1 },
     ],
   },
+  {
+    id: "R_03",
+    ingredients: [
+      { itemId: "frostEssence", quantity: 2 },
+      { itemId: "gold", quantity: 2 },
+    ],
+  },
 ];
 
 export const BASE_ITEM_LIST = [
-  { id: "gold", name: "Gold", value: 2, symbol: "🜚", type: "alchemy" },
-  { id: "silver", name: "Silver", value: 2, symbol: "🜛", type: "alchemy" },
-  { id: "mercury", name: "Mercury", value: 2, symbol: "☿", type: "alchemy" },
-  { id: "copper", name: "Copper", value: 2, symbol: "♀", type: "alchemy" },
-  //   { id: "tin", name: "Tin", value: 2, symbol: "♃", type: "alchemy" },
+  { id: "gold", value: 2, symbol: "🜚", type: "alchemy" },
+  { id: "silver", value: 2, symbol: "🜛", type: "alchemy" },
+  { id: "mercury", value: 2, symbol: "☿", type: "alchemy" },
+  { id: "copper", value: 2, symbol: "♀", type: "alchemy" },
   {
     id: "frostEssence",
-    name: "Frost Essence",
     value: 4,
     symbol: "🜄",
     type: "element",
   },
   {
-    id: "frostFarthing",
-    name: "Frost Farthing",
+    id: "R_00",
     value: 16,
     symbol: "🜞",
     type: "coin",
   },
   {
     id: "earthEssence",
-    name: "Earth Essence",
     value: 4,
     symbol: "🜁",
     type: "element",
   },
   {
-    id: "gildedGroat",
-    name: "Gilded Groat",
+    id: "R_01",
     value: 64,
     symbol: "🝁",
     type: "coin",
   },
   {
-    id: "earthBlood",
-    name: "Earth Blood",
+    id: "R_02",
     value: 64,
     symbol: "🜭",
+    type: "coin",
+  },
+  {
+    id: "R_03",
+    value: 128,
+    symbol: "🝊",
     type: "coin",
   },
 ];
@@ -73,35 +75,34 @@ export const BASE_ITEM_LIST = [
 export const BASE_CAPTIVE_LIST = [
   {
     id: "rabbit",
-    name: "Rabbit",
     roomId: "rabbit",
     image: "rabbit",
     levelId: "level00",
     colorClass: "text-pink-300",
-    teaches: {
-      recipeId: "frostFarthing",
-    },
+    teaches: "R_00",
   },
   {
     id: "toad",
-    name: "Toad",
     roomId: "toad",
     image: "toad",
     levelId: "level00",
     colorClass: "text-pink-600",
-    teaches: {
-      recipeId: "gildedGroat",
-    },
+    teaches: "R_01",
   },
   {
     id: "tortoise",
-    name: "tortoise",
     roomId: "tortoise",
     image: "tortoise",
     levelId: "level01",
     colorClass: "text-pink-400",
-    teaches: {
-      recipeId: "earthBlood",
-    },
+    teaches: "R_02",
+  },
+  {
+    id: "cat",
+    roomId: "cat",
+    image: "cat",
+    levelId: "level01",
+    colorClass: "text-pink-100",
+    teaches: "R_03",
   },
 ];

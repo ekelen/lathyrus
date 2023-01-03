@@ -1,6 +1,6 @@
 import React, { useMemo } from "react";
 import { ITEMS_BY_ID, RECIPES_BY_ID } from "../../data/data";
-import { CaptiveImage } from "../components/Captive";
+
 import { Item } from "../components/Item";
 
 export function Recipes({
@@ -11,9 +11,6 @@ export function Recipes({
   setSelectedRecipeId,
   selectedRecipeId,
 }) {
-  const learnedRecipeList = useMemo(() => {
-    return learnedRecipeIds.map((id) => RECIPES_BY_ID[id]);
-  }, [learnedRecipeIds]);
   const learnedRecipeItems = useMemo(() => {
     return learnedRecipeIds.map((id) => ITEMS_BY_ID[id]);
   }, [learnedRecipeIds]);

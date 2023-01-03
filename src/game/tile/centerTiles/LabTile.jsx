@@ -21,7 +21,7 @@ function Recipe({ recipe, inventoryById, handleCombineItems }) {
   );
 
   return (
-    <div className="flex items-center justify-center mb-1">
+    <div className="flex items-center justify-center mb-1 relative">
       {recipe.ingredients.map((ingredient, i) => {
         const itemWrapperClass = hasIngredient(ingredient) ? "" : "opacity-50";
         return (
@@ -99,7 +99,18 @@ export function LabTile({ room }) {
       <CenterTileContentContainer>
         <Svg source={Flasks} width={"100%"} height="80%" />
       </CenterTileContentContainer>
-      <DialogueBox isOpen={true} roomId={room.id}>
+      <DialogueBox
+        isOpen={true}
+        roomId={room.id}
+        style={{
+          bottom: "unset",
+          top: "-90%",
+          maxHeight: "80%",
+          minHeight: "unset",
+          overflow: "auto",
+          justifyContent: "start",
+        }}
+      >
         <LabTileDialogueContent
           room={room}
           inventoryById={inventoryById}

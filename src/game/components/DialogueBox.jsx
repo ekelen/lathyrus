@@ -12,7 +12,7 @@ function DialogueBox({
     <div
       ref={ref}
       className={
-        "xs:px-2 xs:py-1 sm:px-4 sm:py-2 px-4 py-2 bg-black flex flex-col items-center justify-center border-2 border-white border-double absolute rounded-md text-xs transition-opacity ease-in-out duration-500 " +
+        "xs:px-2 xs:py-1 sm:px-4 sm:py-2 px-4 py-2 bg-black flex flex-col items-center border-2 border-white border-double absolute rounded-md text-xs transition-opacity ease-in-out duration-500 " +
         className
       }
       style={{
@@ -21,6 +21,7 @@ function DialogueBox({
         pointerEvents: isOpen ? "all" : "none",
         minWidth: "200%",
         minHeight: "2.75rem",
+        justifyContent: "center",
         ...style,
       }}
       onClick={onClick}

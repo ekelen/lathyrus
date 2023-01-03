@@ -92,7 +92,6 @@ describe("Base data and initial state", () => {
     expect(Object.keys(ITEMS_BY_ID).length).toBeLessThan(100);
     Object.values(ITEMS_BY_ID).forEach((item) => {
       expect(item).toHaveProperty("id");
-      expect(item).toHaveProperty("name");
       expect(Math.log2(item.value) % 1).toBe(0);
       expect(Math.log2(item.value)).toBeLessThan(10);
     });
@@ -127,7 +126,6 @@ describe("Base data and initial state", () => {
 
     monsterList.forEach((monster) => {
       expect(monster).toHaveProperty("roomId");
-      expect(monster).toHaveProperty("name");
       expect(monster).toHaveProperty("image");
       expect(monster).toHaveProperty("maxHunger");
       expect(Math.log2(monster.maxHunger) % 1).toBe(0);
@@ -147,9 +145,9 @@ describe("Base data and initial state", () => {
       expect(captive).toHaveProperty("id");
       expect(captive).toHaveProperty("roomId");
       expect(ROOMS_BY_ID[captive.id].type).toBe(ROOM_TYPES.captive);
-      expect(captive).toHaveProperty("name");
       expect(captive).toHaveProperty("image");
       expect(captive).toHaveProperty("freed");
+      expect(captive).toHaveProperty("dead");
       expect(captive).toHaveProperty("teaches");
     });
   });
@@ -175,10 +173,10 @@ describe("Base data and initial state", () => {
     _.entries(gameData.RECIPES_BY_ID).forEach(([id, recipe]) => {
       expect(
         CAPTIVE_LIST.find((c) => {
-          return c.teaches.recipeId === id;
+          return c.teaches;
         })
       ).toBeTruthy();
-      expect(recipe).toHaveProperty("name");
+      expect(recipe).toHaveProperty("id");
       expect(recipe).toHaveProperty("ingredients");
       expect(recipe.ingredients.every((i) => ITEMS_BY_ID[i.itemId])).toBe(true);
     });

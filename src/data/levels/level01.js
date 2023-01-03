@@ -1,9 +1,9 @@
 import { ROOM_TYPES } from "../constants";
 
 const LEVEL_ROOM_POSITIONS = [
-  [null, null, null, null, "ent"],
-  [null, null, null, null, "01_0C"],
-  [null, "finish", null, null, "01_0M"],
+  [null, "01_2M", "finish", null, "ent"],
+  ["cat", "01_M_cat", null, null, "01_0C"],
+  ["01_3C", "01_1L", "01_4C", null, "01_0M"],
   ["01_M_tortoise", "tortoise", null, null, "01_1C"],
   [null, "01_1M", "01_2C", "01_0E", "01_0L"],
 ];
@@ -11,57 +11,71 @@ const LEVEL_ROOM_POSITIONS = [
 const LEVEL_BASE_ROOMS_LIST = [
   {
     id: "ent",
-    name: "Portal",
     type: ROOM_TYPES.exit,
   },
   {
     id: "01_0C",
-    name: "Room 01",
     type: ROOM_TYPES.container,
   },
   {
     id: "01_0M",
-    name: "01_0M",
     type: ROOM_TYPES.monster,
   },
   {
     id: "01_1M",
-    name: "01_1M",
     type: ROOM_TYPES.monster,
   },
   {
     id: "01_1C",
-    name: "01_1C",
+    type: ROOM_TYPES.container,
   },
   {
     id: "01_0L",
-    name: "01_0L",
-    types: ROOM_TYPES.lab,
+    type: ROOM_TYPES.lab,
   },
   {
     id: "01_0E",
-    name: "01_0E",
-    types: ROOM_TYPES.empty,
+    type: ROOM_TYPES.empty,
   },
   {
     id: "01_2C",
-    name: "01_2C",
     type: ROOM_TYPES.container,
   },
   {
     id: "tortoise",
-    name: "tortoise",
     type: ROOM_TYPES.captive,
   },
   {
     id: "01_M_tortoise",
-    name: "01_M_tortoise",
     type: ROOM_TYPES.monster,
   },
   {
     id: "finish",
-    name: "finish",
     type: ROOM_TYPES.finish,
+  },
+  {
+    id: "01_1L",
+    type: ROOM_TYPES.lab,
+  },
+  {
+    id: "01_3C",
+    type: ROOM_TYPES.container,
+  },
+  {
+    id: "cat",
+    type: ROOM_TYPES.captive,
+  },
+  {
+    id: "01_M_cat",
+    type: ROOM_TYPES.monster,
+  },
+  {
+    id: "01_4C",
+    type: ROOM_TYPES.container,
+  },
+  {
+    id: "01_2M",
+    type: ROOM_TYPES.monster,
   },
 ];
 
@@ -71,35 +85,63 @@ const LEVEL_CONTAINER_ITEMS = {
     earthEssence: 3,
     silver: 3,
   },
+  "01_1C": {
+    mercury: 1,
+    earthEssence: 3,
+    frostEssence: 2,
+    silver: 3,
+  },
   "01_2C": {
     gold: 1,
     earthEssence: 3,
+    frostEssence: 3,
+    silver: 3,
+  },
+  "01_3C": {
+    gold: 3,
+    earthEssence: 3,
+    mercury: 3,
+  },
+  "01_4C": {
+    gold: 5,
+    earthEssence: 3,
+    frostEssence: 6,
     silver: 3,
   },
 };
 
 const LEVEL_BASE_MONSTER_LIST = [
   {
-    name: "small goblin",
     maxHunger: 4,
     roomId: "01_0M",
     image: "goblin",
     minimumItemValueAccepted: 2,
   },
   {
-    name: "small goblin",
-    maxHunger: 4,
+    maxHunger: 16,
     roomId: "01_1M",
     image: "goblin",
-    minimumItemValueAccepted: 2,
+    minimumItemValueAccepted: 4,
   },
   {
-    name: "zombie",
-    maxHunger: 8,
+    maxHunger: 32,
     roomId: "01_M_tortoise",
     image: "zombie",
-    minimumItemValueAccepted: 2,
+    minimumItemValueAccepted: 8,
     hasKeyTo: "tortoise",
+  },
+  {
+    maxHunger: 256,
+    roomId: "01_M_cat",
+    image: "zombie",
+    minimumItemValueAccepted: 64,
+    hasKeyTo: "cat",
+  },
+  {
+    maxHunger: 512,
+    roomId: "01_2M",
+    image: "dragon",
+    minimumItemValueAccepted: 64,
   },
 ];
 

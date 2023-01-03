@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ModalContext, useGame, useGameDispatch } from "../state/GameContext";
 import { Button } from "./components/Button";
 import Modal from "./components/Modal";
@@ -15,6 +15,15 @@ function Game() {
   const { debug, currentRoom } = useGame();
   const { showModal, handleShowModal } = React.useContext(ModalContext);
   const [showMiniModal, setShowMiniModal] = React.useState(false);
+  const [clickedShowModal, setClickedShowModal] = React.useState(false);
+
+  useEffect(() => {
+    if (showMiniModal && !clickedShowModal) {
+      setClickedShowModal(true);
+    }
+  }, [showMiniModal]);
+  const showMiniModalClass = !clickedShowModal ? "animate-bounce" : "";
+
   return (
     <div
       className="flex flex-col h-full"
@@ -37,7 +46,7 @@ function Game() {
             onClick={() => {
               dispatch({ type: "toggleDebug" });
             }}
-            className="px-2 py-1"
+            className="px-2 py-1 bg-transparent text-slate-600"
           >
             &lt;/&gt;
           </Button>
@@ -58,7 +67,7 @@ function Game() {
               onClick={() => {
                 dispatch({ type: "debugEndLevel" });
               }}
-              className="px-2 py-1"
+              className="px-2 py-1 bg-transparent"
             >
               End Level
             </Button>
@@ -66,7 +75,7 @@ function Game() {
               onClick={() => {
                 dispatch({ type: "debugGoToEndGame" });
               }}
-              className="px-2 py-1"
+              className="px-2 py-1 bg-transparent"
             >
               Go to End Game
             </Button>
@@ -76,7 +85,7 @@ function Game() {
       <RoomFrame />
       <div className="flex items-end justify-end text-sm relative portrait:h-24 landscape:h-auto mt-2">
         <Button
-          className="h-6 w-6 p-0.5"
+          className={`h-6 w-6 p-0.5 ${showMiniModalClass}`}
           onClick={() => {
             setShowMiniModal((o) => !o);
           }}
