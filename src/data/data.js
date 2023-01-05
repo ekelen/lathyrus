@@ -11,7 +11,7 @@ import {
   zipObject,
   ROOM_EXIT_POSITIONS,
   mapValues,
-} from "./util";
+} from "../util/util";
 
 const { level00, level01 } = levels;
 

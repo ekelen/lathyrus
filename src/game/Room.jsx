@@ -1,4 +1,3 @@
-import _ from "lodash";
 import React, { useEffect, useRef } from "react";
 import { ROOM_SIZE } from "../data/constants";
 import { useGame, useGameDispatch } from "../state/GameContext";

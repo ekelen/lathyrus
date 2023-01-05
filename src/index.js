@@ -1,4 +1,3 @@
-import _ from "lodash";
 import "./style.css";
 import printMe from "./print.js";
 
@@ -12,7 +11,7 @@ root.render(<App />);
 
 if (module.hot) {
   module.hot.accept("./print.js", function () {
-    console.log("Accepting the updated printMe module!");
+    console.log("Just a hot module test thing!");
 
     printMe();
   });

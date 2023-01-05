@@ -1,4 +1,3 @@
-import _ from "lodash";
 import { DIRECTION_OPPOSITE, ROOM_TYPES } from "../data/constants";
 import {
   ITEMS_BY_ID,
@@ -13,7 +12,7 @@ import {
   ROOM_EXIT_POSITIONS,
   uniq,
   zipObject,
-} from "../data/util";
+} from "../util/util";
 import { initialState } from "./setup";
 
 export function gameReducer(state, action) {

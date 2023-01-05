@@ -163,9 +163,18 @@ function Challenge({
   previousAnswerCorrect,
   progress,
   recipeList,
-  relatedCaptive,
   selectedRecipe,
 }) {
+  const { captivesByRoomId } = useGame();
+  const relatedCaptive = useMemo(
+    () =>
+      Object.values(captivesByRoomId).find(
+        (captive) => captive.teaches === selectedRecipe.id
+      ),
+
+    [selectedRecipe]
+  );
+
   return (
     <div className="flex flex-col items-center w-full h-full">
       <div className="flex w-full">
@@ -268,11 +277,11 @@ function EndIntro({ setShowChallenge }) {
 }
 
 function EndGame() {
-  const { captivesByRoomId } = useGame();
-
   const [score, setScore] = useState(0);
-
   const [error, setError] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [showChallenge, setShowChallenge] = useState(false);
+  const [previousAnswerCorrect, setPreviousAnswerCorrect] = useState(false);
 
   useEffect(() => {
     let timer;
@@ -287,21 +296,7 @@ function EndGame() {
   const recipeList = Object.values(RECIPES_BY_ID);
   const maxScore = recipeList.length;
 
-  const [progress, setProgress] = useState(0);
-
-  const [showChallenge, setShowChallenge] = useState(false);
-
-  const [previousAnswerCorrect, setPreviousAnswerCorrect] = useState(false);
-
   const selectedRecipe = recipeList[progress] ?? null;
-
-  const relatedCaptive = useMemo(() => {
-    return !selectedRecipe
-      ? null
-      : Object.values(captivesByRoomId).find((captive) => {
-          return captive.teaches === selectedRecipe.id;
-        });
-  }, [selectedRecipe]);
 
   const handleSubmitAnswer = (itemId) => {
     if (!selectedRecipe) return;
@@ -331,7 +326,6 @@ function EndGame() {
           previousAnswerCorrect={previousAnswerCorrect}
           progress={progress}
           recipeList={recipeList}
-          relatedCaptive={relatedCaptive}
           selectedRecipe={selectedRecipe}
         />
       )}

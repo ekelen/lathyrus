@@ -2,7 +2,7 @@ import React, { useCallback, useMemo } from "react";
 import { ITEMS_BY_ID } from "../../data/data";
 import { ItemWithQuantityButton } from "../components/Item";
 import { ROOM_TYPES } from "../../data/constants";
-import { pick, pickBy } from "../../data/util";
+import { pick, pickBy } from "../../util/util";
 
 export function InventoryItems({
   inventoryById,

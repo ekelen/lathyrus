@@ -1,5 +1,4 @@
-import _ from "lodash";
-import { ROOM_SIZE } from "./constants";
+import { ROOM_SIZE } from "../data/constants";
 
 const getPositionFromCoordinates = (x, y) => {
   return y * ROOM_SIZE + x;

@@ -1,5 +1,5 @@
 import React from "react";
-import { getPositionFromCoordinates, CENTER_POSITION } from "../../data/util";
+import { getPositionFromCoordinates, CENTER_POSITION } from "../../util/util";
 import { CenterTile } from "./CenterTile";
 import pine00 from "../img/trees/pine00.png";
 import pine01 from "../img/trees/pine01.png";
