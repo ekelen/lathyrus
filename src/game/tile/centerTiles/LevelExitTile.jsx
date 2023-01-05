@@ -2,7 +2,7 @@ import React from "react";
 import DialogueBox from "../../components/DialogueBox";
 import { CenterTileContentContainer } from "../CenterTileContentContainer";
 
-import { useGame, useGameDispatch } from "../../../state/GameContext";
+import { useGameDispatch } from "../../../state/GameContext";
 import Svg from "../../components/Svg";
 import Gate from "../../img/gate.svg";
 

@@ -51,12 +51,7 @@ function Recipe({ recipe, inventoryById, handleCombineItems }) {
   );
 }
 
-function LabTileDialogueContent({
-  room,
-  inventoryById,
-  learnedRecipeIds,
-  dispatch,
-}) {
+function LabTileDialogueContent({ inventoryById, learnedRecipeIds, dispatch }) {
   const learnedRecipeList = useMemo(() => {
     return learnedRecipeIds.map((id) => RECIPES_BY_ID[id]);
   }, [learnedRecipeIds]);

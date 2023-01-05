@@ -33,7 +33,7 @@ export function CaptiveImage({
   captive,
   width = "100%",
   height = "80%",
-  color = captive.color,
+  color = "currentColor",
   title = "Captive",
 }) {
   const source = GET_CAPTIVE_IMAGE(captive.image);

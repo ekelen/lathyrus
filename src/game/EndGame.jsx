@@ -159,15 +159,12 @@ function PostChallenge({ score, maxScore }) {
 }
 
 function Challenge({
-  progress,
-  score,
-  setScore,
-  selectedRecipe,
-  relatedCaptive,
-  recipeList,
-  previousAnswerCorrect,
   handleSubmitAnswer,
-  setError,
+  previousAnswerCorrect,
+  progress,
+  recipeList,
+  relatedCaptive,
+  selectedRecipe,
 }) {
   return (
     <div className="flex flex-col items-center w-full h-full">
@@ -177,13 +174,13 @@ function Challenge({
         </div>
         <div className="flex-shrink">
           {progress == 0
-            ? null
+            ? "Let's start with an easy one..."
             : previousAnswerCorrect
             ? "You got lucky with that one..."
-            : "That appears incorrect. Priceless knowledge... lost..."}
-          Answer me this:
+            : "That appears incorrect. Priceless knowledge... lost!"}
         </div>
       </div>
+      <div className="w-full">Answer me this:</div>
       <div className="flex mt-5 border border-slate-400 rounded-md items-center px-2 py-1">
         {selectedRecipe.ingredients.map((ingredient, i) => (
           <div
@@ -271,7 +268,7 @@ function EndIntro({ setShowChallenge }) {
 }
 
 function EndGame() {
-  const { learnedRecipeIds, captivesByRoomId } = useGame();
+  const { captivesByRoomId } = useGame();
 
   const [score, setScore] = useState(0);
 
@@ -330,16 +327,12 @@ function EndGame() {
         <EndIntro setShowChallenge={setShowChallenge} />
       ) : (
         <Challenge
-          progress={progress}
-          score={score}
-          setScore={setScore}
-          selectedRecipe={selectedRecipe}
-          relatedCaptive={relatedCaptive}
-          recipeList={recipeList}
-          previousAnswerCorrect={previousAnswerCorrect}
           handleSubmitAnswer={handleSubmitAnswer}
-          error={error}
-          setError={setError}
+          previousAnswerCorrect={previousAnswerCorrect}
+          progress={progress}
+          recipeList={recipeList}
+          relatedCaptive={relatedCaptive}
+          selectedRecipe={selectedRecipe}
         />
       )}
     </div>

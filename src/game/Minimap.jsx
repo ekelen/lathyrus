@@ -52,6 +52,12 @@ function MinimapRoomTile({ room, roomId }) {
         >
           <div className="font-alchemy h-3">🜊</div>
         </div>
+      ) : room.type === ROOM_TYPES.lab ? (
+        <div
+          className={`text-black w-full h-full flex items-center justify-center`}
+        >
+          <div className="font-alchemy text-lg">&#x1F766;</div>
+        </div>
       ) : null}
     </>
   );

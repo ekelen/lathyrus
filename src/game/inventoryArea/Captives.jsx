@@ -30,13 +30,7 @@ export function Captives({
               );
             }}
           >
-            <CaptiveImage
-              captive={captive}
-              color="currentColor"
-              height="100%"
-              width="100%"
-            />
-            {/* </div> */}
+            <CaptiveImage captive={captive} height="100%" width="100%" />
           </UsableButton>
         );
       })}

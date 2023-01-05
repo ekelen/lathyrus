@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import { ITEMS_BY_ID, RECIPES_BY_ID } from "../../data/data";
-import { CaptiveImage } from "../components/Captive";
 import DialogueBox from "../components/DialogueBox";
 import { Item, ItemWithQuantity } from "../components/Item";
 

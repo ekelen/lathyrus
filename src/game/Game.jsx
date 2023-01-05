@@ -10,6 +10,45 @@ import Compass from "./img/compass.svg";
 import Svg from "./components/Svg";
 import EndGame from "./EndGame";
 
+function DebugButtons({ dispatch }) {
+  return (
+    <div className="flex items-center justify-between mt-3 absolute top-10 z-20">
+      <div className="flex gap-2 text-sm">
+        <Button
+          onClick={() => {
+            dispatch({ type: "debugEndLevel" });
+          }}
+          className="px-2 py-1 text-slate-600"
+          bgClassName="bg-transparent"
+        >
+          End Level
+        </Button>
+        <Button
+          onClick={() => {
+            dispatch({ type: "debugGoToEndGame" });
+          }}
+          className="px-2 py-1 text-slate-600"
+          bgClassName="bg-transparent"
+        >
+          Go to End Game
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function Title() {
+  return (
+    <div className="text-2xl text-slate-500 leading-none relative tracking-widest">
+      <span>L</span>
+      <span className="font-alchemy">&#x1f753;</span>TH
+      <span className="font-alchemy">&#x1f756;</span>R
+      <span className="font-alchemy">&#x1f709;</span>S
+      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent to-black opacity-50 z-10 " />
+    </div>
+  );
+}
+
 function Game() {
   const dispatch = useGameDispatch();
   const { debug, currentRoom } = useGame();
@@ -33,20 +72,15 @@ function Game() {
       }}
     >
       <div className="flex items-center justify-between mt-3">
-        <div className="text-2xl text-slate-500 leading-none relative tracking-widest">
-          <span>L</span>
-          <span className="font-alchemy">&#x1f753;</span>TH
-          <span className="font-alchemy">&#x1f756;</span>R
-          <span className="font-alchemy">&#x1f709;</span>S
-          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent to-black opacity-50 z-10 " />
-        </div>
+        <Title />
 
         <div className="flex gap-2 text-sm">
           <Button
             onClick={() => {
               dispatch({ type: "toggleDebug" });
             }}
-            className="px-2 py-1 bg-transparent text-slate-600"
+            className="px-2 py-1 text-slate-600"
+            bgClassName="bg-transparent"
           >
             &lt;/&gt;
           </Button>
@@ -60,28 +94,7 @@ function Game() {
           </Button>
         </div>
       </div>
-      {debug && (
-        <div className="flex items-center justify-between mt-3 absolute top-10 z-20">
-          <div className="flex gap-2 text-sm">
-            <Button
-              onClick={() => {
-                dispatch({ type: "debugEndLevel" });
-              }}
-              className="px-2 py-1 bg-transparent"
-            >
-              End Level
-            </Button>
-            <Button
-              onClick={() => {
-                dispatch({ type: "debugGoToEndGame" });
-              }}
-              className="px-2 py-1 bg-transparent"
-            >
-              Go to End Game
-            </Button>
-          </div>
-        </div>
-      )}
+      {debug && <DebugButtons dispatch={dispatch} />}
       <RoomFrame />
       <div className="flex items-end justify-end text-sm relative portrait:h-24 landscape:h-auto mt-2">
         <Button

@@ -14,8 +14,7 @@ export function CaptiveRecipeHint({
     [selectedCaptiveId, captivesByRoomId]
   );
   const selectedCaptiveRecipe = useMemo(
-    () =>
-      !selectedCaptive ? null : RECIPES_BY_ID[selectedCaptive.teaches.recipeId],
+    () => (!selectedCaptive ? null : RECIPES_BY_ID[selectedCaptive.teaches]),
     [selectedCaptive]
   );
 
@@ -34,12 +33,7 @@ export function CaptiveRecipeHint({
       {!selectedCaptiveRecipe ? null : (
         <div className="flex items-center justify-center">
           <div className={`${selectedCaptive.colorClass} h-6 w-6 relative`}>
-            <CaptiveImage
-              height="80%"
-              width="100%"
-              captive={selectedCaptive}
-              color="currentColor"
-            />
+            <CaptiveImage height="80%" width="100%" captive={selectedCaptive} />
           </div>
           <div>: In a lab, </div>
           {selectedCaptiveRecipe.ingredients.map((ingredient, i) => (

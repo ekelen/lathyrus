@@ -34,12 +34,7 @@ export function FeedCaptiveConfirm({
           <div
             className={`${selectedCaptive.colorClass} h-6 w-6 relative grow`}
           >
-            <CaptiveImage
-              height="80%"
-              width="100%"
-              captive={selectedCaptive}
-              color="currentColor"
-            />
+            <CaptiveImage height="80%" width="100%" captive={selectedCaptive} />
           </div>
           <div>Feed me to the monster?</div>
           <div className="flex flex-col items-center gap-2 justify-center">
