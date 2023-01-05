@@ -9,4 +9,7 @@ Also featuring:
 - Vectors from [Noun Project](https://thenounproject.com/)
 - The delightful [React InlineSVG](https://github.com/gilbarbara/react-inlinesvg) component/loader
 
-## Play! → https://lathyrus.vercel.app
+## ▽ Play! → https://lathyrus.vercel.app
+
+<img width="670" alt="image" src="https://user-images.githubusercontent.com/24300177/210687490-d14ae318-2d29-4be9-be36-daf97a2d1380.png"/>
+
